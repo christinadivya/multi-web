@@ -1,0 +1,31 @@
+<section class="bg-white mt28">
+  <div class="jumbotron jumbotron-fluid subscription-bg py-5">
+    <div class="container text-center text-white my-3">
+      <h1 class="fs30 font-weight-bold">{{langData.referralPage.referralDescription}}</h1>
+      <p class="fs18 op-9 lh-35 w-60 mx-auto">{{langData.referralPage.referralSubdescription}}</p>
+    </div>
+  </div>
+  <div class="px-5 my-5">
+    <div class="row">
+      <div class="col-md-4 col-xl-3 col-lg-4 mb30" *ngFor="let plan of subscriptionList">
+        <div class="card h-100 mb-4 text-center">
+          <div class="card-body pb-0">
+            <h5 class="card-title text-blue text-center ff-muli-bold fs22 my-3">{{plan.planname}}</h5>
+            <ul class="ff-muli-Regular pricing-plan-list text-left">
+              <div *ngFor="let feature of plan.managefeature">
+                <li class="fs12 ff-muli-Regular text-black2" *ngIf="feature.active == true">{{feature.feature.description}}</li>
+                <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="feature.active == false">{{feature.feature.description}}</li>
+              </div>
+            </ul>
+          </div>
+          <div class="card-footer bg-white border-0 pt-0">
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price === '0.00'">Free</strong>
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price !== '0.00' && plan.planname !== 'Limited Platinum'">${{plan.price}} / {{plan.intervaltype}}</strong>
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price !== '0.00' && plan.planname === 'Limited Platinum'">${{plan.price}} one time</strong>
+            <button class="btn btn-blue mt-2 mb-3 fs13 btn-rounded px-4 py-2 ff-muli-Regular" (click)="signUp(plan.planname,plan.intervaltype)">Sign Up Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>  

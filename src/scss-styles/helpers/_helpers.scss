@@ -1,0 +1,62 @@
+/********* margin & padding  **********/
+$spaceamounts: (-6, 0, 2, 3, 5, 7, 8, 9, 10, 12, 15, 18, 20, 25, 28, 30, 35, 40, 50, 52, 53, 55, 57, 60, 65, 70, 80,90, 93,95,97,98, 100,120,140,160, 200);
+$sides: (top, bottom, left, right, all);
+ 
+@each $space in $spaceamounts {
+  @each $side in $sides {
+ 
+    @if $side == 'all' {
+      .m-#{$space} {
+        margin: #{$space}px;
+      }
+ 
+      .p#{$space} {
+        padding: #{$space}px;
+      }
+    } @else {
+      .m#{str-slice($side, 0, 1)}#{$space} {
+        margin-#{$side}: #{$space}px;
+      }
+ 
+      .p#{str-slice($side, 0, 1)}#{$space} {
+        padding-#{$side}: #{$space}px;
+      }
+    }
+  }
+}
+
+/********* margin & padding  **********/
+
+.fw-550{
+  font-weight:550;
+}
+
+.fw-600{
+  font-weight: 600;
+}
+.px-30{
+  padding-left:  30px;
+  padding-right:  30px;
+}
+
+.px-33{
+  padding-left:  33px;
+  padding-right:  33px;
+}
+
+.px-40{
+  padding-left:  40px;
+  padding-right:  40px;
+}
+
+
+
+
+
+.w-40 {
+  width: 40%;
+}
+
+.w-60 {
+  width: 60%;
+}

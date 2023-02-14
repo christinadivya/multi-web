@@ -1,0 +1,19 @@
+.file_upload_button{background: #4291e2;width:120px; height: 40px;line-height: 25px; display: inline-block;text-align: center; }
+.cross_icon {
+    background-color: #4291e2;
+    text-align: center;
+    height: 24px;
+    width: 24px;
+   padding: 1px;
+    .lnr{
+        transform: rotate(45deg);
+        display: inline-block;}
+}
+.fa-times{color: lightgray;}
+.content-value {
+    max-height: 400px;
+    overflow: auto;
+    width: 100%
+}
+
+

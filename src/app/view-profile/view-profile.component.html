@@ -1,0 +1,142 @@
+
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+
+  <section class="container minheight my-5 max-w-lg-1070px">
+     
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card profile-card text-center mb-3  border-0">
+              <div class="card-header">
+    
+                <!-- Default Image -->
+                <img src="./assets/images/default-user.jpg"  class="rounded-circle profile-img" alt="businessin-profile-image" *ngIf="profilimagePresent == false">
+                <img src="{{profileimg}}"  class="rounded-circle profile-img" alt="businessin-profile-image" *ngIf="profilimagePresent">
+              </div>
+              <div class="card-body pt-5 pb-4">
+                <h1 class="fs18 font-weight-bold mt-3 mb-0 text-black2">{{userprofile.firstname}} {{userprofile.lastname}}</h1>
+                <p class="list-group-item fs14 text-black2 border-0 px-0 py-1">Type :
+                  <span class="fs16 text-black2 mb-2">{{userAccount.accounttypeshortname}}</span></p>
+                <p class="fs14 text-black2 text-left" *ngIf="userprofile.companyname !== null && userprofile.companyname !== ''">
+                <!-- <img src="./assets/images/briefcase-solid.svg"  alt="briefcase-icon" style="width:20px" class="pr-2"> -->
+                <em class="fas fa-briefcase fs20 color-light-blue mr-2"></em>
+                  {{userprofile.companyname}}</p>
+                <p class="fs14 text-black2  text-left">
+                    <img src="./assets/images/locationicon.svg"  alt="location-icon" class="pr-2">
+                  {{userAddress}}</p>
+                  <p class="fs16  font-weight-bold  text-center atagtext-blue mb-0" *ngIf="showPhoneOrEmail"><a href= "mailto:{{userEmail}}?subject={{Subject}}&body=https%3A%2F%2Fbusinessindev.optisolbusiness.com%2Fview-profile%2F{{profileId}}%20check%20this%20link%20to%20know%20about%20me" target="_top">{{userEmail}}</a></p>
+                  <div class="d-flex align-items-center">
+                    <div *ngIf="!showPhoneOrEmail">
+                      <button type="button" (click)="joinRoom()" class="btn btn-blue btn-rounded   mt-2 font-weight-bold ">
+                        <em class="fa fa-envelope " aria-hidden="true"></em>
+                        <span class="fs14 pl-1">{{langData.viewProfilePage.message}}</span>
+                      </button>
+                    </div>
+                    <div class="pt-2 mx-auto">
+                      <button type="button"
+                        class="btn btn-blue-border btn-rounded text-blue  ml-2  font-weight-bold "
+                        (click) = "shareToLink()" location.href >
+                        <img src="./assets/images/shareicon.svg"  alt="location-icon" class="pt-1">
+                        <span class="fs14 pl-1">{{langData.viewProfilePage.share}}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+             
+            </div>
+        </div>
+      <div class="col-md-6" *ngIf="postlistflag">
+          <div class="viewreferrals card position-relative mb-4 ">
+              <div class="card-body p-0 px-lg-3">
+                <h3 class="fs17 text-blue font-weight-bold mt-3 pl-1"><u>Posts By {{userprofile.firstname}} {{userprofile.lastname}}</u></h3>
+                  <ul class="list-group toppics-list">
+                      <li class="list-group-item position-relative pb-0" *ngFor="let array of postlistarray| paginate:{currentPage: currentPage,itemsPerPage:pageSize,totalItems:total}; let i=index">
+                        <div class="c-pointer">
+                          <img src="./assets/images/mobile-logo.png" *ngIf="!array.postlogo || array.postlogo == null" alt="top-pics-images" class="viewmainimg position-absolute">
+                        <img src="{{cloudeURL}}{{array.postlogo}}" *ngIf="array.postlogo && array.postlogo != null" alt="top-pics-images" class="viewmainimg position-absolute">
+                        <div class="top-pic-desc mb-1">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h1 class="fs16 mt-1 mb-0 font-weight-bold text-black2" (click)="viewpost(array)">{{array.postname}}</h1>
+                                <span class="fs14 font-weight-bold atagtext-blue">{{array.companyname}}</span>
+                            </div>
+                          </div>  
+                        </div>
+                        <div class="desc-section">
+                          <p class="fs12 text-grey23 mb-0 mr-3">{{array.date}} {{array.time}}</p>
+                          <p class="text-left fs14 text-black2 view-moreless-div"
+                          *ngIf = "array && array.postsummary" [ngClass]="{'break-view compresed-view': array.viewmore==true }">{{array.postsummary}}
+                          <span class="d-inline-block moreless">
+                            <a class="fs12 font-weight-bold atagtext-blue"  href="javascript:void(0)" *ngIf="array.viewmore==true" (click)="viewmorepage(array)">...View More</a>
+                            <a class="fs12 font-weight-bold atagtext-blue ml-3"  href="javascript:void(0)" *ngIf="array.viewmore==false" (click)="viewmorepage(array)">...View Less</a>
+                          </span>
+                        </p>
+                          <!-- <div class="fs12 text-right font-weight-bold atagtext-blue "> <a href="javascript:void(0)" (click)="viewmorepage(array)">View More</a></div> -->
+                          </div>
+                        </div>
+                      </li>
+                      </ul>
+                   
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center mt-3">
+                  <pagination-controls (pageChange)="postChange($event)" directionLinks="true" autoHide="true"
+                  responsive="true"  previousLabel="" nextLabel="">
+                </pagination-controls>
+              </div>
+              </div>
+           
+      </div>
+      <div class="col-md-6" *ngIf="!postlistflag">
+          <div class="viewreferrals card position-relative mb-4 ">
+              <div class="card-body py-lg-4 px-lg-3">
+               <div class="text-center">
+                  <img src="./assets/images/nopost.svg" alt="no-post">
+                  <p class="fs10 text-darkpurple font-weight-bold">{{langData.viewProfilePage.noPostAvailable}}</p>
+               </div>
+                   
+              </div>
+            </div>
+           
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+
+          <div class="card-body p-1">
+
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="531" width="100%"></iframe>
+
+
+
+
+          </div>
+
+
+        </div>
+      
+      </div>
+
+    </div>
+
+
+
+
+  </section>
+
+
+
+  <!-- Body Content -->
+
+
+  <!-- footer Section -->
+  <!-- <app-auth-footer></app-auth-footer> -->
+  <!-- footer Section -->
+
+</div>
+
+

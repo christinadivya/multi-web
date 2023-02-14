@@ -1,0 +1,269 @@
+.btn-rounded{
+    border-radius: 5px;
+}
+
+.btn-blue{
+  background: $blue;
+  border-color: $blue;
+  color: $white;
+  &:hover{
+    background: $blue2;
+    border-color: $blue2;
+    color: $white;
+  }
+} 
+
+.btn-blue-border{
+    background: transparent;
+    border-color: $blue;
+    color: $white;
+    &:hover{
+      background: $blue2;
+      border-color: $blue2;
+      color: $white;
+    }
+  } 
+  .btn-blue-borderbtn{
+    background: transparent;
+    border-color: $blue;
+    color: $white;
+  
+  }
+
+  .btn-blue-outline{
+    background: transparent;
+    border-color: $blue;
+    color: $blue;
+    border-radius: 5px;
+    &:hover{
+      background: $blue;
+      border-color: $blue;
+      color: $white;
+    }
+  }
+
+
+.btn-grey-border{
+    background: transparent;
+    border-color: $grey10;
+    color: $grey10;
+    &:hover{
+      background: $grey10;
+      border-color: $grey10;
+      color: $white;
+    }
+}
+
+.social-btn{
+    height:26px;
+    width: 26px;
+    border-radius: 50%;
+    color: $white;
+    text-align: center;
+    // padding: 2px;
+
+    &.fb{
+       background: $navy;
+    }
+
+    &.g-plus{
+        // background: $white;
+        border-color: $white;
+        color: $black;
+        img{
+            width: 25px;
+            height: 25px;   
+          } 
+    }
+    
+    &.pinterest{
+        background: $maroon;
+    }
+
+    &.linkedin{
+        background: $navy2;
+    }
+
+    &.twitter{
+        background: $blue5;
+    }
+
+}
+
+.upload-btn{
+    // background: rgba(46, 84, 122, 0.78);
+    background: rgba(0, 0, 0, 0.78);
+    height: 35%;
+    text-align: center;
+    width: 100%;
+    bottom:0px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @extend .c-pointer;
+}
+
+
+// ng tag input chip customising
+
+.ngx-select__selected{
+
+    .btn-secondary {
+      
+    }
+
+    .btn-link{
+
+        &.ngx-select__clear{
+           
+            margin-left: 10px;
+        }
+        
+    }
+
+}
+
+
+.chips-list{
+    li{
+        color: $black2;
+        background-color: $grey9;
+        border:1px solid $grey8;
+        border-radius: 9px;
+        padding: 9px 20px;
+        @extend .fs14;
+        @extend .mb10;
+        margin-right: 10px;
+        display: inline-block;
+        position: relative;
+       
+        
+        & > span{
+            @extend .fs9;
+             padding: 2px 4px;
+             position: absolute;
+             top: -5px;
+             right: -4px;
+             height: 15px;
+             width: 15px;
+             line-height: 12px;
+             background: red;
+             color: $white;
+             text-align: center;
+             @extend .c-pointer;
+        }
+
+
+        &.upload-red2{
+         .bg-badge-color{
+             background-color: $red2 !important;
+            }
+
+            .progress-color{
+                .progress-bar{
+                    background-color: $blue8 !important;
+                }
+            }
+        } 
+        &.upload-yellow{
+            .bg-badge-color{
+                background-color: $yellow !important;
+            }
+            .progress-color{
+                .progress-bar{
+                    background-color: $blue8 !important;
+                }
+            }
+        }  
+        &.upload-blue8{
+            .bg-badge-color{
+                background-color: $blue8 !important;
+            }
+            
+            .progress-color{
+                .progress-bar{
+                    background-color: $blue8 !important;
+                }
+            }
+        }
+
+        &.upload-orange{
+            .bg-badge-color{
+                background-color: $orange !important;
+            }
+            
+            .progress-color{
+                .progress-bar{
+                    background-color: $blue8 !important;
+                }
+            }
+        }
+        .file-badge{
+            position: absolute;
+            left: 7px;
+            top: 7px;
+        }
+
+        .progress{
+            height: 5px;
+            bottom: -9px;
+            left: -19px;
+            position: relative;
+            width: 114%;
+            background: transparent;
+        }
+
+        .upload-badge{
+            background: rgba(66, 145, 226,0.20);
+            border-radius: 6px;
+            height: 30px;
+            width: 30px;
+            left: 5px;
+            top: 4px;
+            padding: 4px 3px;
+            position: absolute;
+            img{
+                width: 24px;
+                height: 20px;
+            }
+        }
+
+    }
+    &.video-list{
+        .progress{
+            width: 109.5%;
+        }
+    }
+}
+
+
+.videouplabel{
+    padding: 9px 4px !important;
+}
+
+.btn-edit-lits,
+.btn-view-lits{
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    padding: 0px;
+    font-size: 14px;
+    span{
+        color:white;
+    }
+}
+
+
+.btn-edit-lits{
+  background: #13F04E;
+  font-size: 11px;
+}
+.btn-view-lits{
+    padding: 2px 0px;
+    background: #F09F13;
+
+}
+.wid-37{
+    width: 40%;
+}

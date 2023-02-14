@@ -1,0 +1,992 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<div class="bg-lg-grey5 pt-5">
+   <!-- <ng-container *ngIf="showHeader">
+      <app-auth-header class="desktop-view" *ngIf="desktopView"></app-auth-header>
+   </ng-container> -->
+   <!-- Common templates -->
+   <!-- Body Content -->
+   <section class="container py-3 py-lg-4" [ngClass]="{'px-0': pages == 5}">
+      <!-- Personal Information -->
+      <form name="form" focusInvalidInput (ngSubmit)="registerprofile.valid  && profileRegistration(registerprofile)"
+         #registerprofile="ngForm" class="personal-info-form" novalidate>
+         <!-- Image Upload start -->
+         <ng-template #imgupload let-Evaluates='Evaluates'>
+            <div class="position-relative h-lg-100">
+               <div class="card position-relative upload-card h-lg-100 py-3">
+                  <img src="./assets/images/user-img-new.svg" alt="default-image" *ngIf="croppedImage == ''"
+                     class="personal-profile-image rounded-circle">
+                  <img [src]="croppedImage" alt="user-image" *ngIf="croppedImage != ''"
+                     class="personal-profile-image rounded-circle fit-cover">
+                  <input type="file" class="d-none" id="imgupload" (change)="fileChangeEvent($event, imageupload)">
+                  <label class="upload-btn position-absolute mb-0" for="imgupload">
+                     {{langData.personalInfo.upload}}
+                  </label>
+               </div>
+            </div>
+         </ng-template>
+         <!-- Image Upload Ends -->
+         <!-- Personal Information start -->
+         <ng-template #personalinfo let-Evaluates='Evaluates'>
+            <div class="card">
+               <div class="card-body p-0 p-lg-4">
+                  <div class="row">
+                     <div class="col-md-5 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.common.firstName}} <sup class="text-red">*</sup></label>
+                           <input type="text" name="firstname" #firstname="ngModel" [(ngModel)]="registerData.firstname"
+                              pattern="[A-Za-z ]{0,25}" class="form-control" maxlength="25"
+                              [ngClass]="{'is-invalid': ( firstname.touched ||  registerprofile.submitted ) && firstname.errors}"
+                              [disabled]="inputfirstDisabled" [placeholder]="langData.common.firstName" required>
+                           <div class="text-danger"
+                              *ngIf="(firstname.touched ||  registerprofile.submitted ) && firstname.errors">
+                              <small *ngIf="firstname.errors.required">{{langData.common.pleaseEnterFirstName}}</small>
+                              <small *ngIf="firstname.errors.pattern">{{langData.common.firstNameOnlyAlphbets}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-5 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.common.lastName}} <sup class="text-red">*</sup></label>
+                           <input type="text" class="form-control" maxlength="25" name="lastname" #lastname="ngModel"
+                              [(ngModel)]="registerData.lastname" pattern="[A-Za-z ]{0,25}"
+                              [ngClass]="{'is-invalid': (lastname.touched ||  registerprofile.submitted )  && lastname.errors}"
+                              [disabled]="inputlastDisabled" [placeholder]="langData.common.lastName" required>
+                           <div class="text-danger"
+                              *ngIf=" (lastname.touched ||  registerprofile.submitted ) && lastname.errors">
+                              <small *ngIf="lastname.errors.required">{{langData.common.pleaseEnterLastName}}</small>
+                              <small *ngIf="lastname.errors.pattern">{{langData.common.lastNameOnlyAlphbets}}</small>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-md-5 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.common.emailAddress}} <sup>*</sup></label>
+                           <input type="email" class="form-control" name="email" #email="ngModel"
+                              [(ngModel)]="registerData.email"
+                              pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
+                              (input)="emailValidation(registerData.email)"
+                              [ngClass]="{'is-invalid': ( email.touched ||  registerprofile.submitted ) && email.errors}"
+                              [disabled]="inputemailDisabled" [placeholder]="langData.common.emailAddress" required>
+                           <div class="text-danger"
+                              *ngIf="(email.touched ||  registerprofile.submitted ) && email.errors">
+                              <small
+                                 *ngIf="email.errors.pattern">{{langData.common.pleaseEnterValidEmailAddress}}</small>
+                              <small *ngIf="email.errors.required">{{langData.common.pleaseEnterEmailAddress}}</small>
+                           </div>
+                           <div class="text-danger" *ngIf="emailExist">
+                              <small>{{langData.personalInfo.emailALreadyExist}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-5 mx-auto desktop-view">
+                        <div class="form-group" *ngIf="languageData.length > 0">
+                           <label>{{langData.personalInfo.language}}<sup class="text-red">*</sup></label>
+                           <select class="custom-select" name="language"
+                              #language="ngModel" [(ngModel)]="registerData.language"
+                              [ngClass]="{'is-invalid': (registerprofile.submitted ) && language.errors}" required>
+                              <option [value]='null'>{{langData.personalInfo.selectLanguage}}</option>
+                              <option *ngFor="let lang of languageData" [value]="lang.id">{{lang.name}}
+                              </option>
+                           </select>
+                           <div class="text-danger"
+                              *ngIf="(registerprofile.submitted ) && language.errors">
+                              <small *ngIf="language.errors.required">{{langData.personalInfo.pleaseSelectAnyLanguage}}</small>
+                           </div>
+                        </div>
+                     </div>                    
+                  </div>
+               </div>
+            </div>
+            <div class="text-center my-4 mobile-view">
+               <button type="button" (click)="nextPage()"
+                  [disabled]="firstname.errors || lastname.errors || email.errors || (emailExist == true)"
+                  class="btn btn-blue btn-rounded px-30 py-1">
+                  <span class="fs14">{{langData.personalInfo.next}}</span>
+               </button>
+            </div>
+         </ng-template>
+         <!-- Personal Information Ends -->
+         <!-- Account type Starts -->
+         <ng-template #acctype let-Evaluates='Evaluates'>
+            <div class="card position-relative mb-4">
+               <div class="card-body p-0 py-lg-4 px-lg-5">
+                  <div class="row">
+                     <div class="col-xl-8">
+                        <ul class="list-unstyled custom-list mb-0 row" *ngIf="acctypeData.length > 0">
+                           <li class="col-md-6" *ngFor="let acctyp of acctypeData; let i = index">
+                              <div class="custom-radio check-shadow">
+                                 <input type="radio" name="acctype" id="acctyp{{i}}" [checked]="(i + 1) === acctypradio"
+                                    [value]="acctyp.accounttypeid" (change)="selectedAccType(acctyp)">
+                                 <svg version="1.1" height="26px" width="26px" class="position-absolute"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                    <polyline class="path check" fill="none" stroke="#fff" stroke-width="12"
+                                       stroke-linecap="round" stroke-miterlimit="10"
+                                       points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                 </svg>
+                                 <label for="acctyp{{i}}">{{acctyp.accounttypename}}</label>
+                              </div>
+                           </li>
+                        </ul>
+                     </div>
+                     <div class="col-xl-4 mt-md-3 mt-xl-0">
+                        <div class="inner-card h-lg-100 p-3 m-2 m-lg-0 text-center">
+                           <div class="row">
+                              <div class="col-2 col-lg-12">
+                                 <img src="./assets/images/bulb.svg" alt="businessin-Info" class="mt-1">
+                              </div>
+                              <div class="col-10 col-lg-12">
+                                 <p class="fs13 mt-2 mb-0 mb-lg-3 font-weight-bold">
+                                    {{langData.personalInfo.notSureWhichOption}}</p>
+                                 <button type="button" class="btn btn-blue mobile-link btn-rounded px-30 py-1" (click)="selectOptionForYourNeed(selectOptiontemplate)">
+                                    <span class="fs14 font-weight-bold">{{langData.personalInfo.clickHere}}</span>
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="text-danger mt-3"
+                     *ngIf="registerprofile.submitted &&  (selectedAccTyp == '' || selectedAccTyp == null)">
+                     <small>{{langData.personalInfo.pleaseChooseAccountType}}</small>
+                  </div>
+               </div>
+            </div>
+            <div class="text-center my-4 mobile-view">
+               <button type="button" (click)="nextPage()" [disabled]="selectedAccTyp == '' || selectedAccTyp == null"
+                  class="btn btn-blue btn-rounded px-30 py-1">
+                  <span class="fs14">{{langData.personalInfo.next}}</span>
+               </button>
+            </div>
+         </ng-template>
+         <!-- Account type  Ends -->
+         <!-- Business Information  Starts -->
+         <ng-template #businessinf let-Evaluates='Evaluates'>
+            <div class="card mb-4">
+               <div class="card-body p-2 p-lg-4">
+                  <div class="row mx-m-desktop-33">
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.companyName}}<sup
+                                 *ngIf="registerData.acctype !== 4">*</sup></label>
+                           <input type="text" pattern="^[^\s]+(\s+[^\s]+)*$" class="form-control" name="companyname" #companyname="ngModel"
+                              [(ngModel)]="registerData.companyname"
+                              [ngClass]="{'is-invalid': ( companyname.touched ||  registerprofile.submitted )  && companyname.errors}"
+                              [placeholder]="langData.personalInfo.companyName" [required]="registerData.acctype !== 4">
+                           <div class="text-danger"
+                              *ngIf="( companyname.touched ||  registerprofile.submitted ) && companyname.errors">
+                              <small
+                                 *ngIf="companyname.errors.required">{{langData.personalInfo.pleaseEnterCompanyName}}</small>
+                              <small
+                                 *ngIf="companyname.errors.pattern">{{langData.personalInfo.pleaseEnterValidCompanyName}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label class="text-nowrap">{{langData.personalInfo.EIN_Number}} <sup
+                                 *ngIf="registerData.acctype !== 4">*</sup></label>
+                           <input type="text" class="form-control" name="companyein" #companyein="ngModel" maxlength="9"
+                              [(ngModel)]="registerData.companyein" pattern="^([0-9]{9})$"
+                              [ngClass]=" registerData.acctype !== 4 ? {'is-invalid': ( companyein.touched ||  registerprofile.submitted ) && companyein.errors} : ''"
+                              [placeholder]="langData.personalInfo.EIN" [required]="registerData.acctype !== 4">
+                           <div class="text-danger"
+                              *ngIf="registerData.acctype !== 4 && ( companyein.touched ||  registerprofile.submitted ) && companyein.errors">
+                              <small
+                                 *ngIf="companyein.errors.required">{{langData.personalInfo.pleaseEnterEINNumber}}</small>
+                              <small
+                                 *ngIf="companyein.errors.pattern">{{langData.personalInfo.pleaseEnterNineNumbers}}</small>
+                           </div>
+                           <div class="text-danger"
+                              *ngIf="registerData.acctype === 4 && registerprofile.submitted && companyein.errors">
+                              <small
+                                 *ngIf="companyein.errors.pattern">{{langData.personalInfo.pleaseEnterNineNumbers}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.address}} <sup>*</sup></label>
+                           <input type="text" class="form-control" name="addressline1" #addressline1="ngModel"
+                              [(ngModel)]="registerData.addressline1" pattern="^[^\s]+(\s+[^\s]+)*$"
+                              [ngClass]="{'is-invalid': ( addressline1.touched ||  registerprofile.submitted ) && addressline1.errors}"
+                              [placeholder]="langData.personalInfo.address" required>
+                           <div class="text-danger"
+                              *ngIf="( addressline1.touched ||  registerprofile.submitted ) && addressline1.errors">
+                              <small
+                                 *ngIf="addressline1.errors.required">{{langData.personalInfo.pleaseEnterAddress}}</small>
+                              <small
+                                 *ngIf="addressline1.errors.pattern">{{langData.personalInfo.pleaseEnterValidAddress}}</small>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row mx-m-desktop-33">
+                     <div class="col-xl-3 col-6 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.country}} <sup>*</sup></label>
+                           <select class="custom-select" name="countryid" #countryid="ngModel"
+                              [(ngModel)]="registerData.countryid" (change)="getState()"
+                              [ngClass]="{'is-invalid': ( countryid.touched ||  registerprofile.submitted ) && countryid.errors}"
+                              [disabled]="!countryData.length > 0" required>
+                              <option [value]='null' disabled selected>{{langData.personalInfo.selectCountry}}</option>
+                              <option *ngFor="let cntry of countryData" [selected]="" [value]="cntry.countryid">
+                                 {{cntry.countryname}}</option>
+                           </select>
+                           <div class="text-danger"
+                              *ngIf="( countryid.touched ||  registerprofile.submitted ) && countryid.errors">
+                              <small
+                                 *ngIf="countryid.errors.required">{{langData.personalInfo.pleaseSelectCountry}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3 col-6 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.state}} <sup>*</sup></label>
+                           <select class="custom-select" name="stateid" #stateid="ngModel"
+                              [(ngModel)]="registerData.stateid" (change)="getCity()"
+                              [ngClass]="{'is-invalid':  ( stateid.touched ||  registerprofile.submitted ) && stateid.errors}"
+                              [disabled]="flagCheck || !stateData.length > 0" required>
+                              <option [value]="null" disabled>{{langData.personalInfo.selectState}}</option>
+                              <option *ngFor="let sta of stateData" [value]="sta.stateid">{{sta.statename}}</option>
+                           </select>
+                           <div class="text-danger"
+                              *ngIf="( stateid.touched ||  registerprofile.submitted ) && stateid.errors">
+                              <small *ngIf="stateid.errors.required">{{langData.personalInfo.pleaseSelectState}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3  col-12 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.city}} <sup *ngIf = "cityData.length > 0">*</sup></label>
+                           <select class="custom-select" name="cityid" #cityid="ngModel"
+                              [(ngModel)]="registerData.cityid"
+                              [ngClass]="{'is-invalid': ( cityid.touched ||  registerprofile.submitted ) && cityid.errors}"
+                              [disabled]="!cityData.length > 0" required>
+                              <option [value]="null" disabled>{{langData.personalInfo.selectCity}}</option>
+                              <option *ngFor="let cty of cityData" [value]="cty.cityid">{{cty.cityname | titlecase}}
+                              </option>
+                           </select>
+                           <div class="text-danger"
+                              *ngIf="( cityid.touched ||  registerprofile.submitted ) && cityid.errors">
+                              <small *ngIf="cityid.errors.required">{{langData.personalInfo.pleaseSelectCity}}</small>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row mx-m-desktop-33">
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.zipcode}} <sup>*</sup></label>
+                           <input type="text" name="zipcode" maxLength="20" #zipcode="ngModel"
+                              [(ngModel)]="registerData.zipcode" class="form-control" pattern="^[^\s]+(\s+[^\s]+)*$"
+                              [ngClass]="{'is-invalid': ( zipcode.touched ||  registerprofile.submitted ) && zipcode.errors}"
+                              [placeholder]="langData.personalInfo.zipcode" required>
+                           <div class="text-danger"
+                              *ngIf="( zipcode.touched ||  registerprofile.submitted ) && zipcode.errors">
+                              <small
+                                 *ngIf="zipcode.errors.required">{{langData.personalInfo.pleaseEnterZipcode}}</small>
+                              <small *ngIf="zipcode.errors.pattern">{{langData.personalInfo.pleaseEnterOnlyNumbers}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.personalInfo.companyWebsite}} <sup
+                                 *ngIf="registerData.acctype !== 4">*</sup></label>
+                           <input type="text" name="companywebsite" #companywebsite="ngModel"
+                              [(ngModel)]="registerData.companywebsite"
+                              pattern="^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}"
+                              class="form-control"
+                              [ngClass]="registerData.acctype !== 4 ?{'is-invalid': ( companywebsite.touched ||  registerprofile.submitted ) && companywebsite.errors}: ''"
+                              [placeholder]="langData.personalInfo.companyWebsite"
+                              [required]="registerData.acctype !== 4">
+                           <div class="text-danger"
+                              *ngIf="registerData.acctype !== 4 && ( companywebsite.touched ||  registerprofile.submitted ) && companywebsite.errors">
+                              <small
+                                 *ngIf="companywebsite.errors.required">{{langData.personalInfo.pleaseEnterCompanyWebsite}}</small>
+                              <small
+                                 *ngIf="companywebsite.errors.pattern">{{langData.personalInfo.pleaseEnterValidWebsiteURL}}</small>
+                           </div>
+                           <div class="text-danger"
+                              *ngIf="registerData.acctype === 4 && registerprofile.submitted && companywebsite.errors">
+                              <small
+                                 *ngIf="companywebsite.errors.pattern">{{langData.personalInfo.pleaseEnterValidWebsiteURL}}</small>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-xl-3 mx-auto">
+                        <div class="form-group">
+                           <label>{{langData.common.phoneNumber}} <sup>*</sup></label>
+                           <div class="d-flex">
+                              <div class="pr-1">
+                                 <select name="phonecode" #phonecode="ngModel" [(ngModel)]="registerData.phonecode"
+                                    (change)="changeMask('phonemask',$event.target.value)"
+                                    class="custom-select w-70px pr-1 no-arrow" disabled>
+                                    <option *ngFor="let cntry of countryData" [value]="cntry.countrydialcode">
+                                       {{cntry.countrydialcode}}</option>
+                                 </select>
+                                </div>
+                              <div class="pl-1 w-100">
+                                    <input name="phonenumber" #phonenumber="ngModel" type = "text"
+                                       [ngModel]="registerData.phonenumber" mask="{{phonemask}}" 
+                                       class="form-control"
+                                       [ngClass]="{'is-invalid': ( phonenumber.touched ||  registerprofile.submitted ) && phonenumber.errors}"
+                                       (input)="checkPhoneNumberIsExist($event.target.value)"
+                                       placeholder="Phone Number" required>
+                                 
+                              </div>
+                           </div>
+                           <div class="text-danger"
+                              *ngIf="(phonenumber.touched ||  registerprofile.submitted ) && phonenumber.errors">
+                              <small
+                                 *ngIf="phonenumber.errors.required">{{langData.personalInfo.pleaseEnterPhoneNumber}}</small>
+                              <small *ngIf="phonenumber.errors.pattern">
+                                 <span *ngIf="registerData.phonecode != '+91'">
+                                    {{langData.personalInfo.pleaseEnterValidPhoneNumber}}
+                                 </span>
+                                 <span *ngIf="registerData.phonecode == '+91'">
+                                    {{langData.personalInfo.phoneNumbernotExceedMoreThanTen}}
+                                 </span>
+                              </small>
+                           </div>
+
+                           <div class='text-danger' *ngIf="phoneNumberExist">
+                              <small>{{langData.personalInfo.phoneNumberAlreadyExist}}</small>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="text-center my-4">
+               <button type="button" (click)="nextPage()"
+                  [disabled]="countryid.errors || stateid.errors || cityid.errors || zipcode.errors || companywebsite.errors || phonenumber.errors || (phoneNumberExist == true)"
+                  class="btn btn-blue btn-rounded px-30 py-1 mobile-view">
+                  <span class="fs14">{{langData.personalInfo.next}}</span>
+               </button>
+            </div>
+         </ng-template>
+         <!-- Business Information  Ends -->
+        
+         <ng-template #locationsinput>
+            <input type="text" class="form-control" [placeholder]="langData.personalInfo.preferredLocationSearch" name="locationsearch"
+               #locationsearch="ngModel" [(ngModel)]="locations" (ngModelChange)="SearchLocation()">
+         </ng-template>
+         <ng-template #locationsdropdownlist>
+            <ul class="list-unstyled" *ngIf="locaionresult.length > 0">
+               <li *ngFor="let loca of locaionresult" (click)="addPreferredLocation(loca)">
+                  {{loca.locationFinal}}
+               </li>
+            </ul>
+         </ng-template>
+         <!-- Location Tag  starts -->
+         <ng-template #locationstag>
+            <ul class="chips-list list-unstyled" *ngIf="selectedlocation.length > 0">
+               <li *ngFor="let data of selectedlocation">
+                  <ng-container *ngIf="data.searchedby === 'Continent'">
+                     {{data.continentname}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'Country'">
+                     {{data.countryname}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'State'">
+                     {{data.statename}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'City'">
+                     {{data.cityname}}
+                  </ng-container>
+                  <span class="remove-btn rounded-circle" (click)="reomveLocation(data)"><span
+                        class="fas fa-minus"></span></span>
+               </li>
+            </ul>
+         </ng-template>
+         <!-- Location Tag  Ends -->
+         <!-- Mobile selected inustry chips list starts -->
+         <ng-template #mobilechiplist>
+            <ul class="chips-list list-unstyled" *ngIf="pickedIndstryName.length > 0">
+               <li *ngFor="let mydata of pickedIndstryName">
+                  {{mydata.data.industryname}}
+                  <span class="remove-btn rounded-circle" (click)="removeIndustry(mydata.position)"><span
+                        class="fas fa-minus"></span></span>
+               </li>
+            </ul>
+         </ng-template>
+         <!-- Mobile selected inustry chips list  Ends -->
+         <!-- Preffered industry checkbox list starts -->
+         <ng-template #preferedindustryCheckboxlist>
+            <ul class="list-unstyled taginput-list mb-0 mx-mobileview-0 preffered-industry-list"
+               *ngIf="allindustryData.length > 0">
+               <li *ngFor="let industry of allindustryData; let i = index">
+                  <div class="custom-checkbox">
+                     <input type="checkbox" name="userindustry{{i}}" id="preferredInd{{i}}"
+                        (change)="selectedIndustry($event.target.checked,industry,i)"
+                        [checked]="industry.flag == true? true:false">
+                     <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                        (click)="selectedIndustry(!industry.flag,industry,i)">
+                        <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                           stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                     </svg>
+                     <label for="preferredInd{{i}}">{{industry.industryname}}</label>
+                  </div>
+               </li>
+            </ul>
+         </ng-template>
+         <!-- Preffered industry checkbox list starts -->
+         <!-- submit & cancel btn -->
+         <ng-template #submitcancelbtn>
+            <button type="button" class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold"
+               routerLink="/home">
+               <span class="fs14">{{langData.common.cancel}}</span>
+            </button>
+            <button type="submit" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold">
+               <span class="fs14" *ngIf="generalId == undefined">{{langData.common.signUp}}</span>
+               <span class="fs14" *ngIf="generalId == 'true'">{{langData.common.update}}</span>
+            </button>
+         </ng-template>
+         <!-- submit & cancel btn -->
+         <!--  Desktop View -->
+         <div class="desktop-view" *ngIf="desktopView">
+            <h1 class="fs26 font-weight-bold text-center mb-4 mt-2 text-black2" *ngIf="generalId == undefined">{{langData.personalInfo.account}}</h1>
+            <!-- <h1 class="fs26 font-weight-bold text-center mb-4 mt-2 text-black2" *ngIf="generalId == 'true'"></h1> -->
+            <h1 class="text-black2 fs18 font-weight-bold mb-3">{{langData.personalInfo.personalInformation}}</h1>
+            <div class="row mb-4">
+               <div class="col max-width-333px">
+                  <!-- Image Upload -->
+                  <ng-container [ngTemplateOutlet]="imgupload" [ngTemplateOutletContext]=""></ng-container>
+                  <!-- /Image Upload -->
+               </div>
+               <div class="col">
+                  <!-- Personal Info -->
+                  <ng-container [ngTemplateOutlet]="personalinfo" [ngTemplateOutletContext]=""></ng-container>
+                  <!-- /Personal Info -->
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-12">
+                  <h2 class="text-black2 fs18 font-weight-bold mb-3">{{langData.personalInfo.accountType}}</h2>
+                  <!-- Account type -->
+                  <ng-container [ngTemplateOutlet]="acctype"></ng-container>
+                  <!-- /Account type -->
+               </div>
+            </div>
+            <h3 class="text-black2 fs18 font-weight-bold mb-3">{{langData.personalInfo.businessInformation}}</h3>
+            <!-- Business Information -->
+            <ng-container [ngTemplateOutlet]="businessinf" [ngTemplateOutletContext]=""></ng-container>
+            <!-- /Business Information -->
+            <h3 class="text-black2 fs18 font-weight-bold mb-3">{{langData.personalInfo.interest_s}}</h3>
+            <!-- interest -->
+            <div class="card mb-4">
+               <div class="card-body  p-0 p-lg-4">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="mx-lg-4">
+                           <!-- Tag Input  -->
+                           <label>{{langData.personalInfo.preferredLocation_s}} <sup class="text-red">*</sup></label>
+                           <div class="mb-3">
+                              <div class="position-relative">
+                                 <div class="input-group  custom-input-group" *ngIf="desktopView"
+                                    [ngClass]="{'emptyinput': locations == '' || locations == null}">
+                                    <!-- locations input -->
+                                    <ng-container [ngTemplateOutlet]="locationsinput"></ng-container>
+                                    <!-- locations input -->
+                                    <div class="input-group-append">
+                                       <span class="input-group-text bg-white" id="basic-addon1"><span
+                                             class="lnr lnr-magnifier"></span></span>
+                                    </div>
+                                 </div>
+                                 <div [ngClass]="{'animated-show': locaionresult.length > 0}" style="max-height: 250px"
+                                    class="position-absolute bg-white w-100 custom-drop">
+                                    <!-- location option list -->
+                                    <ng-container [ngTemplateOutlet]="locationsdropdownlist"></ng-container>
+                                    <!-- location option list -->
+                                 </div>
+                              </div>
+                              <div class="text-danger"
+                                 *ngIf="registerprofile.submitted && (selectedlocation == '' || selectedlocation == null)">
+                                 <small>{{langData.personalInfo.pleaseChooseLocations}}</small>
+                              </div>
+                           </div>
+                           <!-- Tag Input  -->
+                           <!-- LOCATION TAG -->
+                           <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+                           <!-- LOCATION TAG -->
+                           <label>{{langData.personalInfo.preferredIndustry_s}}<sup class="text-red">*</sup></label>
+                           <div *ngIf="desktopView">
+                              <ng-container [ngTemplateOutlet]="preferedindustryCheckboxlist"></ng-container>
+                           </div>
+                           <div class="text-danger"
+                              *ngIf="registerprofile.submitted &&  (selectedIndus == '' || selectedIndus == null)">
+                              <small>{{langData.personalInfo.pleaseChoosePreferredIndustry_s}}</small>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- /interest  -->
+            <div *ngIf='desktopView' class="text-center">
+               <ng-container [ngTemplateOutlet]="submitcancelbtn"></ng-container>
+            </div>
+         </div>
+         <!--  Desktop View -->
+         <!-- Mobile View -->
+         <div class="mobile-view personal-info-mobile" *ngIf="mobileView">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+               <div class="position-relative">
+                  <em class="fas fa-chevron-left" (click)="prevpages()" *ngIf="pages > 1"></em>
+                  <h1>
+                     <span *ngIf="pages == 1" class="fs16">Upload Picture</span>
+                     <span *ngIf="pages == 2" class="fs16">Personal Information</span>
+                     <span *ngIf="pages == 3" class="fs16">Account Type</span>
+                     <span *ngIf="pages == 4" class="fs16">Business Information</span>
+                     <span *ngIf="pages == 5" class="fs16">Interest</span>
+                  </h1>
+               </div>
+            </header>
+            <!-- Mobile Header -->
+            <!-- Image Upload -->
+            <div *ngIf="pages == 1">
+               <ng-container [ngTemplateOutlet]="imgupload"></ng-container>
+               <div class="text-center my-4">
+                  <button type="button" (click)="nextPage()" class="btn btn-grey-border btn-rounded px-30 py-1 mr-2">
+                     <span class="fs14">Skip</span>
+                  </button>
+                  <button type="button" (click)="nextPage()" class="btn btn-blue btn-rounded px-30 py-1">
+                     <span class="fs14">Next</span>
+                  </button>
+               </div>
+            </div>
+            <!-- Image Upload -->
+            <!-- Personal Info -->
+            <div *ngIf="pages == 2">
+               <ng-container [ngTemplateOutlet]="personalinfo"></ng-container>
+            </div>
+            <!-- /Personal Info -->
+            <!-- Account type -->
+            <div *ngIf="pages == 3">
+               <ng-container [ngTemplateOutlet]="acctype"></ng-container>
+            </div>
+            <!-- /Personal Info -->
+            <!-- Business Information -->
+            <div *ngIf="pages == 4">
+               <ng-container [ngTemplateOutlet]="businessinf"></ng-container>
+            </div>
+            <!-- /Business Information -->
+            <!-- interest -->
+            <div *ngIf="pages == 5">
+               <div class="card">
+                  <div class="card-header bg-white border-bottom-0 position-relative">
+                     <h2 class="pr-5 fs14 text-black2">Preferred Location <sup class="text-red">*</sup> </h2>
+                     <button type="button" class="btn btn-blue btn-sm position-absolute rt-21px tp-5px"
+                        (click)="filterModal(prefferedlocation)"><span class="fas fa-plus"></span></button>
+                  </div>
+                  <div class="card-body border-bottom py-1 px-2">
+                     <!-- LOCATION TAG -->
+                     <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+                     <!-- LOCATION TAG -->
+                  </div>
+               </div>
+               <div class="text-danger px-3 py-1"
+                  *ngIf="registerprofile.submitted && (selectedlocation == '' || selectedlocation == null)">
+                  <small>Please choose locations</small>
+               </div>
+               <div class="card pt-3">
+                  <div class="card-header bg-white border-bottom-0 position-relative">
+                     <h2 class="pr-5 fs14 text-black2">Preferred Industry(s) <sup class="text-red">*</sup> </h2>
+                     <button type="button" class="btn btn-blue btn-sm position-absolute" style="right: 20px;top:5px;"
+                        (click)="filterModal(prefferedindustries)"><span class="fas fa-plus"></span></button>
+                  </div>
+                  <div class="card-body border-bottom py-1 px-2">
+                     <!-- Mobile selected inustry chips list -->
+                     <ng-container [ngTemplateOutlet]="mobilechiplist"></ng-container>
+                     <!-- Mobile selected inustry chips list -->
+                  </div>
+               </div>
+               <div class="text-danger  px-3 py-1"
+                  *ngIf="registerprofile.submitted &&  (selectedIndus == '' || selectedIndus == null)">
+                  <small>Please choose preferred industry(s)</small>
+               </div>
+               <div class="text-center my-4">
+                  <div *ngIf='mobileView'>
+                     <ng-container [ngTemplateOutlet]="submitcancelbtn"></ng-container>
+                  </div>
+               </div>
+            </div>
+            <!-- /interest  -->
+         </div>
+         <!-- Mobile View -->
+      </form>
+   </section>
+   <!-- Body Content -->
+   <!-- footer Section -->
+   <app-auth-footer class="desktop-view" *ngIf="showHeader"></app-auth-footer>
+   <!-- footer Section -->
+</div>
+<!-- Email Verification Modal -->
+<div *ngIf="isModalShown" [config]="{ show: true, backdrop: 'static' }" (onHidden)="onHidden()" bsModal
+   #emailverification="bs-modal" class="modal fade" role="dialog" aria-labelledby="dialog-auto-name">
+   <div class="modal-dialog modal-custom">
+      <div class="modal-content">
+         <div class="modal-header bg-grey12 border-0">
+            <h1 class="modal-title fs20 font-weight-bold mx-auto">Email Verification</h1>
+           </div>
+         <div class="modal-body px-4">
+            <img src="./assets/images/email-verify-img.svg" alt="Email Icon" style="margin-left: 112px;">
+            <p class="text-black2 my-3">We have sent you a link to verify your the email. Please follow instructions in
+               the email before clicking submit below.</p>
+            <button type="button" class="btn btn-blue btn-rounded px-33 py-2 h-42px" (click)="redirect()"
+               style="margin-left: 60px;">
+               <span class="fs14">Back to Login</span>
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Email Verification Modal -->
+<!-- Mobile prefered location Modal -->
+<ng-template #prefferedlocation>
+   <div class="modal-header border-0">
+      <div class="position-relative" *ngIf="mobileView">
+         <span class="fas fa-chevron-left position-absolute fs20 lft-7 tp-10" (click)="modalRef.hide()"></span>
+         <!-- locations  -->
+         <ng-container [ngTemplateOutlet]="locationsinput"></ng-container>
+         <!-- locations -->
+      </div>
+      <a href="javascript:void(0)" class="position-absolute rt-21px text-blue" (click)="modalRef.hide()">
+         Done
+      </a>
+   </div>
+   <div class="modal-body text-center px-1 pt-0">
+      <div class="text-nowrap overflow-x my-3 py-1">
+         <!-- LOCATION TAG -->
+         <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+         <!-- LOCATION TAG -->
+      </div>
+      <div class="mobile-optios-list">
+         <!-- location option list -->
+         <ng-container [ngTemplateOutlet]="locationsdropdownlist"></ng-container>
+         <!-- location option list -->
+      </div>
+   </div>
+</ng-template>
+<!-- Mobile prefered location Modal -->
+<!-- Mobile Preferred Industries Modal -->
+<ng-template #prefferedindustries>
+   <div class="modal-header border-0">
+      <div class="position-relative" *ngIf="mobileView">
+         <span class="fas fa-chevron-left position-absolute fs20 lft-7 tp-10" (click)="modalRef.hide()"></span>
+         <h1 class="fs20 pl-5 py-2">Preferred Industry(s)</h1>
+      </div>
+      <a href="javascript:void(0)" class="position-absolute rt-21px text-blue" (click)="modalRef.hide()">
+         Done
+      </a>
+   </div>
+   <div class="modal-body text-center px-1 pt-0">
+      <div class="text-nowrap overflow-x my-3 py-1">
+         <!-- Mobile selected inustry chips list -->
+         <ng-container [ngTemplateOutlet]="mobilechiplist"></ng-container>
+         <!-- Mobile selected inustry chips list -->
+      </div>
+      <div class="mobile-checkbox-list" *ngIf="mobileView">
+         <ng-container [ngTemplateOutlet]="preferedindustryCheckboxlist"></ng-container>
+      </div>
+   </div>
+</ng-template>
+<!-- Mobile prefered location Modal -->
+<!-- Image Upload Modal -->
+<ng-template #imageupload>
+   <div class="modal-header border-0">
+      <h1 class="modal-title fs20 font-weight-bold mx-auto">Image Upload</h1>
+      <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+         <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+      </button>
+   </div>
+   <div class="modal-body text-center px-1 pt-0">
+      <div class="my-3 py-1 content-value_1">
+         <img [src]="croppedImage" alt="Default-image" class="personal-profile-image rounded-circle fit-cover mb-2">
+         <image-cropper [imageChangedEvent]="imageFile" class="image-cropper" [maintainAspectRatio]="true" [aspectRatio]="4 / 3"
+            [resizeToWidth]="500" format="png" [outputType]="string" (imageCropped)="imageCropped($event)">
+         </image-cropper>
+      </div>
+   </div>
+   <div class="modal-footer" style="justify-content: center;">
+      <button class="btn btn-blue btn-rounded px-4 py-2" (click)="uploadfile();modalRef.hide()">Save</button>
+   </div>
+</ng-template>
+
+<!-- Start Select Option -->
+<ng-template #selectOptiontemplate>
+   <div *ngIf="selectOptiontemplateStatus">
+      <div class="modal-header border-0">
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body text-center">
+         <div class="row px-4 mt-2 mb-4">
+            <div class="col-md-5">
+               <img src="./assets/images/businessin-icons/onboarding-1.svg" alt="Onboarding image" width="250">
+            </div>
+            <div class="col-md-7">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">This Wizard is designed to help you <br>choose which account type fits best <br>your
+                  <span class="text-blue">business needs.</span>
+               </p>
+               <button class="btn btn-blue mt-2 mb-3 fs13 px-5 pt10 pb10 ff-muli-bold" 
+               (click)="openNextModel('businessModelTemplateStatus')">Next</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="businessModelTemplateStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('selectOptiontemplateStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-5">
+            <div class="col-md-6 text-center">
+               <img src="./assets/images/businessin-icons/onboarding-2.svg" alt="Onboarding image" width="250">
+            </div>
+            <div class="col-md-5 text-left">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">What are you looking for ?
+               </p>
+               <button class="btn btn-blue mt-2 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" 
+               (click)="openNextModel('startNewBusinessModelStatus')">Starting a New Business</button>
+               <button type="button" (click)="openNextModel('ExpendingYourBusinessStatus')" class="btn btn-outline-primary mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold">Expanding your Business</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="startNewBusinessModelStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('businessModelTemplateStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-5 text-center">
+            <div class="col-md-5">
+               <img src="./assets/images/businessin-icons/onboarding-3.svg" alt="Onboarding image" width="250">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">You are looking to start a New Business
+               </p>
+               <button (click)="openNextModel('BasedOnYourAnswerStatus')" class="btn btn-blue mt-2 mb-3 fs14 px-4 pt10 pb10 ff-muli-semibold btn-block" 
+               >You have a great idea and need funding</button>
+               <button (click)="openNextModel('accountTypeBasedOnNeedStatus')" type="button" class="btn btn-outline-primary mb-3 fs14 px-4 pt10 pb10 ff-muli-semibold btn-block">You have funding but need an idea</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="accountTypeBasedOnNeedStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('startNewBusinessModelStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-5 text-center">
+            <div class="col-md-5">
+               <img src="./assets/images/businessin-icons/onboarding-4.svg" alt="Onboarding image" width="250">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Investor</span>
+               </p>
+               <form>
+                  <div class="form-group">
+                     <label for="investor" class="color-light-black fs18 ff-muli-semibold">What Kind of Investor Are You ?</label>
+                     <div class="custom-form-dropdown">
+                        <select class="form-control text-center my-3 bg-light-grey w-75 ff-muli-semibold" id="investor">
+                           <option>Investor Type</option>
+                           <option *ngFor="let subinves of inves; let i = index">{{subinves.subaccname}}</option>
+                        </select>
+                     </div>
+                   </div>
+                  <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(3, 'Investors')"
+                  >Save</button>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="ExpendingYourBusinessStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('startNewBusinessModelStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-5 text-center">
+            <div class="col-md-5">
+               <img src="./assets/images/businessin-icons/onboarding-7.svg" alt="Onboarding image" width="240">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Your are looking to Expand<br> your existing Business
+               </p>
+               <button (click)="openNextModel('BasedOnYourAnswerCompaniesStatus', 'Companies')" class="btn btn-outline-primary mt-2 mb-3 fs14 px-4 pt10 pb10 ff-muli-semibold btn-block" [ngStyle]="{'background-color':accountName === 'Companies' ? 'lightblue' : '' }">Looking for companies or manufactures to distribute their products</button>
+               <button (click)="openNextModel('BasedOnYourAnswerFranchiseesStatus', 'Franchisees')" type="button"  class="btn btn-outline-primary mb-3 fs14 px-4 pt10 pb10 ff-muli-semibold btn-block" [ngStyle]="{'background-color':accountName === 'Franchisees' ? 'lightblue' : '' }">Looking to buy a Franchise</button>
+               <button (click)="openNextModel('BasedOnYourAnswerFranchiseStatus', 'Franchises')" type="button" class="btn btn-outline-primary mb-3 fs14 px-4 pt10 pb10 ff-muli-semibold btn-block" [ngStyle]="{'background-color':accountName === 'Franchises' ? 'lightblue' : '' }">Looking to sell a Franchise</button>
+               <button (click)="openNextModel('BasedOnYourAnswerDistributorsStatus', 'Distributors')" type="button" class="btn btn-outline-primary mb-3 fs14 px-3 pt10 pb10 ff-muli-semibold btn-block" [ngStyle]="{'background-color':accountName === 'Distributors' ? 'lightblue' : '' }">Looking for someone to distribute your Product</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('startNewBusinessModelStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-4 text-center">
+            <div class="col-md-5 ml-2">
+               <img src="./assets/images/businessin-icons/onboarding-5.svg" alt="Onboarding image" width="280">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Entrepreneurs</span>
+               </p>
+               <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(4, 'Entrepreneurs')"
+               >Save</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerInvestorStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('ExpendingYourBusinessStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-5 text-center">
+            <div class="col-md-5">
+               <img src="./assets/images/businessin-icons/onboarding-4.svg" alt="Onboarding image" width="250">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Investor</span>
+               </p>
+               <form>
+                  <div class="form-group">
+                     <label for="investor" class="color-light-black fs18 ff-muli-semibold">What Kind of Investor Are You ?</label>
+                     <div class="custom-form-dropdown">
+                        <select class="form-control text-center my-3 bg-light-grey w-75 ff-muli-semibold" id="investor">
+                           <option>Investor Type</option>
+                           <option *ngFor="let subinves of inves; let i = index">{{subinves.subaccname}}</option>
+                        </select>
+                     </div>
+                   </div>
+                  <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(3, 'Investors')"
+                  >Save</button>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerCompaniesStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('ExpendingYourBusinessStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-4 text-center">
+            <div class="col-md-5 ml-2">
+               <img src="./assets/images/businessin-icons/onboarding-6.svg" alt="Onboarding image" width="280">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Companies</span>
+               </p>
+               <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(1, 'Companies')"
+               >Save</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerDistributorsStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('ExpendingYourBusinessStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-4 text-center">
+            <div class="col-md-5 ml-2">
+               <img src="./assets/images/businessin-icons/onboarding-8.svg" alt="Onboarding image" width="280">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Distributors</span>
+               </p>
+               <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(2, 'Distributors')"
+               >Save</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerFranchiseStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('ExpendingYourBusinessStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-4 text-center">
+            <div class="col-md-5 ml-2">
+               <img src="./assets/images/businessin-icons/onboarding-6.svg" alt="Onboarding image" width="280">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Franchise</span>
+               </p>
+               <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(5, 'Franchises')"
+               >Save</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div *ngIf="BasedOnYourAnswerFranchiseesStatus">
+      <div class="modal-header border-0">
+         <span class="lnr lnr-arrow-left fs20 font-weight-bold color-blackarrow" (click)="openNextModel('ExpendingYourBusinessStatus')"></span>
+         <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+            <span class="lnr lnr-cross font-weight-bold color-light-black fs15"></span>
+         </button>
+      </div>
+      <div class="modal-body">
+         <div class="row px-4 mt-2 mb-4 text-center">
+            <div class="col-md-5 ml-2">
+               <img src="./assets/images/businessin-icons/onboarding-6.svg" alt="Onboarding image" width="280">
+            </div>
+            <div class="col-md-6 ml-3">
+               <p class="color-light-black fs18 ff-muli-semibold lh-35">Based on your answers, this is best account type that fits your business needs: <span class="text-blue">Franchisees</span>
+               </p>
+               <button class="btn btn-blue mt-4 mb-3 fs14 px-5 pt10 pb10 ff-muli-semibold" (click)="saveId(6, 'Franchisees')"
+               >Save</button>
+            </div>
+         </div>
+      </div>
+   </div>   
+
+</ng-template>
+<!-- End Select Option -->

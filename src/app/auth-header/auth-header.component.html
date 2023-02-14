@@ -1,0 +1,107 @@
+<!-- Header -->
+<nav class="navbar navbar-expand bg-dark home-header  navbar-dark fixed-top p2">
+  <a class="navbar-brand py-2 px-5" href="javascript:void(0)" routerLink="/home"><img src="./assets/images/logo.png" alt="Business-In-Logo" class="business-in-logo"></a>
+  <div class="collapse navbar-collapse">
+    <!-- Login Component -->
+    <app-auth-login class="ml-auto" (forgotpassword) ="openModal(forgotpassword)"></app-auth-login>
+    <!-- Login Component -->
+  </div>  
+</nav>
+  <!-- Header -->
+    <!-- Forgot Password Modal  -->
+  <ng-template #forgotpassword>
+    <div class="modal-header bg-grey12 border-0">
+      <h1 class="modal-title fs20 font-weight-bold mx-auto pt-4">{{langData.common.forgotPassword}}</h1>
+      <button type="button" class="close position-absolute rt-29px op-1" aria-label="Close" (click)="closereset(forgotForm)">
+        <span class="lnr lnr-cross font-weight-bold text-grey11 fs18"></span>
+      </button>
+    </div>
+    <div class="modal-body px-4 pt-0 pb-4">
+      <form #forgotForm="ngForm" (ngSubmit)="forgotForm.form.valid && onSubmit(forgotForm)" novalidation>
+        <div class="form-group mb-2">
+          <label class="fs14 text-left">Email Address</label>
+          <div class="input-group"> 
+            <input type="email" name="email" #email="ngModel" [(ngModel)]="forgotData.email" class="form-control desktop-design-change border-right-0" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
+            [ngClass]="{'is-invalid': forgotForm.submitted && (email.errors?.pattern || email.errors?.required)}" [placeholder]="langData.common.emailAddress" required />
+            <!-- error Popup -->
+            <div class="error-card" [ngClass]="{ 'show-error': forgotForm.submitted && email.errors}">
+              <small *ngIf="email.errors?.pattern">{{langData.common.pleaseEnterValidEmailAddress}}</small>
+              <small *ngIf="email.errors?.required">{{langData.common.pleaseEnterEmailAddress}}</small>
+            </div>
+             <!-- error Popup -->
+            <div class="input-group-append bg-white">
+                <span class="input-group-text bg-white"><em class="far fa-envelope text-black2 op-35"></em></span>
+            </div>
+          </div> 
+        </div>
+        <div class="form-group text-center">
+          <button type="submit" class="btn btn-blue btn-rounded px-30 py-2 mt-4" >
+            <span class="fs14">{{langData.common.submit}}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+  <!-- Forgot Password Modal -->
+    <!-- Header -->
+    <!-- Reset Password Modal  -->
+  <ng-template #resetpassword>
+    <div class="modal-header bg-grey12 border-0">
+      <h1 class="modal-title fs20 font-weight-bold mx-auto pt-4">{{langData.loginHeaderPage.resetpwd}}</h1>
+      <button type="button" class="close position-absolute rt-29px op-1" aria-label="Close" (click)="closereset(resetForm)">
+        <span class="lnr lnr-cross font-weight-bold text-grey11 fs18"></span>
+      </button>
+    </div>
+    <div class="modal-body text-left px-4 pt-0 pb-4">
+      <form #resetForm="ngForm" (ngSubmit)="resetForm.form.valid && resetSubmit(resetForm)" novalidation>
+        <div class="form-group mb-2">
+          <div class="input-group">       
+            <input type="text" name="otp" #otp="ngModel" [(ngModel)]="resetData.otp" class="form-control desktop-design-change"
+            [ngClass]="{'is-invalid': resetForm.submitted && (otp.errors?.pattern || otp.errors?.required)}" [placeholder]="langData.loginHeaderPage.otp" maxlength="6" (keypress)="numberOnly($event)"  required />
+
+          </div> 
+          <!-- error Popup -->
+          <div class="text-danger" *ngIf="resetForm.submitted && otp.errors">
+            <small *ngIf="otp.errors?.required">{{langData.loginHeaderPage.pleaseEnterOtp}}</small>
+          </div>
+        </div>
+        <!-- error Popup -->
+        <div class="form-group mb-2">
+          <label class="fs12">{{langData.loginHeaderPage.newpwd}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': resetForm.submitted && password.errors}">
+            <input [type]="input_type" class="form-control border-right-0" name="password" #password="ngModel" [(ngModel)]="resetData.password"  [ngClass]="{'is-invalid': resetForm.submitted && password.errors}" pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"    [placeholder]="langData.loginHeaderPage.newpwd" required>
+            <div class="input-group-append">
+              <span class="input-group-text  bg-white c-pointer" (click)="passwordToggle()" [ngClass]="{'is-invalid': resetForm.submitted && password.errors}"><img [src]="passEye" alt="eye"></span>
+            </div>
+          </div>
+        
+          <div class="text-danger" *ngIf="resetForm.submitted && password.errors">
+            <small *ngIf="password.errors?.required">{{langData.common.pleaseEnterPassword}}</small>
+            <small *ngIf="password.errors?.pattern">{{langData.loginhome.passwordCriteria}}</small>
+          </div>
+        </div>
+            <!-- error Popup -->
+        <div class="form-group mb-1">
+          <label class="fs12">{{langData.loginHeaderPage.confirmpwd}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': resetForm.submitted && confirmpassword.errors}">
+            <input [type]="input_type1" class="form-control border-right-0" name="confirmpassword" #confirmpassword="ngModel" [(ngModel)]="resetData.confirmpassword"  [ngClass]="{'is-invalid': resetForm.submitted && confirmpassword.errors}" pattern="{{ password.value }}"   [placeholder]="langData.loginHeaderPage.confirmpwd" required>
+            <div class="input-group-append">
+              <span class="input-group-text bg-white c-pointer" (click)="passwordToggle1()" [ngClass]="{'is-invalid': resetForm.submitted && confirmpassword.errors}"><img [src]="passEye1" alt="eye"></span>
+            </div>
+          </div>
+          
+          <div class="text-danger" *ngIf="resetForm.submitted && confirmpassword.errors">
+            <small *ngIf="confirmpassword.errors?.required">{{langData.loginHeaderPage.pleaseEnterConfirmPassword}}</small>
+            <small *ngIf="confirmpassword.errors?.pattern">{{langData.loginHeaderPage.samepwd}}</small>
+          </div>
+        </div>
+      
+        <div class="form-group text-center">
+          <button type="submit" class="btn btn-blue btn-rounded px-30 py-2 mt-3" >
+            <span class="fs14">{{langData.common.submit}}</span>
+          </button>
+        </div>          
+      </form>
+    </div>
+  </ng-template>
+    <!-- Forgot Password Modal -->

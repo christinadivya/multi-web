@@ -1,0 +1,18 @@
+<!-- Header -->
+<app-header *ngIf="service.loggeduserIn()"></app-header>
+<app-auth-header *ngIf="!service.loggeduserIn()"></app-auth-header>
+<!-- Header -->
+
+
+<!-- Page content -->
+<section class="page-content">
+ <router-outlet></router-outlet>
+</section>
+<!-- Page content -->
+
+
+<!-- Start Footer -->
+<app-auth-footer></app-auth-footer>
+<!-- End Footer -->
+
+

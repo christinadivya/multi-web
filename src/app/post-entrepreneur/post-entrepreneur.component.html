@@ -1,0 +1,767 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }" ></ngx-loading>
+<section class="container py-3 py-lg-5">
+  <div class="pt-5">
+     <form class="personal-info-form" focusInvalidInput [formGroup]="createPostForm" (ngSubmit)="onSubmit()"  novalidate="">
+     <!-- Image Upload -->
+     <ng-template #imgupload>
+        <div class="position-relative h-lg-100">
+           <div class="card position-relative max-height-300px upload-card py-3">
+              <img alt="default-image" class="personal-profile-image logo-img object-fit-contain h-200px" src="{{uploadImageUrl}}"
+                 (click)="fileInput.click()">
+              <input class="d-none" id="imgupload" type="file" #fileInput (click)="fileInput.value = null" value=""
+              (change)="onFileChange($event)" accept="image/*">
+              <label class="upload-btn position-absolute mb-0 font-weight-bold" for="imgupload">
+              <em class="mr-1" [ngClass]="loadImage ? 'fa fa-spinner fa-spin fs18 text-color-grey' : ''"></em> 
+              {{langData.createPostPage.uploadLogo}}</label>
+           </div>
+        </div>
+     </ng-template>
+     <!-- Image Upload -->
+     <!-- Post info -->
+     <ng-template #postinfo>
+        <div class="card overflow-none">
+           <div class="card-body p-0 p-lg-4">
+              <div class="row">
+                 <div class="col-md-5 mx-auto">
+                    <div class="form-group">
+                       <label>{{langData.createPostPage.postTitle}} <sup class="text-red">*</sup></label>
+                       <input class="form-control"  formControlName="postName" [(ngModel)]="postName" [placeholder]="langData.createPostPage.postTitle" type="text"
+                       maxlength="50" [ngClass]="{ 'is-invalid': submitted && createPostForm.get('postName').invalid}"> 
+                       <div class="text-danger" *ngIf="submitted  &&  createPostForm.get('postName').errors">
+                          <small *ngIf="createPostForm.get('postName').errors">{{langData.createPostPage.postTitleRequired}}</small>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="col-md-5 mx-auto">
+                    <div class="form-group">
+                        <label>{{langData.createPostPage.companyName}} <sup *ngIf="!investCheck && accId !== 4" class="text-red" >*</sup></label>
+                        <input type="text" class="form-control" formControlName="companyName" [placeholder]="langData.createPostPage.companyName"
+                           [ngClass]="{ 'is-invalid': submitted  && createPostForm.get('companyName').invalid}">
+                        <div class="text-danger" *ngIf="!investCheck && accId !== 4 && submitted &&  createPostForm.get('companyName').errors">                       
+                          <small *ngIf="createPostForm.get('companyName').errors.required">{{langData.createPostPage.companyNamerequired}}</small>
+                        </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="row">
+                 <div class="col-md-5 mx-auto">
+                    <div class="form-group">
+                       <label>{{langData.createPostPage.founded}} <sup class="text-red" *ngIf="!investCheck && accId !== 4">*</sup></label>
+                       <div class="input-group  form-inputgroup" [ngClass]="{ 'is-invalid': submitted && createPostForm.get('foundedYear').invalid}">
+                           <input formControlName="foundedYear"  autocomplete="off" class="form-control border-right-0 bg-grey24" name="date" bsDatepicker [bsConfig]="{dateInputFormat: 'YYYY'}" (onShown)="onOpenCalendar($event)" [maxDate]="mytime" min="1000" (ngModelChange)="validateYear()" [ngClass]="{ 'is-invalid': submitted && createPostForm.get('foundedYear').invalid}">
+                          <div class="input-group-append">
+                             <span class="input-group-text border-left-0 bg-grey24" id="basic-addon1"><img src="./assets/images/calendar.svg" class="w-21px" alt="calendar"></span>
+                          </div>
+                       </div>
+                       <div class="text-danger" *ngIf="!investCheck && accId !== 4 && submitted  &&  createPostForm.get('foundedYear').errors">
+                          <small *ngIf="createPostForm.get('foundedYear').errors.required">{{langData.createPostPage.foundedYearRequired}}</small>
+                          <small *ngIf="createPostForm.get('foundedYear').errors.pattern">{{langData.createPostPage.enterValidYear}}</small>
+                       </div>
+                       <div class="text-danger" *ngIf="!investCheck && accId !== 4 && !currentyearvalid && submitted">
+                          <small>{{langData.createPostPage.enterCurrentYearLesserThanCurrentYear}}</small>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="col-md-5 mx-auto">
+                    <div class="form-group position-relative focusshow locationsearch-field">
+                       <label>{{langData.createPostPage.location}} <sup class="text-red">*</sup></label>
+                       <ngx-select [allowClear]="true"
+                       [items]="items" optionValueField="cityid" optionTextField="citywithstate"
+                       formControlName="myLocation"
+                       [(ngModel)]="selectedcityid"
+                       (typed)="mylocationSearch($event)"
+                       [ngClass]="{ 'is-invalid': submitted  && createPostForm.get('myLocation').invalid}"
+                       placeholder="Choose Location" class="location-hidden">
+                       <ng-template ngx-select-option ngx-select-option-selected let-option let-text="text">
+                          {{option.data.citywithstate}}
+                       </ng-template>
+                       <ng-template ngx-select-option-not-found let-input>
+                          "{{input}}" not found
+                       </ng-template>
+                       </ngx-select>
+                       <div class="text-danger" *ngIf="submitted  &&  createPostForm.get('myLocation').errors">
+                          <small *ngIf="createPostForm.get('myLocation').errors">{{langData.createPostPage.locationIsrequired}}</small>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="row">
+                 <div class="col-md-5 mx-auto">
+                    <div class="form-group">
+                       <label>{{langData.createPostPage.sizeOfCompany}}<sup *ngIf="!investCheck && accId !== 4">*</sup></label>
+                       <select formControlName="sizeCompany" class="custom-select bg-grey24"
+                       [ngClass]="{ 'is-invalid': submitted  && createPostForm.get('sizeCompany').invalid}">
+                       <option value="">{{langData.createPostPage.sizeOfCompany}}</option>
+                       <option *ngFor="let companies of companysize" [value]="companies.id">{{companies.compsize}}  Employees</option>
+                       </select>
+                       <div class="text-danger" *ngIf="submitted  &&  createPostForm.get('sizeCompany').errors">
+                          <small *ngIf="createPostForm.get('sizeCompany').errors.required">{{langData.createPostPage.sizeOfCompanyrequired}}</small>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="col-md-5 mx-auto desktop-view">
+                    <div class="form-group">
+                       <label>{{langData.createPostPage.companyWebsite}}<sup *ngIf="!investCheck && accId !== 4"  class="text-red" >*</sup></label>
+                       <input type="text"  class="form-control" formControlName="companyWebsite" placeholder="Company Website" pattern='^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}'  [ngClass]="{ 'is-invalid': submitted && createPostForm.get('companyWebsite').invalid}">
+                       <div class="text-danger" *ngIf="accId !== 4 && submitted && createPostForm.get('companyWebsite').errors">
+                          <small *ngIf="createPostForm.get('companyWebsite').errors.required">
+                         {{langData.createPostPage.websiteIsRequired}}</small>
+                          <small *ngIf="createPostForm.get('companyWebsite').errors.pattern">{{langData.createPostPage.pleaseEntervalidWebsite}}</small>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <div class="text-center my-4 mobile-view ">
+           <button class="btn btn-blue btn-rounded px-30 py-1" (click)="pages = 2" type="button">
+           <span class="fs14">Next</span>
+           </button>
+        </div>
+     </ng-template>
+     <!-- Post info -->
+     <!-- Type Of Post Starts -->
+     <ng-template #typeofpost>
+        <div class="card position-relative mb-4 ">
+           <div class="card-body p-0 py-lg-4 px-lg-5">
+              <div class="row">
+                 <div class="col-xl-12">
+                    <ul class="list-unstyled custom-list mb-0 row">
+                       <li class="col-md-4 col-6" *ngFor="let acc of accValue; let i = index">
+                          <div class="custom-radio check-shadow">
+                             <input  type="radio" id="acctyp{{i}}" value="accValue{{i}}" formControlName="accountType" (change)="changeCompany(acc)" (input)="investValue(acc)" [checked]="createPostForm.get('accountType').value == acc.accounttypeid">
+                             <svg class="position-absolute" height="26px" version="1.1" viewBox="0 0 130.2 130.2" width="26px"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                                   stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                             </svg>
+                             <label for="acctyp{{i}}">{{acc.accounttypeshortname}}</label>
+                          </div>
+                       </li>
+                    </ul>
+                    <div class="text-danger" *ngIf="submitted  &&  !accountTypeId">
+                       <small>{{langData.createPostPage.accountTypeIsRequired}}</small>
+                    </div>
+                 </div>
+                 <div class="col-xl-12" *ngIf="typeofinvestor">
+                    <h2 class="text-black2 fs18 font-weight-bold my-3">{{langData.createPostPage.typeOfInvestors}}</h2>
+                    <ul class="list-unstyled custom-list mb-0 row">
+                       <li class="col-md-4 col-6" *ngFor="let invesValue of inves; let i = index">
+                          <div class="custom-radio check-shadow">
+                             <input formControlName="investType" (change)="invesGetId(invesValue)" value="invesValue{{i}}" type="radio" id="invtyp{{i}}" [checked]="invesValue.subchecked" >
+                             <svg class="position-absolute" height="26px" version="1.1" viewBox="0 0 130.2 130.2" width="26px"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                                   stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                             </svg>
+                             <label for="invtyp{{i}}">{{invesValue.subaccname}}</label>
+                          </div>
+                       </li>
+                    </ul>
+                    <div class="text-danger" *ngIf="submitted && investCheck && !invesId">
+                       <small>{{langData.createPostPage.investorsTypeIsRequired}}</small>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <div class="text-center my-4 mobile-view"><button class="btn btn-blue btn-rounded px-30 py-1" type="button" (click)="pages = 3"><span class="fs14">Next</span></button></div>
+     </ng-template>
+     <!-- Type Of Post End -->
+     <!-- Location Tag  starts -->
+     <ng-template #locationstag>
+        <ul class="chips-list list-unstyled" *ngIf="selectedlocation.length > 0">
+           <li *ngFor="let data of selectedlocation" class="mb-3">
+               <ng-container *ngIf="data.searchedby === 'Continent'">
+                     {{data.continentname}}
+                </ng-container>
+                <ng-container *ngIf="data.searchedby === 'Country'">
+                     {{data.countryname}}
+                </ng-container>
+                <ng-container *ngIf="data.searchedby === 'State'">
+                     {{data.statename}}
+                </ng-container>
+                <ng-container *ngIf="data.searchedby === 'City'">
+                     {{data.cityname}}
+                </ng-container>
+              <span class="remove-btn rounded-circle" (click)="reomveLocation(data)"><span class="fas fa-minus"></span></span>
+           </li>
+        </ul>
+     </ng-template>
+     <!-- Location Tag  Ends -->
+     <!-- Mobile selected inustry chips list starts -->
+     <ng-template #mobilechiplist>
+        <ul class="chips-list list-unstyled">
+           <li>
+              industryname
+              <span class="remove-btn rounded-circle" (click)="removeIndustry(mydata.position)"><span class="fas fa-minus"></span></span>
+           </li>
+        </ul>
+     </ng-template>
+     <!-- Mobile selected inustry chips list  Ends -->
+     <!-- Locations Search Input Field -->
+     <ng-template #locationsinput>
+        <input type="text" class="form-control" formControlName="locationState"  [(ngModel)]="locationValue"  placeholder="Preffered Location Search" (input)="locationSearch(locationValue)" [ngClass]="{ 'is-invalid': submitted  && (selectedlocation == '' || selectedlocation == null)}">
+     </ng-template>
+     <!-- Locations Search Input Field -->
+     <!-- Locations Dropdown list -->
+     <ng-template #locationsdropdownlist>
+        <ul class="list-unstyled">
+            <li *ngFor="let loca of locationresult" (click)="addPreferredLocation(loca)">
+                {{loca.locationFinal}}
+               </li>
+        </ul>
+     </ng-template>
+     <!-- Locations Dropdown list -->
+     <!-- Desktop View Starts -->
+     <div class="desktop-view" *ngIf="desktopView">
+        <h1 class="text-black2 fs26 font-weight-bold mb-4 text-center">
+           <!-- Create a Post Title -->
+           <ng-container *ngIf="!editpostid">{{langData.createPostPage.create_A_Post}}</ng-container>
+           <!-- Update a Post Title -->
+           <ng-container *ngIf="editpostid">{{langData.createPostPage.update_A_Post}}</ng-container>
+        </h1>
+        <!-- Personal Information -->
+        <div class="row mb-4">
+           <div class="col max-width-333px">
+              <!-- Image Upload -->
+              <ng-container [ngTemplateOutlet]="imgupload"></ng-container>
+              <!-- /Image Upload -->
+           </div>
+           <div class="col">
+              <!-- Personal Info -->
+              <ng-container [ngTemplateOutlet]="postinfo"></ng-container>
+              <!-- /Personal Info -->
+           </div>
+        </div>
+        <!-- Personal Information -->
+        <!-- Preffered industry checkbox list starts -->
+        <ng-template #targetindustriesCheckboxlist>
+           <ul class="list-unstyled taginput-list mb-0 mx-mobileview-0 preffered-industry-list">
+              <li  *ngFor="let ind of indusValue; let i = index">
+                 <div class="custom-checkbox">
+                    <input type="checkbox" name="userindustry0" id="preferredInd{{i}}" formControlName="targetIndustry" (change)="indGetValue($event.target.checked, i)" [ngClass]="{ 'is-invalid': submitted  && !industryArray.length > 0 }" [checked]="ind.selected">
+                    <svg class="position-absolute c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"  (click)="changeFunctions(ind.selected, i)"
+                       width="21px" xmlns="http://www.w3.org/2000/svg">
+                       <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                          stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                    </svg>
+                    <label for="preferredInd{{i}}">{{ind.industryname}}</label>
+                 </div>
+              </li>
+           </ul>
+           <div class="text-danger" *ngIf="submitted &&  !userIndustry.length > 0">
+              <small>{{langData.createPostPage.targetIndustryIsRequired}}</small>
+           </div>
+        </ng-template>
+        <!-- Preffered industry checkbox list starts -->
+        <div class="form-group">
+           <label class="text-black2 fs18 font-weight-bold w-100">{{langData.createPostPage.businessSummary}}
+           <sup>*</sup>
+           </label>
+           <div class="card br-19">
+              <div class="card-body  p-0 px-lg-3 py-lg-4">
+                 <textarea autosize  class="form-control border-0" maxlength="500" [(ngModel)]="textareacount" formControlName="bussinessSummary" rows="1" placeholder="Describe the purpose of this post" [ngClass]="{ 'is-invalid': submitted && createPostForm.get('bussinessSummary').invalid}"></textarea>
+              </div>
+           </div>
+           <span class="text-right pr-3 my-2 d-block">{{textareacount.length}} / 500</span>
+           <span class="pr-3 d-block text-left" style="margin-bottom: 0.5rem !important; margin-top: -35px;">
+              <span class="text-danger" *ngIf="submitted &&  createPostForm.get('bussinessSummary').errors">
+                 <small  *ngIf="createPostForm.get('bussinessSummary').errors">{{langData.createPostPage.businessSummaryIsRequired}}</small>
+              </span>
+            </span>
+        </div>
+        <div class="row">
+           <div class="col-12">
+              <h2 class="text-black2 fs18 font-weight-bold">{{langData.createPostPage.typeOfPost}}<sup class="text-red">*</sup></h2>
+              <!-- Type of post -->
+              <ng-container [ngTemplateOutlet]="typeofpost"></ng-container>
+              <!-- Type of post -->
+           </div>
+        </div>
+        <div class="text-center my-4 "><button class="btn btn-blue btn-rounded px-30 py-1 mobile-view" type="button"><span class="fs14">Next</span></button></div>
+        <div class="card mb-4">
+           <div class="card-body  p-0 p-lg-4">
+              <div class="row">
+                 <div class="col-md-12">
+                    <div class="mx-lg-4">
+                       <label class="text-black2 fs16 font-weight-bold">{{langData.createPostPage.targetLocation_s}} <sup class="text-red">*</sup></label>
+                       <div class="mb-3">
+                          <div class="position-relative mb-3">
+                             <div class="input-group custom-input-group">
+                                <!-- Locations Input -->
+                                <ng-container [ngTemplateOutlet]="locationsinput"></ng-container>
+                                <!-- Locations Input -->
+                                <div class="input-group-append">
+                                   <span class="input-group-text bg-white" id="basic-addon1">
+                                   <span class="lnr lnr-magnifier"></span>
+                                   </span>
+                                </div>
+                             </div>
+                             <div [ngClass]="{'animated-show': checkContent }" style="
+                             max-height: 250px;
+                         " class="bg-white w-100 custom-drop position-absolute">
+                                <!-- location dropdown List -->
+                                <ng-container [ngTemplateOutlet]="locationsdropdownlist"></ng-container>
+                                <!-- location dropdown List -->
+                             </div>
+                          </div>
+                          <div class="text-danger" *ngIf="submitted  && (selectedlocation == '' || selectedlocation == null) && (!selectedlocation.length > 0)">
+                              <small>{{langData.createPostPage.targetLocationIsRequired}}</small>
+                           </div>
+                          <div class="mb-3">
+                             <!-- Selected Location  -->
+                             <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+                             <!-- Selected Locations -->
+                          </div>
+                       </div>
+                       <label class="text-black2 fs16 font-weight-bold">{{langData.createPostPage.targetIndustry_s}} <sup class="text-red">*</sup></label>
+                       <div class="">
+                          <!-- Target Industries checkbox list -->
+                          <ng-container [ngTemplateOutlet]="targetindustriesCheckboxlist"></ng-container>
+                          <!-- Target Industries checkbox list -->
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <h3 class="text-black2 fs18 font-weight-bold">{{langData.createPostPage.contactInformation}} <sup class="text-red">*</sup></h3>
+        <div class="card mb-4 ">
+           <div class="card-body  p-0 p-lg-4">
+              <div class="row">
+                 <div class="col-md-12">
+                    <div class="mx-lg-4">
+                       <label class="text-black2 fs16 font-weight-bold">{{langData.createPostPage.howYouWantContacted}}</label>
+                       <ul class="list-unstyled taginput-list mb-0 mx-mobileview-0 row ">
+                          <li class="col-md-4 col-12 mx-0 ">
+                             <div class="custom-radio check-shadow">
+                                <input type="radio" id="radio1" name="contactthrough" (change)="changeAddres(1)" value="direct" [checked]="directcontact">
+                                <svg class="position-absolute  c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                                   width="21px" xmlns="http://www.w3.org/2000/svg">
+                                   <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                                      stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                                </svg>
+                                <label for="radio1">{{langData.createPostPage.directly}}</label>
+                             </div>
+                          </li>
+                          <li class="col-md-4 col-12 mx-0 ">
+                             <div class="custom-radio check-shadow">
+                                <input type="radio" id="radio2" name="contactthrough" (change)="changeAddres(2)" value="business" [checked]="!directcontact">
+                                <svg class="position-absolute  c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                                   width="21px" xmlns="http://www.w3.org/2000/svg">
+                                   <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                                      stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                                </svg>
+                                <label for="radio2">{{langData.createPostPage.throughBusinessIn}}</label>
+                             </div>
+                          </li>
+                       </ul>
+                       <div class="my-4">
+                          <ng-container *ngIf="addressCheck" formArrayName="arrAddress">
+                             <div  *ngFor="let a of createPostForm.get('arrAddress').controls; let i = index"  [formGroupName]="i">
+                             <div class="row">
+                                <div  *ngIf="addressCheck" class="col-md-6 col-12">
+                                   <h3 class="text-black2 fs14 font-weight-bold mb-3">{{langData.createPostPage.contact}} {{i+1}}</h3>
+                                </div>
+                                <div  class="col-md-6 col-12 text-right">
+                                   <span *ngIf="i > 0" (click)="removeItem(i)"><span class="far fa-trash-alt text-red2 c-pointer fs20"></span></span>
+                                </div>
+                             </div>
+                             <div  class="row mb-4">
+                                <div class="col-md-5 col-12">
+                                   <div class="form-group">
+                                      <label>{{langData.createPostPage.title}}<sup class="text-red">*</sup></label>
+                                      <input class="form-control" formControlName="contacttitle" maxlength="25" pattern="[A-Za-z ]{0,25}" [placeholder]="langData.createPostPage.title"
+                                         required="" type="text" [ngClass]="{'is-invalid': submitted && createPostForm.get('arrAddress').controls[i].controls.contacttitle.errors}">
+                                      <div class="text-danger" *ngIf="submitted  && createPostForm.get('arrAddress').controls[i].controls.contacttitle.errors">
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contacttitle.errors.required">{{langData.createPostPage.titleIsRequired}}</small>
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contacttitle.errors.pattern">{{langData.createPostPage.onlyAlphabetsAllowedNoSpaceAllowed}}</small>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="col-md-5 offset-md-2 col-12">
+                                   <div class="form-group">
+                                      <label>{{langData.createPostPage.name}}<sup class="text-red">*</sup></label>
+                                      <input class="form-control"  formControlName="contactname" maxlength="25"  pattern="[A-Za-z ]{0,25}" [placeholder]="langData.createPostPage.name"
+                                         required="" type="text" [ngClass]="{'is-invalid': submitted && createPostForm.get('arrAddress').controls[i].controls.contactname.errors}">
+                                      <div class="text-danger" *ngIf="submitted  && createPostForm.get('arrAddress').controls[i].controls.contactname.errors">
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactname.errors.required">{{langData.createPostPage.nameIsRequired}}</small>
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactname.errors.pattern">{{langData.createPostPage.onlyAlphabetsAllowedNoSpaceAllowed}}</small>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="col-md-5 col-12">
+                                   <div class="form-group">
+                                      <label>{{langData.common.emailAddress}}<sup class="text-red">*</sup></label>
+                                      <input class="form-control"  formControlName="contactemail"  [placeholder]="langData.common.emailAddress"
+                                         required="" type="email" [ngClass]="{'is-invalid': submitted && createPostForm.get('arrAddress').controls[i].controls.contactemail.errors}">
+                                      <div class="text-danger" *ngIf="submitted  && createPostForm.get('arrAddress').controls[i].controls.contactemail.errors">
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactemail.errors.required">{{langData.common.emailIsRequired}}</small>
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactemail.errors.pattern">{{langData.common.pleaseEnterValidEmail}}</small>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="col-md-5 offset-md-2 col-12">
+                                   <div class="form-group">
+                                      <label>{{langData.common.phoneNumber}}<sup class="text-red">*</sup></label>
+                                      <div class="d-flex">
+                                         <div class="pr-1">
+                                            <select name="phonecode" class="custom-select w-86px"  formControlName="contactphonecode" 
+                                            (change)="changeMask($event.target.value,i)" [ngClass]="{ 'is-invalid': submitted  && createPostForm.get('arrAddress').controls[i].controls.contactphonecode.errors}">
+                                                <option *ngFor="let phonecode of allcountryData" [value]="phonecode.countrydialcode">
+                                                   <span style="padding-right: 20px" *ngIf="phonecode.countrydialcode.length == 4">({{ phonecode.countrydialcode}}) &nbsp; &nbsp; &nbsp; </span> 
+                                                   <span style="padding-right: 20px" *ngIf="phonecode.countrydialcode.length == 3">({{ phonecode.countrydialcode}}) &nbsp; &nbsp; &nbsp; &nbsp; </span> 
+                                                   <span style="padding-right: 20px" *ngIf="phonecode.countrydialcode.length == 2">({{ phonecode.countrydialcode}}) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> 
+                                                   <span style="padding-left: 10px">  {{phonecode.countryname}} </span>
+                                                </option>
+                                            </select>
+                                         </div>
+                                         <div class="pl-1 w-100">
+                                            <input  formControlName="contactphoneno" 
+                                            mask="{{createPostForm.get('arrAddress').controls[i].controls.phonemask.value}}" class="form-control" [placeholder]="langData.common.phoneNumber" 
+                                               [ngClass]="{'is-invalid': submitted && createPostForm.get('arrAddress').controls[i].controls.contactphoneno.errors}"
+                                               required>
+                                         </div>
+                                      </div>
+                                      <div class="text-danger" *ngIf="submitted  && createPostForm.get('arrAddress').controls[i].controls.contactphonecode.errors">
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactphonecode.errors.required" class="d-block">{{langData.createPostPage.phoneCodeIsRequired}}</small>
+                                      </div>
+                                      <div class="text-danger" *ngIf="submitted  && createPostForm.get('arrAddress').controls[i].controls.contactphoneno.errors">
+                                         <small *ngIf="createPostForm.get('arrAddress').controls[i].controls.contactphoneno.errors.required" class="d-block">{{langData.createPostPage.phoneNumberIsRequired}}</small>
+                                      </div>
+                                   </div>
+                                </div>
+                             </div>
+                       </div>
+                       <div class="text-right">
+                       <button type="button" class="cross_icon float-right rounded outline-0 border-0" (click)="addItem()"><span class="lnr lnr-cross  text-white font-weight-bold fs14"></span></button>
+                      
+                       </div>
+                       </ng-container>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+     <div class="card mb-4" *ngIf="checkEntp">
+        <div class="card-body p-0 p-lg-4">
+           <div class="mx-lg-4">
+              <div class="row">
+                 <div class="col-md-2">
+                    <label class="text-black2 fs16 font-weight-bold mb-0 mt10">{{langData.createPostPage.amountNeeded}} <sup class="text-red">*</sup></label>
+                 </div>
+                 <div class="col-md-8">
+                    <div class="d-flex">
+                       <div class="form-group w-100px mb-3 mb-md-0 mr-md-3">
+                          <select class="custom-select font-weight-bold" formControlName="currencyCountry" (change)="fetchAmountRangeByCurrency()">
+                          <option *ngFor="let money of countrycurrency" [value]='money.currencycode'>{{money.currency}}</option>
+                          </select>
+                       </div>
+                       <div class="form-group w-260px mb-3 mb-md-0 mr-md-3">
+                          <select class="custom-select" formControlName="myamountRange">
+                             <option value=''>{{langData.createPostPage.selectAmountRange}}</option>
+                             <option *ngFor="let amt of amountrange" [value]='amt.id'>{{amt.range1}}</option>
+                          </select>
+                       </div>
+                    </div>
+                    <div class="text-danger" *ngIf="submitted  && createPostForm.get('myamountRange').errors">
+                       <small *ngIf="createPostForm.get('myamountRange').errors.required" class="d-block">{{langData.createPostPage.pleaseSelectAmountRange}}</small>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+     <h3 *ngIf="checkEntp" class="text-black2 fs18 font-weight-bold">{{langData.createPostPage.businessPitch}} <span class="fs16 font-weight-normal">({{langData.createPostPage.pleaseDonUploadYourBusinessPlan}})</span></h3>
+     <div class="card mb-4" *ngIf="checkEntp">
+        <div class="card-body p-0 p-lg-4">
+           <div class="mx-lg-4">
+            <ul class="list-unstyled taginput-list mb-0 mx-mobileview-0 row">
+               <li class="col-md-4 col-12 mx-0 " *ngFor="let pitch of businessPitch; let i = index">
+                  <div class="custom-radio check-shadow">
+                     <input  type="radio" id="pitchtype{{i}}" value="businessPitch{{i}}" formControlName="businessPitchType" (change)="changeBusinessPitch(pitch)" [checked]="businessPitchTypeId == pitch.pitchid">
+                     <svg class="position-absolute  c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                        width="21px" xmlns="http://www.w3.org/2000/svg">
+                        <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                           stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                     </svg>
+                     <label for="pitchtype{{i}}">{{pitch.type}}</label>
+                  </div>
+               </li>
+            </ul>
+              <!-- <ul class="list-unstyled taginput-list mb-0 mx-mobileview-0 row">
+                 <li class="col-md-4 col-12 mx-0 ">
+                    <div class="custom-radio check-shadow">
+                       <input type="radio" id="bpitch1" name="radio" disabled>
+                       <svg class="position-absolute  c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                          width="21px" xmlns="http://www.w3.org/2000/svg">
+                          <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                             stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                       </svg>
+                       <label for="bpitch1">{{langData.createPostPage.requireAccess}}</label>
+                    </div>
+                 </li>
+                 <li class="col-md-4 col-12 mx-0 ">
+                    <div class="custom-radio check-shadow">
+                       <input type="radio" id="bpitch2" name="radio" checked disabled>
+                       <svg class="position-absolute  c-pointer" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                          width="21px" xmlns="http://www.w3.org/2000/svg">
+                          <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                             stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                       </svg>
+                       <label for="bpitch2">{{langData.createPostPage.visibleToEveryone}}</label>
+                    </div>
+                 </li>
+              </ul> -->
+              <div class="row mt-4">
+                 <div class="col-md-6">
+                    <label class="m-0 fs18 font-weight-bold text-black2">{{langData.createPostPage.addFilesDocuments}} :</label>
+                    <!-- File Upload  -->
+                    <label for="fileup" class="file_upload_button py-2 px-3 btn-rounded mx-2  fs16 font-weight-bold text-white mb-0 c-pointer">{{langData.createPostPage.browse}}</label>
+                    <input type="file" class="d-none" id="fileup" (change)="fileChangeEvent($event.target.files, 1)" multiple [disabled]='fileuploadDiabled'>
+                    <!-- File Upload  -->
+                    <label class="m-0 fs-14 d-block" *ngIf="filesuploaded && filesuploaded != null">{{filesuploaded}} {{langData.createPostPage.filesUploaded}}</label> 
+                    <ul class="chips-list p-0 list-unstyled max-w-324px my-3" formArrayName="documentList">
+                       <ng-container *ngFor="let files of createPostForm.get('documentList').controls;let i = index">
+                          <li class="d-block" *ngIf="createPostForm.get('documentList').controls[i].controls.extension.value != '.mp4'" 
+                          [ngClass]="{ 'upload-red2': createPostForm.get('documentList').controls[i].controls.extension.value == '.pdf', 
+                          'upload-yellow': (createPostForm.get('documentList').controls[i].controls.extension.value == '.xls' || createPostForm.get('documentList').controls[i].controls.extension.value == '.xlsx'), 
+                          'upload-blue8': (createPostForm.get('documentList').controls[i].controls.extension.value == '.rtf' || createPostForm.get('documentList').controls[i].controls.extension.value == '.docx')
+                          }">
+                          <div class="file-badge bg-badge-color">
+                             {{createPostForm.get('documentList').controls[i].controls.extension.value}}
+                          </div>
+                          <div class="pl-4 text-truncate">{{createPostForm.get('documentList').controls[i].controls.documentoriginalname.value}}</div>
+                          <span class="remove-btn rounded-circle" *ngIf="!fileuploadDiabled" (click)="removeDocument(i)"><span class="fas fa-minus"></span></span>
+                          <div class="progress progress-color">
+                             <div class="progress-bar" [style.width]="createPostForm.get('documentList').controls[i].controls.percentage.value + '%'"></div>
+                          </div>
+                          </li>
+                       </ng-container>
+                    </ul>
+                 </div>
+                 <div class="col-md-6">
+                    <div class="row pb-2">
+                       <div class="col-md-12">
+                          <label class="post-entrepreneurs-header fs14 font-weight-bold pt5">{{langData.createPostPage.videoUpload}}: <span class="text-blue fs14 font-weight-normal">{{langData.createPostPage.eachVideoMax50MB}}</span></label>
+                          <ul class="chips-list list-inline pr-4">
+                             <li class="list-inline w-128px mr-3 c-pointer" (click)="updateUrlArray()" [ngClass]="{'pointer-events-none' : videuploadDiabled}"> <span class="upload-badge"><img src="./assets/images/url-icon.svg" alt="url-icon"></span> 
+                             <div class="pl-4 d-inline-block">URL</div>
+                             </li>
+                             <li class="list-inline w-128px p-0">
+                                <label class="mb-0 videouplabel c-pointer" for="videoup">
+                                   <input type="file" class="d-none" id="videoup" (change)="fileChangeEvent($event.target.files, 2)" [disabled]="videuploadDiabled" multiple>
+                                   <span class="upload-badge"><img src="./assets/images/video-icon.svg"  alt="video-icon"></span> 
+                                   <div class="pl-4 ml-3 d-inline-block">{{langData.createPostPage.gallery}}</div>
+                                </label>
+                             </li>
+                          </ul>
+                       </div>
+                    </div>
+                    <div class="business_pitch_links_placeholder" formArrayName="videoUrlList" >
+                       <ng-container *ngFor="let b of createPostForm.get('videoUrlList').controls; let i = index"  [formGroupName]="i">
+                       <div class="mb-3">
+                          <div class="input-group">
+                             <input type="text" class="form-control br-7"  formControlName="videourl" placeholder="https://www.youtube.com/" 
+                                [ngClass]="{'is-invalid': submitted && createPostForm.get('videoUrlList').controls[i].controls.videourl.errors}">
+                             <div class="input-group-append">
+                                <span class="input-group-text bg-white border-0 pr-1 c-pointer" *ngIf="!videuploadDiabled" (click)="removeUrlItem(i)"><span class="far fa-trash-alt text-red2 fs20"></span></span>
+                             </div>
+                          </div>
+                          <div class="text-danger" *ngIf="submitted  && createPostForm.get('videoUrlList').controls[i].controls.videourl.errors">
+                             <small *ngIf="createPostForm.get('videoUrlList').controls[i].controls.videourl.errors.required">{{langData.createPostPage.enterYoutubeEmbedURL}}</small>
+                             <small *ngIf="createPostForm.get('videoUrlList').controls[i].controls.videourl.errors.pattern">{{langData.createPostPage.enterValidYoutubeEmbedURL}}</small>
+                          </div>
+                       </div>
+                       </ng-container>
+                    </div>
+                    <ul class="chips-list p-0 list-unstyled my-3 video-list" formArrayName="videoList">
+                       <ng-container *ngFor="let files of createPostForm.get('videoList').controls;let i = index">
+                          <li class="d-block" *ngIf="createPostForm.get('videoList').controls[i].controls.extension.value == '.mp4'"
+                          [ngClass]="{ 'upload-orange': createPostForm.get('videoList').controls[i].controls.extension.value == '.mp4'}">
+                          <div class="file-badge bg-badge-color">
+                             {{createPostForm.get('videoList').controls[i].controls.extension.value}}
+                          </div>
+                          <div class="pl-4 text-truncate">{{createPostForm.get('videoList').controls[i].controls.documentoriginalname.value}}</div>
+                          <span class="remove-btn rounded-circle" *ngIf="!videuploadDiabled" (click)="removeVideo(i)"><span class="fas fa-minus"></span></span>
+                          <div class="progress progress-color">
+                             <div class="progress-bar" [style.width]="createPostForm.get('videoList').controls[i].controls.percentage.value + '%'"></div>
+                          </div>
+                          </li>
+                       </ng-container>
+                    </ul>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+     <div class="text-center">
+        <button class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold " (click)="cancelPost(cancelmodal)" type="button">
+        <span class="fs14">{{langData.common.cancel}}</span>
+        </button>
+        <button class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold" type="submit" [disabled]='submitDisabled'>
+        <span class="fs14" *ngIf="!editpostid">{{langData.common.submit}}</span>
+        <span class="fs14" *ngIf="editpostid">{{langData.common.saveChanges}}</span>
+        </button>
+      </div>
+  </div>
+  <!-- Desktop View Ends -->
+  <!-- Mobile View -->
+  <div class="mobile-view personal-info-mobile" *ngIf="mobileView">
+     <!-- Mobile Header -->
+     <header class="mobile-header">
+        <div class="position-relative">
+           <em class="fas fa-chevron-left" (click)="prevpages()" *ngIf="pages > 1"></em>
+           <h1>
+              <span *ngIf="pages == 1" class="fs16">Create a Post</span>
+              <span *ngIf="pages == 2" class="fs16">Account Type</span>
+              <span *ngIf="pages == 3" class="fs16">Interest(s)</span>
+              <span *ngIf="pages == 4" class="fs16">Business Information</span>
+              <span *ngIf="pages == 5" class="fs16">Interest</span>
+           </h1>
+        </div>
+     </header>
+     <!-- Mobile Header -->
+     <div *ngIf="pages == 1">
+        <!-- Image Upload & post info-->
+        <!-- Image Upload -->
+        <ng-container [ngTemplateOutlet]="imgupload"></ng-container>
+        <!-- /Image Upload -->
+        <!-- Personal Info -->
+        <ng-container [ngTemplateOutlet]="postinfo"></ng-container>
+        <!-- /Personal Info -->
+        <!-- Image Upload & post info-->
+     </div>
+     <div *ngIf="pages == 2">
+        <!-- Type Of Post  -->
+        <!-- Type of post & Account Type -->
+        <ng-container [ngTemplateOutlet]="typeofpost"></ng-container>
+        <!-- Type of post & Account Type  -->
+        <!-- Type Of Post  -->
+     </div>
+     <div *ngIf="pages == 3">
+        <!-- Interest  -->
+        <div class="card">
+           <div class="card-header bg-white border-bottom-0 position-relative">
+              <h2 class="pr-5 fs14 text-black2">Target Location <sup class="text-red">*</sup> </h2>
+              <button type="button" class="btn btn-blue btn-sm position-absolute rt-21px tp-5px" (click)="filterModal(prefferedlocation)"><span class="fas fa-plus"></span></button>
+           </div>
+           <div class="card-body border-bottom py-1 px-2">
+              <!-- Selected Location  -->
+              <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+              <!-- Selected Locations -->
+           </div>
+        </div>
+        <div class="card pt-3">
+           <div class="card-header bg-white border-bottom-0 position-relative">
+              <h2 class="pr-5 fs14 text-black2">Target Industry(s) <sup class="text-red">*</sup> </h2>
+              <button type="button" class="btn btn-blue btn-sm position-absolute" style="right: 20px;top:5px;" (click)="filterModal(prefferedindustries)"><span class="fas fa-plus"></span></button>
+           </div>
+           <div class="card-body border-bottom py-1 px-2">
+              <!-- Mobile selected inustry chips list -->
+              <ng-container [ngTemplateOutlet]="mobilechiplist"></ng-container>
+              <!-- Mobile selected inustry chips list -->
+           </div>
+        </div>
+        <!-- Interest  -->
+     </div>
+  </div>
+  <!-- Mobile View -->
+  </form>
+  </div>
+</section>
+<!-- Mobile prefered location Modal -->
+<ng-template #prefferedlocation >
+  <div class="modal-header bg-grey12 border-0">
+     <div class="position-relative" *ngIf="mobileView">
+        <span class="fas fa-chevron-left position-absolute fs20 lft-7 tp-10" (click)="modalRef.hide()"></span>
+        <!-- locations  -->
+        <ng-container [ngTemplateOutlet]="locationsinput"></ng-container>
+        <!-- locations -->
+     </div>
+     <a href="javascript:void(0)" class="position-absolute rt-21px text-blue" (click)="modalRef.hide()">
+     Done
+     </a>
+  </div>
+  <div class="modal-body text-center px-1 pt-0">
+     <div class="text-nowrap overflow-x my-3 py-1">
+        <!-- Selected Location  -->
+        <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+        <!-- Selected Locations -->
+     </div>
+     <div class="mobile-optios-list">
+        <!-- location option list -->
+        <ng-container  [ngTemplateOutlet]="locationsdropdownlist"></ng-container>
+        <!-- location option list -->
+     </div>
+  </div>
+</ng-template>
+<!-- Mobile prefered location Modal -->
+<!-- Mobile Preferred Industries Modal -->
+<ng-template #prefferedindustries >
+  <div class="modal-header bg-grey12 border-0">
+     <div class="position-relative" *ngIf="mobileView">
+        <span class="fas fa-chevron-left position-absolute fs20 lft-7 tp-10" (click)="modalRef.hide()"></span>
+        <h1 class="fs20 pl-5 py-2">Target Industry(s)</h1>
+     </div>
+     <a href="javascript:void(0)" class="position-absolute rt-21px text-blue" (click)="modalRef.hide()">
+     Done
+     </a>
+  </div>
+  <div class="modal-body text-center px-1 pt-0">
+     <div class="text-nowrap overflow-x my-3 py-1">
+        <!-- Mobile selected inustry chips list -->
+        <ng-container [ngTemplateOutlet]="mobilechiplist"></ng-container>
+        <!-- Mobile selected inustry chips list -->
+     </div>
+     <div class="mobile-checkbox-list" *ngIf="mobileView">
+        <ng-container [ngTemplateOutlet]="targetindustriesCheckboxlist"></ng-container>
+     </div>
+  </div>
+</ng-template>
+<!-- Mobile prefered location Modal -->
+<!-- Image Upload Modal -->
+<ng-template #imagecropper>
+  <div class="modal-header">
+     <h1 class="modal-title fs20 font-weight-bold mx-auto">Image Upload</h1>
+     <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+     <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+     </button>
+  </div>
+  <div class="modal-body mt-3">
+     <form  novalidate>
+        <div class="px-5 content-value mt-0">
+           <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="false" [aspectRatio]="1 / 1"
+           [resizeToWidth]="250" format="png" (imageCropped)="imageCropped($event)"></image-cropper>
+        </div>
+        <div class="text-center mt-5">
+           <button class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold" (click)="uploadImageFile()">Save</button>
+        </div>
+     </form>
+  </div>
+</ng-template>
+<!-- Image Upload Modal -->
+<!-- cancel Modal -->
+<ng-template #cancelmodal>
+  <div class="modal-header bg-grey12 border-0 text-center">
+     <h1 class="modal-title fs20 font-weight-bold mx-auto">Cancel Post</h1>
+     <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+     <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+     </button>
+  </div>
+  <div class="modal-body text-center modal-pad">
+     <span><img src="./assets/images/caution.svg" alt="caution"></span>
+     <h1 class="fs16 my-2">Uh-Oh Entered Data will be lost, do you want to cancel ?</h1>
+     <div class="my-2">
+        <button type="button" (click)="cancelPopup()" class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold">
+        <span class="fs14">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold" (click)="redirect()">
+        <span class="fs14">Okay</span>
+        </button>
+     </div>
+  </div>
+</ng-template>
+<!-- cancel Modal -->

@@ -1,0 +1,323 @@
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+  <section class="container my-5 minheight max-w-lg-1070px">   
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card custom-user-card overflow-hidden">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-left text-black2 font-weight-bold">{{langData.messagePage.message}}</h3>
+          </div>
+          <div class="card-body p-0 ">
+            <div class="row rowpadd pb-0">
+              <div class="col-md-12  d-flex justify-content-between align-items-center">
+                <div >
+                  <img class="search_icon" src="./assets/images/search2.svg" alt="searchicon">
+                  <input class="fs14 pl-2 form-control text-grey25 search_txt" [placeholder]="langData.messagePage.search" [(ngModel)]="searchparam" (keyup.enter)="search()">
+                </div>
+                <div >
+                  <img class="" (click)="clickFilter()" src="./assets/images/filter2.svg" alt="filtericon">
+                </div>
+              </div>
+            </div>
+
+            <div class="search_col">
+              <ul class="nostyle p-0" *ngIf= "showpostlist">
+                <div class="search_info">
+                  <div class="row rowpadd1">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="col-md-2">
+                        <img alt="default-businessin-images" *ngIf="!selectedPostLogo || selectedPostLogo == null" class="rounded-circle imgclass" src="./assets/images/mobile-logo.png">
+                        <img alt="top-pics-images" *ngIf="selectedPostLogo && selectedPostLogo !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{selectedPostLogo}}">
+                      </div>
+                      <div class="col-md-9 text-left">
+                        <p class="fs12 pl-3 txt-white txt-trungate1  mb-0 pb-0">{{selectedPostName}}</p>
+                      </div>
+                      <div class="col-md-1 chat-box">
+                        <p class="fs12 txt-white close mb-0" (click)="allFilter()"><em class="fa fa-times" aria-hidden="true"></em></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ul class="nostyle p-0" *ngIf= "showpostlist">
+                  <li *ngFor = "let recent of postrecentlogs; let i = index">
+                    <div class="row rowpadd" (click)="getChatRoomMessage(recent, 'post',i)"  [ngStyle]="{'background-color':i === currIndex ? 'lightblue' : '' }">                       
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="col-md-2">
+                          <img alt="default-businessin-images" *ngIf="!recent.dc_profile_image || recent.dc_profile_image == null" class="rounded-circle imgclass" src="./assets/images/default-user.jpg">
+                          <img alt="top-pics-images" *ngIf="recent.dc_profile_image && recent.dc_profile_image !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{recent.dc_profile_image}}">
+                        </div>
+                        <div class="col-md-4 text-left c-pointer">
+                          <p class="fs14 pl-2 text-black2 txt-truncate mb-0 pb-0" *ngIf="recent.dc_first_name !== null && recent.dc_last_name !== null">{{recent.dc_first_name}} {{recent.dc_last_name}}</p>
+                          <p class="fs12 pl-2 text-grey23 txt-truncate mb-0 pb-0" *ngIf="recent.TMESSAGES_Content !== null">{{recent.TMESSAGES_Content}}</p>
+                        </div>
+                        <div class="col-md-6 chat-box">
+                          <p class="fs12 text-grey23 mb-0 pb-0" *ngIf="recent.TChat_Log_Updated_On !== null">{{convertutctolocal(recent.TChat_Log_Updated_On) | amLocale:'en' | amDateFormat:'MMM D'}}</p>
+                          <p class="fs12 text-grey23 chat-msg mb-0 numbercircle" *ngIf="recent.Unread_msg_count > 0">{{recent.Unread_msg_count}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul> 
+              </ul>
+              
+              <ul class="list-group search_popup_list"  *ngIf="filterlistspopup">
+                <li class="list-group-item text-black2 fs14 font-weight-bold"> {{langData.messagePage.inbox}} </li>
+                <li class="list-group-item text-black2 fs14 c-pointer ml-2" (click)="allFilter()"> {{langData.messagePage.allMessages}} </li>
+                <li class="list-group-item text-black2 fs14 c-pointer ml-2" (click)="listArchieve()"> {{langData.messagePage.archieve}} </li>
+                <li class="list-group-item text-black2 fs14 c-pointer ml-2" (click)="getmypost('post')"> {{langData.messagePage.post}} 
+                  <span class="down_arrow" *ngIf="postlist.length > 0">
+                    <em class="fas fa-caret-down"></em>
+                  </span>
+                </li> 
+                <div class="post_content" *ngIf = "show">
+                  <div class="row m-0 rowpadd1" *ngFor = "let post of postlist; let i = index">
+                    <div class="d-flex justify-content-between align-items-center c-pointer" (click)="getUserOfPost(post)" >
+                      <div class="col-md-2">
+                        <img alt="default-businessin-images" *ngIf="!post.postlogo || post.postlogo == null" class="rounded-circle imgclass" src="./assets/images/mobile-logo.png">
+                        <img alt="top-pics-images" *ngIf="post.postlogo && post.postlogo !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{post.postlogo}}">
+                      </div>
+                      <div class="col-md-9 text-left">
+                        <p class="fs12 pl-3 text-grey23 txt-trungate1`  mb-0 pb-0" *ngIf="post.postname && post.postname !== null">{{post.postname | truncate : 20 : "..."}}</p>
+                      </div>
+                      <div class="col-md-1 chat-box">
+                        <p class="fs12 text-grey23 chat-msg mb-0 numbercircle" *ngIf="post.totalcount >= 0">{{post.totalcount}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+              <ul class="nostyle p-0" *ngIf="!showpostlist">
+                <li *ngFor = "let recent of recentlogs; let i = index">
+                  <div class="row rowpadd" (click)="getChatRoomMessage(recent, 'profile', i)"  [ngStyle]="{'background-color':i === currIndex ? 'lightblue' : '' }">
+                    <div class="d-flex justify-content-between align-items-center"   >
+                      <div class="col-md-2">
+                        <img alt="default-businessin-images" *ngIf="recent.HCHAT_ROOM_Is_Post === 0 && (!recent.dc_profile_image || recent.dc_profile_image === null)" class="rounded-circle imgclass" src="./assets/images/default-user.jpg">
+                        <img alt="default-businessin-images" *ngIf="recent.HCHAT_ROOM_Is_Post === 1 && (!recent.DC_POST_LOGO || recent.DC_POST_LOGO === null)" class="rounded-circle imgclass" src="./assets/images/default-user.jpg">
+                        <img alt="top-pics-images" *ngIf="recent.HCHAT_ROOM_Is_Post === 0 && recent.dc_profile_image && recent.dc_profile_image !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{recent.dc_profile_image}}">
+                        <img alt="top-pics-images" *ngIf="recent.HCHAT_ROOM_Is_Post === 1 && recent.dc_post_created_by !== loginUserId && recent.DC_POST_LOGO && recent.DC_POST_LOGO !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{recent.DC_POST_LOGO}}">
+                        <img alt="top-pics-images" *ngIf="recent.HCHAT_ROOM_Is_Post === 1 && recent.dc_post_created_by === loginUserId && recent.DC_POST_LOGO && recent.DC_POST_LOGO !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{recent.DC_POST_LOGO}}">
+                      </div>
+                      <div class="col-md-4 text-left c-pointer">
+                        <p class="fs14 pl-2 text-black2 txt-truncate mb-0 pb-0" *ngIf="recent.HCHAT_ROOM_Is_Post === 0 && recent.dc_first_name !== null && recent.dc_last_name !== null">{{recent.dc_first_name}} {{recent.dc_last_name}}</p>
+                        <p class="fs14 pl-2 text-black2 txt-truncate mb-0 pb-0" *ngIf="recent.HCHAT_ROOM_Is_Post === 1 && recent.dc_post_created_by !== loginUserId && recent.dc_post_name !== null">{{recent.dc_post_name}}</p>
+                        <p class="fs14 pl-2 text-black2 txt-truncate mb-0 pb-0" *ngIf="recent.HCHAT_ROOM_Is_Post === 1 && recent.dc_post_created_by === loginUserId && recent.dc_post_name !== null">{{recent.dc_first_name}} {{recent.dc_last_name}} ({{recent.dc_post_name}})</p>
+                        <p class="fs12 pl-2 text-grey23 txt-truncate mb-0 pb-0" *ngIf="recent.TMESSAGES_Content !== null">{{recent.TMESSAGES_Content}}</p>
+                      </div>
+                      <div class="col-md-6 chat-box">
+                        <p class="fs12 text-grey23 mb-0 pb-0" *ngIf="recent.TChat_Log_Updated_On !== null">{{convertutctolocal(recent.TChat_Log_Updated_On) | amLocale:'en' | amDateFormat:'MMM D'}}</p>
+                        <p class="fs12 text-grey23 chat-msg mb-0 numbercircle" *ngIf="recent.Unread_msg_count > 0">{{recent.Unread_msg_count}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>  
+            </div>                
+          </div>  
+        </div>
+      </div>
+      <div class="col-md-6" >
+        <div class="card custom-user-card overflow-hidden">
+          <div class="card-header bg-grey5">
+            <div class="d-flex">
+              <div class="mr-3"> 
+                <h3 class="fs14 mb-0 text-left text-black2 font-weight-bold  mt-1" *ngIf = "chatroomname">{{chatroomname}} <span *ngIf= "showUserName">{{postusername}}</span> </h3>
+                <!-- <h3 class="fs14 mb-0 text-left text-black2 font-weight-bold  mt-1" *ngIf = "chatroomname && !showUserName">{{chatroomname}}</h3> -->
+              </div>
+              <div class="ml-auto"> <img class="text-right c-pointer" (click)="clickThreeDots($event)" src="./assets/images/threedots.svg" alt="threedotsimg" data-toggle="collapse" href="#collapseExample"  #toggleButton></div>
+            </div>
+            <!-- <div class="row">
+              <div class="col-md-6 text-left">
+                <h3 class="fs14 mb-0 text-left text-black2 font-weight-bold" *ngIf = "chatroomname && showUserName">{{chatroomname}} {{postusername}}</h3>
+                <h3 class="fs14 mb-0 text-left text-black2 font-weight-bold" *ngIf = "chatroomname && !showUserName">{{chatroomname}}</h3>
+              </div>
+              <div class="col-md-6 text-right">
+                <img class="text-right c-pointer" (click)="clickThreeDots($event)" (focus)="outside($event)" src="./assets/images/threedots.svg" alt="threedotsimg" data-toggle="collapse" href="#collapseExample">
+              </div>
+            </div> -->
+          </div>
+          <ngx-loading  [show]=loading [config]="{ backdropBorderRadius: '12px'}" ></ngx-loading>
+          <div class="card-body p-0 "  *ngIf="!sendDisabled">
+
+            <div class="row m-0">
+               
+
+              <div class="col-md-12 chatspace" (scroll)="scrolled($event)" #scrollBottom>
+                
+                <div class="row rowpad" *ngFor = "let roommessage of chatroommesaage; let i = index">  
+                   
+                  <ul class="list-group threedots_popup c-pointer" *ngIf="showthreedotspopup" #menu>
+                    <li class="list-group-item text-black2 fs14 c-pointer" (click)="mute(roommessage.TMESSAGES_Chat_Room_ID)" *ngIf="mutetype == 0"><img src="./assets/images/noun_archieve_877910.svg" alt="Mute"> {{langData.messagePage.mute}}</li>
+                    <li class="list-group-item text-black2 fs14 current c-pointer" (click)="mute(roommessage.TMESSAGES_Chat_Room_ID)" *ngIf="mutetype == 1"><img src="./assets/images/noun_archieve_877910.svg" alt="Mute"> {{langData.messagePage.unMute}}</li>
+                    <li class="list-group-item text-black2 fs14 c-pointer" (click)="archive(roommessage.TMESSAGES_Chat_Room_ID)" *ngIf="archievetype == 0"><img src="./assets/images/noun_Mute_3052834.svg" alt="Archieve"> {{langData.messagePage.archieve}} </li>
+                    <li class="list-group-item text-black2 fs14 current c-pointer" (click)="archive(roommessage.TMESSAGES_Chat_Room_ID)" *ngIf="archievetype == 1"><img src="./assets/images/noun_Mute_3052834.svg" alt="UnArchieve"> {{langData.messagePage.unArchieve}} </li>
+                    <!-- <li class="list-group-item text-black2 fs14 c-pointer" (click)="delete(roommessage.TMESSAGES_Chat_Room_ID)"><img src="./assets/images/noun_Trash_3073244.svg" alt="Clear"> {{langData.messagePage.clearChat}}</li> -->
+                    <li class="list-group-item text-black2 fs14 c-pointer" (click)="delete(roommessage.TMESSAGES_Chat_Room_ID)"><img src="./assets/images/noun_Trash_3073244.svg" alt="Delete" > {{langData.messagePage.delete}}</li>
+                  </ul>                
+                  <div class="col-md-12 text-left d-flex align-items-start justify-content-start" *ngIf = "roommessage.TMESSAGES_UID != loginUserId"> 
+                     
+                    <div>
+                      <img alt="default-businessin-images" *ngIf="!roommessage.dc_profile_image || roommessage.dc_profile_image == null" class="rounded-circle imgclass" src="./assets/images/default-user.jpg">
+                      <img alt="top-pics-images" *ngIf="roommessage.dc_profile_image && roommessage.dc_profile_image !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{roommessage.dc_profile_image}}">
+                    </div>
+                    <div class="pl-3">                                                                     <p class="sendmsg p-2 mb-0 pre"  style="white-space: pre-wrap;" *ngIf="roommessage.TMESSAGES_File_Type == 'text' && roommessage.TMESSAGES_Content !== null && !roommessage.linktype">{{roommessage.TMESSAGES_Content}}</p>
+                      <div [innerHTML]="roommessage.anchorContent" class="sendmsg p-2 mb-0 pre" style="white-space: pre-wrap;" *ngIf="roommessage.TMESSAGES_File_Type == 'text' && roommessage.TMESSAGES_Content !== null && roommessage.linktype && roommessage.linktype !== null">
+                      </div>
+                      <img *ngIf="roommessage.TMESSAGES_File_Type == 'image' || roommessage.TMESSAGES_File_Type == 'jpg' || roommessage.TMESSAGES_File_Type == 'jpeg' || roommessage.TMESSAGES_File_Type == 'gif' || roommessage.TMESSAGES_File_Type == 'png' || roommessage.TMESSAGES_File_Type == 'tif'" src="{{roommessage.TMESSAGES_Content}}" alt="" class="chatupimg" height="150" width="200">
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'pdf'" class="sendmsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-pdf fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p>
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'doc' || roommessage.TMESSAGES_File_Type == 'docx' || roommessage.TMESSAGES_File_Type == 'msword'" class="sendmsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-word fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p>
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'xlsx' || roommessage.TMESSAGES_File_Type == 'xls'" class="sendmsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-excel fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p>
+                      <!-- <p *ngIf="roommessage.linktype && roommessage.linktype == 'link'" class="sendmsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.linkdataurl}}">
+                          <img src="{{roommessage.linkimage}}" alt="linkimage" class="chatupimg" height="150" width="200">
+                          <div>
+                            <h4>{{roommessage.linktitle | truncate : 20 : "..."}}</h4>
+                            <p>{{roommessage.linkdescription}}</p>
+                          </div>
+                        </a>
+                      </p> -->
+                      <span class="fs12 text-grey23" *ngIf="roommessage.TMESSAGES_Created_On !== null">{{convertutctolocal(roommessage.TMESSAGES_Created_On) | amLocale:'en' | amDateFormat:'MMM D, h:mm A'}}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-12 pt-2 text-right d-flex align-items-start justify-content-end" *ngIf = "roommessage.TMESSAGES_UID == loginUserId">
+                    <div class="">
+                      <p class="recievemsg py-2 px-3 ml-auto mb-0 pre" style="white-space: pre-wrap;"*ngIf="roommessage.TMESSAGES_File_Type == 'text' && roommessage.TMESSAGES_Content !== null && !roommessage.linktype">{{roommessage.TMESSAGES_Content}}</p>
+                      <div [innerHTML]="roommessage.anchorContent" class="recievemsg p-2 mb-0 pre" style="white-space: pre-wrap;"*ngIf="roommessage.TMESSAGES_File_Type == 'text' && roommessage.TMESSAGES_Content !== null && roommessage.linktype && roommessage.linktype !== null">
+                        
+                      </div>
+                      <img *ngIf="roommessage.TMESSAGES_File_Type == 'image' || roommessage.TMESSAGES_File_Type == 'jpg' || roommessage.TMESSAGES_File_Type == 'jpeg' || roommessage.TMESSAGES_File_Type == 'gif' || roommessage.TMESSAGES_File_Type == 'png' || roommessage.TMESSAGES_File_Type == 'tif'" src="{{roommessage.TMESSAGES_Content}}" alt="" class="chatupimg" height="150" width="200">
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'pdf'" class="recievemsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-pdf fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p>
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'doc' || roommessage.TMESSAGES_File_Type == 'docx' || roommessage.TMESSAGES_File_Type == 'msword'" class="recievemsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-word fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p>
+                      <p *ngIf="roommessage.TMESSAGES_File_Type == 'xlsx' || roommessage.TMESSAGES_File_Type == 'xls'" class="recievemsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.TMESSAGES_Content}}">
+                          <em class="fas fa-file-excel fa-2x"></em> &nbsp; &nbsp; {{roommessage.TMESSAGES_File_Name}}
+                        </a>
+                      </p> 
+                      <!-- <p *ngIf="roommessage.linktype && roommessage.linktype == 'link'" class="recievemsg p-2 mb-0">
+                        <a class="far fa-file-check" href="{{roommessage.linkdataurl}}">
+                          <img src="{{roommessage.linkimage}}" alt="linkimage" class="chatupimg" height="150" width="200">
+                          <div>
+                            <h4>{{roommessage.linktitle | truncate : 20 : "..."}}</h4>
+                            <p>{{roommessage.linkdescription}}</p>
+                          </div>
+                        </a>
+                      </p> -->
+                      <span class="fs12 text-grey23" *ngIf="roommessage.TMESSAGES_Created_On !== null">{{convertutctolocal(roommessage.TMESSAGES_Created_On) | amLocale:'en' | amDateFormat:'MMM D, h:mm A'}}</span>
+                    </div>
+                    <div class="pl-3">
+                      <img alt="default-businessin-images" *ngIf="!roommessage.dc_profile_image || roommessage.dc_profile_image == null" class="rounded-circle imgclass" src="./assets/images/default-user.jpg">
+                      <img alt="top-pics-images" *ngIf="roommessage.dc_profile_image && roommessage.dc_profile_image !== null" class="rounded-circle imgclass" src="{{cloudeURL}}{{roommessage.dc_profile_image}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 chat-textbox">
+                <div class="row rowpad-2">
+                  <div class="col-md-11 text-left">
+                    <textarea type="text" class="fs12 text-grey23 form-control writemsg" rows="3" [placeholder]="langData.messagePage.writeAMessage" [(ngModel)]="message" (keyup.enter)="send()"></textarea>
+                  </div>
+                  <div class="col-md-1 text-right">
+                    <!-- <em class="fas fa-chevron-circle-up text-blue9"></em> -->
+                  </div>
+                </div>
+              </div>
+              <div class="row rowpad-2 chat-fileupload">
+                <div class="col-md-12">
+                  <ul class="chips-list p-0 list-unstyled list-group-horizontal my-3" *ngIf = "filearray.length > 0">
+                    <ng-container *ngFor="let files of filearray;let i = index">
+                      <li class="d-block"
+                      [ngClass]="{ 'upload-red2': files.extension == '.pdf', 
+                      'upload-yellow': (files.extension == '.xls' || files.extension == '.xlsx'), 
+                      'upload-blue8': (files.extension == '.rtf' || files.extension == '.docx')
+                      }">
+                        <div class="file-badge bg-badge-color">
+                          {{files.extension}}
+                        </div>
+                        <div class="pl-4 text-truncate">{{files.documentoriginalname}}</div>
+                        <span class="remove-btn rounded-circle" (click)="removeDocument(i)"><span class="fas fa-minus"></span></span>
+                        <div class="progress progress-color">
+                          <div class="progress-bar" [style.width]="files.percentage + '%'"></div>
+                        </div>
+                      </li>
+                    </ng-container>
+                  </ul>
+                  <ul class="chips-list p-0 list-unstyled list-group-horizontal my-3" *ngIf = "imagearray.length > 0">
+                    <ng-container *ngFor="let images of imagearray;let i = index">
+                      <li class="d-block" *ngIf="images.extension != '.mp4'"
+                      [ngClass]="{'upload-blue8': (images.extension == '.png' || images.extension == 'image' || images.extension == '.jpg')
+                      }">
+                        <div class="file-badge bg-badge-color">
+                          {{images.extension}}
+                        </div>
+                        <div class="pl-4 text-truncate">{{images.documentoriginalname}}</div>
+                        <span class="remove-btn rounded-circle" (click)="removeImage(i)"><span class="fas fa-minus"></span></span>
+                        <div class="progress progress-color">
+                          <div class="progress-bar" [style.width]="images.percentage + '%'"></div>
+                        </div>
+                      </li>
+                    </ng-container>
+                  </ul> 
+                </div>
+              </div>
+              <div class="col-md-12 icons py-2">
+                <div class="row rowpad">
+                  <div class="col-md-6 text-left py-1">
+                    <input type="file" (change)="fileChangeEvent($event.target.files, 1)" multiple [disabled]='imageuploadDisabled' hidden id="customFile1" name="upload_image" accept="image/*">
+                    <label *ngIf="message" for="customFile1"></label>
+                    <label *ngIf="message" for="customFile2"></label>
+                    <img class="c-pointer" src="./assets/images/msgimg.svg" alt="msgimg" (click)="uploadfile(1)">
+                    <input type="file" (change)="fileChangeEvent($event.target.files, 2)" multiple [disabled]='fileuploadDiabled' hidden id="customFile2" name="upload_image" accept="application/pdf/, .pdf, .doc, .docx, .xls, .xlsx">
+                    <img  class="pl-2 c-pointer" src="./assets/images/msgattachment.svg" alt="msgattachment" (click)="uploadfile(2)">
+                    <img  class="pl-2 c-pointer" src="./assets/images/msgsmiley.svg" alt="msgsmiley" (click)="toggleEmojiPicker()" #toggleButton1>
+                    <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addEmoji($event)" *ngIf="showEmojiPicker" title="Pick your emoji…" (keyup.enter)="send()" #menu1></emoji-mart>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <button class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold fs14" (click) = "send()">Send</button>
+                  </div>
+                  <!-- <div class="col-md-6 text-right" (click) = "send()">
+                    <img  src="./assets/images/msgsend.svg" alt="msgsend">
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="message-center-align" *ngIf="sendDisabled"><p *ngIf="loading==false">No Conversation started yet</p></div>
+        </div>
+      </div> 
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+          <div class="card-body p-1">
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- footer Section -->
+<app-auth-footer></app-auth-footer>
+  <!-- footer Section -->
+
+</div>
+

@@ -1,0 +1,42 @@
+<section class="mt30">
+
+  
+
+   <div >
+    <!-- Direct Contact -->
+
+    <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.contactInfo}}</h1>
+
+        <div class="summary-box br5 pt-2 mb30 bg-white overflow-hidden">
+          <div class="table-responsive table-businessin">
+
+
+          <table class="table table-striped mb0">
+              <thead>
+                <tr>
+                  <th class="border-0 fs18">{{langData.viewPostPage.contactPerson}}</th>
+                  <th class="border-0 fs18">{{langData.viewPostPage.title}}</th>
+                  <th class="border-0 fs18">{{langData.common.phoneNumber}}</th>
+                  <th class="border-0 fs18">{{langData.common.emailAddress}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="postdata && postdata.contactList">
+                <tr *ngFor="let contact of postdata.contactList">
+                  <td class="fs14">{{contact.contactname}}</td>
+                  <td class="fs14">{{contact.contacttitle}}</td>
+                  <td class="fs14">({{contact.contactphonecode}}) {{contact.contactphoneno}}</td>
+                  <td class="fs14">{{contact.contactemail}}</td>
+                </tr>
+              </ng-container>
+                <tr *ngIf="!(postdata.contactList)" class="text-center">
+                    <td class="fs14" colspan="4"  class="text-red">{{langData.common.noDataFound}}</td>
+                </tr>
+              </tbody>
+            </table> 
+          </div>
+        </div>
+
+      <!-- Direct Contact -->
+      </div>
+</section>

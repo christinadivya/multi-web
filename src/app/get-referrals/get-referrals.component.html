@@ -1,0 +1,261 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+  <section class="container my-5 max-w-lg-1070px">
+    <div class="row">
+      <div class="col-md-9">
+        <form name="form" focusInvalidInput [formGroup]="createreferralForm" (ngSubmit)="onSubmit()"
+          class="personal-info-form" novalidate>
+          <div class="card custom-user-card overflow-hidden">
+            <div class="card-header">
+              <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.getReferralPage.getReferral}}</h3>
+            </div>
+            <ng-template #locationsinput >
+              <input type="text" class="form-control" [placeholder]="langData.getReferralPage.preferredLocationSearch"
+                formControlName="targetedlocations" [(ngModel)]="locations" [ngClass]="{ 'is-invalid': submitted && selectedlocation.length == 0}" 
+                (ngModelChange)="SearchLocation()" [tooltipEnable]= "planBased" [tooltip]="tolTemplate" [readonly]="planBased">
+            </ng-template>
+            <ng-template #tolTemplate>{{planBased === true ? 'Please upgrade your plan to enable this feature' : ' ' }}</ng-template>
+            <ng-template #locationsdropdownlist>
+              <ul class="list-unstyled" *ngIf="locaionresult.length > 0">
+                <li *ngFor="let loca of locaionresult" (click)="addPreferredLocation(loca)">
+                  {{loca.locationFinal}}
+                </li>
+              </ul>
+            </ng-template>
+            <!-- Location Tag  starts -->
+            <ng-template #locationstag>
+              <ul class="chips-list list-unstyled" *ngIf="selectedlocation.length > 0">
+                <li *ngFor="let data of selectedlocation; let i = index;">
+                  <ng-container *ngIf="data.searchedby === 'Continent'">
+                    {{data.continentname}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'Country'">
+                    {{data.countryname}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'State'">
+                    {{data.statename}}
+                  </ng-container>
+                  <ng-container *ngIf="data.searchedby === 'City'">
+                    {{data.cityname}}
+                  </ng-container>
+                  <span class="remove-btn rounded-circle" (click)="removeLocation(i)"><span
+                      class="fas fa-minus"></span></span>
+                </li>
+              </ul>
+            </ng-template>
+            <ng-template #attachedfileslist>
+              <ul class="chips-list  list-unstyled w-100 float-left mx-lg-4" formArrayName="documentList">
+                 <ng-container *ngFor="let files of createreferralForm.get('documentList').controls;let i = index">
+                    <li  class="wid-37  float-left uploadlist-margin" *ngIf="createreferralForm.get('documentList').controls[i].controls.extension.value != '.mp4'" 
+                    [ngClass]="{ 'upload-red2': (createreferralForm.get('documentList').controls[i].controls.extension.value == '.pdf' || createreferralForm.get('documentList').controls[i].controls.extension.value == '.png' || createreferralForm.get('documentList').controls[i].controls.extension.value == '.jpg' || createreferralForm.get('documentList').controls[i].controls.extension.value == '.jpeg'), 
+                    'upload-yellow': (createreferralForm.get('documentList').controls[i].controls.extension.value == '.xls' || createreferralForm.get('documentList').controls[i].controls.extension.value == '.xlsx'), 
+                    'upload-blue8': (createreferralForm.get('documentList').controls[i].controls.extension.value == '.rtf' || createreferralForm.get('documentList').controls[i].controls.extension.value == '.docx')
+                    }">
+                    <div class="file-badge bg-badge-color">
+                       {{createreferralForm.get('documentList').controls[i].controls.extension.value}}
+                    </div>
+                    <div class="pl-4 text-truncate">{{createreferralForm.get('documentList').controls[i].controls.documentoriginalname.value}}</div>
+                    <span class="remove-btn rounded-circle" (click)="removeDocument(i)"><span class="fas fa-minus"></span></span>
+                    <div class="progress progress-color">
+                       <div class="progress-bar" [style.width]="createreferralForm.get('documentList').controls[i].controls.percentage.value + '%'"></div>
+                    </div>
+                    </li>
+                 </ng-container>
+              </ul>
+            </ng-template>
+            <ng-template #preferedindustryCheckboxlist>
+              <ul
+                class="list-unstyled d-inline-flex mb-0 mx-mobileview-0 taginput-list targeted-industry-list w-100 row"
+                *ngIf="allindustryData.length > 0">
+                <li *ngFor="let industry of allindustryData; let i = index" class="col-md-4">
+                  <div class="custom-checkbox">
+                    <input type="checkbox" name="userindustry{{i}}" id="preferredInd{{i}}"
+                      (change)="selectedIndustry($event.target.checked,industry,i)"
+                      [checked]="industry.flag == true? true:false">
+                    <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                      (click)="selectedIndustry(!industry.flag,industry,i)">
+                      <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                        stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                    </svg>
+                    <label for="preferredInd{{i}}">{{industry.industryname}}</label>
+                  </div>
+                </li>
+              </ul>
+            </ng-template>
+            <ng-template #submitcancelbtn>
+              <button type="button" class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold"
+                routerLink="/home">
+                <span class="fs14">{{langData.common.cancel}}</span>
+              </button>
+              <button type="submit" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold">
+                <span class="fs14">{{langData.common.submit}}</span>
+              </button>
+            </ng-template>
+            <div class="card-body ">
+              <div class="row mx-m-desktop-33">
+                <div class="col-md-12  mx-auto">
+                  <div class="form-group px-lg-4" *ngIf="isPost">
+                    <label class="text-black2 fs18 font-weight-bold w-100">{{langData.getReferralPage.targetedPost}}
+                      <sup>*</sup>
+                    </label>
+                    <ng-container *ngIf="postObj && postObj.length > 1">
+                      <select class="custom-select" (change)="getpost($event.target.value)" formControlName="postid"
+                        [ngClass]="{ 'is-invalid': submitted && createreferralForm.get('postid').invalid,'placeholderclr':!selectchange}">
+                        <option class="" value="" disabled>{{langData.getReferralPage.selectpostyouwanttorefer}}</option>
+                        <option class="customclr" *ngFor="let post of postObj" [selected]="" [value]="post.postid">
+                          {{post.postname}}</option>
+                      </select>
+                    </ng-container>
+                    <ng-container *ngIf="postObj && postObj.length == 1">
+                      <input type="text" formControlName="postid" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && createreferralForm.get('postid').invalid}" readonly>
+                    </ng-container>
+
+                    <span class="pr-3 d-block text-left">
+                      <span class="text-danger" *ngIf="submitted &&  createreferralForm.get('postid').errors">
+                        <small *ngIf="createreferralForm.get('postid').errors">{{langData.getReferralPage.targetedPostsRequired}}</small>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row mx-m-desktop-33">
+                <div class="col-md-12 mx-auto">
+                  <div class="form-group px-lg-4">
+                    <label class="text-black2 fs18 font-weight-bold w-100">{{langData.viewPostPage.targetedLocation_s}}
+                      <sup>*</sup>
+                    </label>
+                    <div class="mb-3">
+                      <div class="position-relative">
+                        <div class="input-group  custom-input-group"
+                          [ngClass]="{'emptyinput': locations == '' || locations == null}">
+                          <!-- locations input -->
+                          <ng-container [ngTemplateOutlet]="locationsinput" ></ng-container>
+                          <!-- locations input -->
+                          <div class="input-group-append">
+                            <span class="input-group-text bg-white" id="basic-addon1"><span
+                                class="lnr lnr-magnifier"></span></span>
+                          </div>
+                        </div>
+                        <div [ngClass]="{'animated-show': locaionresult.length > 0}" style="max-height: 250px"
+                          class="position-absolute bg-white w-100 custom-drop">
+                          <!-- location option list -->
+                          <ng-container [ngTemplateOutlet]="locationsdropdownlist"></ng-container>
+                          <!-- location option list -->
+                        </div>
+                      </div>
+                      <span class="pr-3 d-block text-left">
+                        <span class="text-danger"
+                          *ngIf="submitted && (selectedlocation == '' || selectedlocation == null)">
+                          <small>{{langData.getReferralPage.selectTargetedLocations}}</small>
+                        </span>
+                      </span>
+                    </div>
+                    <!-- Tag Input  -->
+                    <!-- LOCATION TAG -->
+                    <ng-container [ngTemplateOutlet]="locationstag"></ng-container>
+                  </div>
+                </div>
+              </div>
+              <div class="row mx-m-desktop-33">
+                <div class="col-md-12 mx-auto">
+                  <div class="form-group px-lg-4">
+                    <label class="text-black2 fs18 font-weight-bold w-100">{{langData.viewPostPage.targetedIndustry_s}}
+                      <sup>*</sup>
+                    </label>
+                    <div>
+                      <ng-container [ngTemplateOutlet]="preferedindustryCheckboxlist"></ng-container>
+                    </div>
+                    <span class="pr-3 d-block text-left">
+                      <span class="text-danger" *ngIf="submitted && (selectedIndus == '' || selectedIndus == null)">
+                        <small>{{langData.getReferralPage.selectTargetedIndustries}}</small>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row mx-m-desktop-33">
+                <div class="col-md-12 mx-auto">
+                  <div class="mx-lg-4">
+                    <div class="form-group position-relative">
+                      <label class="text-black2 fs18 font-weight-bold w-100">{{langData.getReferralPage.message}}
+                        <sup>*</sup>
+                      </label>
+                      <div class="card br-19">
+                        <div class=" card-body p-0 px-lg-3 py-lg-2">
+                          <textarea autosize class="form-control border-0 minheighttxtarea" maxlength="500"
+                             rows="1" [placeholder]="langData.getReferralPage.writeMessage" [(ngModel)]="postmessage" (ngModelChange)="postmessagechange()" [ngModelOptions]="{standalone: true}"
+                            >
+                          </textarea>                              
+                        </div>
+                      </div>
+                      <span class="text-right pr-3  d-block fs13 text-grey25 position-absolute letterclass">{{maxlength}} /
+                        500</span>
+                      <span class="pr-3 d-block text-left">
+                        <span class="text-danger" *ngIf="valueflag==true">
+                          <small *ngIf="valueflag==true">{{langData.getReferralPage.messageIsRequired}}</small>
+                        </span>
+                        <span class="text-danger" *ngIf="messagelength==true">
+                            <small *ngIf="messagelength==true">{{langData.getReferralPage.messageLengthRestriction}}</small>
+                          </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>            
+
+              <div class="row mx-md-0">
+                <div class="col-md-9">
+                  <p class="mb-0">Sincerely,</p>
+                  <p  class="fs16 "><span class="text-black">Team </span><span class="text-blue">BusinessIn</span></p>
+                </div>
+                <div class="col-md-3">
+                  <div class="mb-4 text-right">
+                    <button type="button" (click)="fileInput.click()"
+                      class="referralcustomfile btn btn-blue btn-rounded attach-btn px-4 align-items-center d-flex py-2 font-weight-bold">
+                      <img class="customimgbtn mr-3" src="./assets/images/attachmenticon.svg" alt="attachmenticon">
+                      <span class="fs14">{{langData.getReferralPage.attachment}}</span>
+                      <input type="file" #fileInput id="fileup" (change)="fileChangeEvent($event.target.files, 1)" multiple [disabled]='fileuploadDiabled'>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row mx-md-0">
+                <div class="col-md-12" >
+                  <div  *ngIf="this.referralflag">
+                    <p class="fs16 " *ngIf="this.referralType === 'profile'"><span class="text-blue">Note:</span><span class="text-black"> Your profile link will be shared through email</span></p>
+                    <p class="fs16 " *ngIf="this.referralType === 'post'"><span class="text-blue">Note:</span><span class="text-black"> Your post link will be shared through email</span></p>
+                  </div>
+                </div>
+            </div>
+              <div class="row mx-m-desktop-33 ">
+                <div class="col-md-12 mx-auto">
+                  <div>
+                    <ng-container [ngTemplateOutlet]="attachedfileslist"></ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-4 mb-2">
+            <ng-container [ngTemplateOutlet]="submitcancelbtn"></ng-container>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+          <div class="card-body p-1">
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>        
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Body Content -->
+</div>

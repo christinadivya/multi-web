@@ -1,0 +1,146 @@
+
+.bg-dark{
+    background-color: $black2 !important;
+}
+
+.bg-opacity{
+    .bg-dark{
+        background-color: rgba(0,0,0,0.2) !important;
+    }
+}
+
+.home-header{
+    height: 52px;
+     .business-in-logo{
+         width: 150px;
+     }
+
+     .form-list{
+         display: flex;
+         align-items: center;
+         li{
+             margin-right: 10px;
+         }
+     }
+     .numbercircle{
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        background: #4291E2;
+        color: #ffffff;
+        text-align: center;
+        line-height: 1.4;
+    }
+    .notify-count-msg
+    {
+        position: absolute;
+        top: 0;
+        right: 5px;
+    }
+    .notify-count
+    {
+        position: absolute;
+        top: 0;
+        right: 9px;
+    }
+}
+
+
+.menu-list{
+    li{
+        margin-left: 18px;
+        margin-right: 18px;
+        margin-top: 3px;
+        font-size: 12px;
+        border-bottom:2px solid transparent;
+        color: #C7D1D8;
+        @extend .c-pointer;
+        &.active{
+        color:#fff;    
+        border-bottom:2px solid white;
+        font-weight: bold;
+        }
+        &.active .menu-icon
+        {
+            filter: brightness(1) invert(0);
+        }
+        .menu-icon{
+            display: block;
+            margin:4px auto;
+            width: 17px;
+
+            &.w-24px{
+                width: 20px;
+            }
+               
+            &.w-15px{
+                width: 17px;
+            }
+
+            &.w-13px{
+                width: 13px;
+            }
+
+        }
+    }
+}
+
+.hdr-prfl-img{
+  height: 20px;
+  width: 20px;
+  border:1px solid $white;
+  border-radius: 50%;
+}
+
+.dd-btn{
+    padding-top: 8px;
+}     
+
+
+
+.header-dropdown{
+    width: 288px;
+    border-radius: 2px;
+    // box-shadow: 0 0 0 1px rgba(0,0,0,.15), 0 2px 3px rgba(0,0,0,.2);
+    transition: box-shadow 83ms;
+    box-shadow: 0 4px 8px rgba(0,0,0,.15);
+    padding: 4px 0 0;
+    border: none;
+
+    li{
+        padding: 4px 12px;
+        line-height: 2;
+        margin: 0px;
+        cursor: pointer;
+        font-weight: 700;
+        color: rgba(0,0,0,.6);
+        &:hover{
+            background-color: rgba(0,0,0,.1);
+        }
+    }
+}
+
+
+
+.nav-item {
+    
+    .active-icon {
+      display: none !important;
+      }
+      .inactive-icon {
+          display: block !important;
+      }
+    &.active {
+      .active-icon {
+          display: block !important;
+      }
+      .inactive-icon {
+          display: none !important;
+      }
+    }
+  }
+  .modal-dialog.modal-md.auth-modal.br-44 {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+}

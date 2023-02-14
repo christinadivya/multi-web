@@ -1,0 +1,195 @@
+{{beforeLoginHeader}}
+<ng-container  *ngIf="beforeLoginHeader">
+  <app-auth-header></app-auth-header>
+</ng-container>
+
+<ng-container *ngIf="afterLoginHeader">
+  <!-- Common Elements Section  -->
+
+  <!-- **** Search Filed **** -->
+  <ng-template #searchf>
+  <div  class="input-group search-input">
+    <div class="input-group-prepend">
+      <span class="input-group-text py-1 px-2 bg-white border-0"><span class="lnr lnr-magnifier fs20"></span></span>
+    </div>
+    <input type="text" [ngModel]="search" (focus)="focus($event)" (input)="onSearchChange($event.target.value)" class="form-control border-0 togglesearch pl-0" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+  
+  </div>
+  </ng-template>
+  <!-- **** *****  -->
+
+
+  <!--  -->
+
+
+  <!-- Header -->
+  <nav class="navbar navbar-expand bg-dark home-header navbar-dark fixed-top p2">
+      <!-- <a class="navbar-brand bg-white p-2 px-xl-4 px-3 h-50px" routerLink="/user-home"><img src="./assets/images/logo.png" alt="Business-In-Logo" class="business-in-logo"></a> -->
+     <a href="javascript:void(0)" routerLink="/user-home" class="ml100"><img src="./assets/images/mob-logo.png" alt="Logo"></a> 
+      <div class="collapse navbar-collapse">
+          <ul class="navbar-nav"> 
+              <li class="nav-item position-relative ml-lg-2">
+    
+                <!-- Search Field -->             
+                <ng-container  [ngTemplateOutlet]="searchf"></ng-container>
+                <!-- /Search Field -->
+  
+
+  <!-- search li box -->
+
+  <div *ngIf="searchPop" class="position-absolute" style="width: 500px;left:0px;">
+      <div class="card creat-post-card">
+        <img src="./assets/images/close.png" (click)="focusOutFunction()" alt="Close" class="rounded-cross c-pointer"
+          style="width:20px; margin-left: 472px;
+          margin-top: 5px;">
+        <div class="card-body">
+          <ul class="row list-unstyled category-card-list"  style="margin-top: -13px;">
+            <li class="col-md-4" *ngFor="let accountType of accValue">
+              <div class="card category-card-1">
+                <div class="py-2">
+                  <a href ="javascript:void(0)"><span class="fs14" (click)="getSearchPage(accountType)">{{accountType.accounttypeshortname}}</span></a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        
+        </div>
+      </div>
+    </div>
+
+  <!-- search li box -->
+
+
+              </li>
+            </ul>
+        <ul class="navbar-nav ml-auto text-white text-center menu-list  mr-xl-5 pr-xl-4">
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isHomeTab}" routerLinkActive="active" (click)="navigation('/user-home')">
+            <img src="./assets/images/header-icons/home.svg" class="menu-icon h-17px w-18px" alt="businessin-home">
+            {{langData.header.home}}
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isMessageTab}" routerLinkActive="active" (click)="navigation('/messages')">
+            <img src="./assets/images/header-icons/chat.svg" class="menu-icon h-18px w-18px" alt="businessin-message">
+            {{langData.header.message}}
+            <sup class="fs12 chat-msg mb-0  rounded-circle numbercircle text-white notify-count-msg" *ngIf="totalMessage > 0">{{totalMessage}}</sup>
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isBookmarkTab}"  routerLinkActive="active" (click)="navigation('/bookmarks')">
+            <img src="./assets/images/header-icons/bookmark.svg" class="menu-icon h-18px w-13px" alt="businessin-bookmark">
+            {{langData.header.bookmark}}
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isMypostTab}" routerLinkActive="active" (click)="navigation('/post-list')">
+              <img src="./assets/images/header-icons/note.svg" class="menu-icon h-18px w-18px" alt="businessin-note">
+              {{langData.header.myPosts}}
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isCreatepostTab}" (click) = "createPost()" routerLinkActive="active" [tooltip] = "tooltipStatus">
+              <img src="./assets/images/header-icons/plus.svg" class="menu-icon h-18px w-18px" alt="businessin-plus" [ngClass] = "applyBlur == false? ' ' : 'blur-bg'"> 
+              {{langData.header.createPost}}
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isNotificationTab}" routerLinkActive="active" (click)="navigation('/notifications')">
+              <img src="./assets/images/header-icons/notification-active.svg" class="menu-icon h-18px w-18px active-icon" alt="businessin-plus"> 
+              <img src="./assets/images/header-icons/notification-inactive.svg" class="menu-icon h-18px w-18px inactive-icon" alt="businessin-plus"> 
+              <sup class="fs12 chat-msg mb-0  rounded-circle numbercircle text-white notify-count" *ngIf="totalNotificationCount > 0">{{totalNotificationCount}}</sup>
+              {{langData.header.Notification}}             
+          </li>
+          <li class="nav-item position-relative" [ngClass]="{ 'active': isReferralTab}" routerLinkActive="active" (click)="navigation('/view-referral')">
+            <img src="./assets/images/header-icons/referrals.svg" class="menu-icon h-18px w-18px" alt="businessin-plus"> 
+            Referrals
+        </li>
+      
+          <li class="btn-group nav-item position-relative"  dropdown placement="bottom right">
+            <a  dropdownToggle  class="dd-btn fs12" (click)="settings()">
+
+              <img src="./assets/images/default-user.jpg" *ngIf="currentUserDetails && currentUserDetails.userprofile.profileimage == null" alt="default-user" class="hdr-prfl-img">
+
+              <img src="{{cloudeURL}}{{currentUserDetails.userprofile.profileimage}}" *ngIf="currentUserDetails && currentUserDetails.userprofile.profileimage != null" alt="default-user" class="hdr-prfl-img">
+              <br>
+              {{langData.header.me}} <span class="caret"><em class="fas fa-caret-down"></em></span>
+            </a>
+            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu  header-dropdown lft-auto rt-0px"
+                role="menu" aria-labelledby="button-basic">
+              <div class="row user_info">
+                <div class="col-md-3">
+                  <img src="{{profileImage}}" class="img-fluid user_icon" alt="user">
+                </div>
+                <div class="col-md-9">
+                  <h5>{{profileName}}</h5>
+                  <p>{{companyName}}</p>
+                </div>
+              </div>                
+              <li role="menuitem" class="menu_list" (click)="profile()">{{langData.header.profile}}</li>
+              <li role="menuitem" class="menu_list" (click)="privacyTab()">{{langData.header.privacy}}</li> 
+              <li role="menuitem" class="menu_list" (click)="settingsTab()">{{langData.header.billing}}</li> 
+              <li role="menuitem" class="menu_list" (click)="buisnessPitch()">{{langData.header.buisnessPitch}}</li> 
+              <li role="menuitem" class="menu_list" (click)="faq()">{{langData.header.FAQ}}</li>  
+              <li role="menuitem" (click)="logOut()" class="menu_list">{{langData.header.logOut}}</li>                  
+              
+            </ul>
+
+    </li>
+
+          
+        </ul>
+      </div>  
+    </nav>
+    
+    <!-- Header -->
+
+
+
+
+    <!-- Mobile Header -->
+
+    <header class="mobile-view mobile-view-header">
+
+      <div class="serach-header">
+
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <img src="./assets/images/bell.svg" alt="notifications-Bell">
+          </li>
+          <li class="list-inline-item">
+          <!-- Search Field -->
+            <ng-container [ngTemplateOutlet]="searchf"></ng-container>
+          <!-- /Search Field -->
+          </li>
+          <li class="list-inline-item text-right">
+            <img src="./assets/images/message.svg" alt="notifications-Bell">
+        </li>
+      </ul>
+
+      </div>
+      
+      <div class="tab-header">
+        <ul class="list-unstyled mb-0">
+          <li class="active">
+              <img src="./assets/images/mobile-icons/tab/home.svg" class="menu-icon h-17px w-18px" alt="businessin-home">
+              <span class="mob-menu-txt">Home</span>
+          </li>
+          <li>
+              <img src="./assets/images/mobile-icons/tab/home.svg" class="menu-icon h-17px w-18px" alt="businessin-home">
+              <span class="mob-menu-txt">My Post</span>
+          </li>
+          <li>
+              <img src="./assets/images/mobile-icons/tab/home.svg" class="menu-icon h-17px w-18px" alt="businessin-home">
+              <span class="mob-menu-txt">Bookmark</span>
+          </li>
+          <li>
+              <img src="./assets/images/mobile-icons/tab/profile.svg" class="menu-icon h-17px w-18px" alt="businessin-home">
+              <span class="mob-menu-txt">Profile</span>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Mobile Header -->
+
+  <!-- Search module -->
+
+
+
+  <!-- Search module -->
+
+  <!-- search box -->
+
+  <!-- search box -->
+
+</ng-container>

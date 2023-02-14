@@ -1,0 +1,341 @@
+<ng-template #plancards>
+    <div class="row mb-4 subscription-cards">
+      <div class="col-lg-3 col-md-6 plan-choose" *ngFor="let listofplans of plans;let i = index">
+        <div (click)="choosePlan(i+1)">
+          <input class="d-none" name="plans" type="radio" id="Gold_1{{i}}" [checked]="plantype == i + 1">
+          <label class="card position-relative subscription-card h-lg-100" for="Gold">
+            <span class="radiobtn">{{listofplans.planname}}</span>
+            <div class="text-center  my-2">
+              <h1 class="mx-auto font-weight-bold mb-1" *ngIf="listofplans.planname!='Silver' && listofplans.planname!='Limited Platinum'">
+                <sup class="fs19">$</sup>
+                <span class="fs41" >{{listofplans.price}}</span>
+                <small class="fs12">/mo</small>
+              </h1>
+              <h1 class="mx-auto font-weight-bold mb-1" *ngIf="listofplans.planname=='Silver'">
+                <sup class="fs19"></sup>
+                <span class="fs41" >Free</span>
+                <small class="fs12"></small>
+              </h1>
+              <h1 class="mx-auto font-weight-bold mb-1" *ngIf="listofplans.planname=='Limited Platinum'">
+                <sup class="fs19">$</sup>
+                <span class="fs41" >{{listofplans.price}}</span>
+                <!-- <small class="fs12">one time</small> -->
+              </h1>
+              <p class="mb-1 fs14">
+                <span class="font-weight-bold" *ngIf="listofplans.planname=='Gold'">(or ${{goldYearly}}/year)</span>
+              </p>
+              <p class="mb-1 fs14">
+                <span class="font-weight-bold" *ngIf="listofplans.planname=='Platinum'">(or ${{platinumYearly}}/year)</span>
+              </p>
+              <p class="mb-1 fs14">
+                <span class="font-weight-bold" *ngIf="listofplans.planname=='Limited Platinum'">(one time)</span>
+              </p>
+            </div>
+            <ul class="ff-muli-Regular pricing-plan-list text-left">
+                <div *ngFor="let allfeature of listofplans.managefeature">
+                  <li class="fs12 ff-muli-Regular text-black2" *ngIf="allfeature.active == true">{{allfeature.feature.description}}</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="allfeature.active == false">{{allfeature.feature.description}}</li>
+                  <!-- <li class="fs12 ff-muli-Regular text-black2"></li> -->
+                  <!-- <li class="fs12 ff-muli-Regular  color-shadegray deactive">Accessing posts worldwide</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive">Contacting Targets worldwide</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive">Posting</li> -->
+                </div>
+              </ul>
+            <!-- <ul class="checked-list fs14">
+              <li *ngFor="let allfeature of listofplans.managefeature">{{allfeature.feature.description}}</li>
+            </ul> -->
+          </label>
+        </div>
+        <!-- <input type="radio" class="d-none" name="plans" id="{{listofplans.planname}}" (change)="choosePlan(listofplans.planid)" [checked]="plantype == i + 1">
+            <label class="card position-relative subscription-card h-lg-100" for="{{listofplans.planname}}">
+               <span class="radiobtn">{{listofplans.planname}}</span>
+               <div class="text-center  my-2">
+                  <h1 class="mx-auto font-weight-bold mb-1"><sup class="fs19">{{listofplans.plancurrency}}</sup> <span  class="fs41">{{listofplans.price}}</span> <small  class="fs12">{{listofplans.planextn}}</small></h1>
+                  <p class="mb-1 fs14"><span class="font-weight-bold">{{listofplans.planperiod}}</span></p>
+               </div>
+               <ul class="checked-list fs14">
+                  <li *ngFor="let feature of listofplans.features">{{feature.description}}</li>
+               </ul>
+            </label> -->
+      </div>
+    </div>
+    <!-- Free Plan -->
+    <div class="text-center pt-1 pb-4">
+      <button type="button" *ngIf="planObject?.planname == 'Silver'" (click)="silverSubscription()" class="btn btn-blue btn-rounded px-30 py-2">
+        <span class="fs14">{{langData.common.submit}}</span>
+      </button>
+    </div>
+    <!-- Free Plan -->
+  </ng-template>
+  <!--Congratulations  Popup Start-->
+  <ng-template #congratulations>
+      <div class="modal-header">
+         <button type="button" class="close" aria-label="Close" (click)="congratzmodalRef.hide()">
+            <span aria-hidden="true"><img src="../assets/images/popup-close.svg" alt="close"></span>
+         </button>
+      </div>
+      <div class="modal-body mt-0">
+         <!-- <img src="./assets/images/congrats.svg" alt="Subscribe" class="img-fluid con-img"> -->
+         <h2 class="modal-title">{{langData.billingPage.congratulations}}</h2>
+         <p class="content">{{message}} </p>
+      </div>
+   </ng-template>
+   <!--Congratulations  Popup End-->
+  <ng-template #freesubscriptiondesc>
+    <div class="text-center">
+      <h2 class="text-blue fs18 font-weight-bold">3 Months Free Trial</h2>
+      <p class="fs16 text-black">
+        <strong>{{langData.subscriptionPage.limitedTimeOffer}}:</strong> We are offering free full access to posts all over the world
+        and unlimited ad posting for three month.</p>
+      <p class="fs16">After trial ends, you will be downgraded to a free account with limited access and no ad posting.</p>
+    </div>
+    <hr class="border-grey14 my-4">
+    <h3 class="text-black2 fs16 font-weight-bold">{{langData.subscriptionPage.friendlyReminder}}</h3>
+    <ul class="checked-list fs14 pl-4">
+      <li class="mb-3">Your Payment method will be automatically charged the subscription amount monthly / yearly</li>
+      <li class="mb-3">A 3 months minimum commitment is required for monthly subscriptions </li>
+      <li class="mb-3">Your subscription will be active until you cancel (You cana cancel anytime after 3 months for monthly subscription or
+        1 year if you have chosen yearly subscription).</li>
+    </ul>
+  </ng-template>
+  <ng-template #failure>
+      <div class="modal-header"  style="display: block;" ng-show="true">
+         <button type="button" class="close" aria-label="Close" (click)="failuremodalRef.hide()">
+            <span aria-hidden="true"><img src="../assets/images/popup-close.svg" alt="close"></span>
+         </button>
+      </div>
+      <div class="modal-body mt-0">
+         <div class="popup_content">
+         <img src="./assets/images/failed-img.svg" alt="Subscribe" class="img-fluid con-img">
+         <h2 class="modal-title">{{langData.billingPage.failed}}</h2>
+         <p class="content">{{message}} </p>
+      </div>
+      </div>
+   </ng-template>
+  <ng-template #payments>
+    <div class="card position-relative mb-4 h-lg-100" [ngClass]="{'shadow-none border-0': mobileView}">
+      <div class="card-body py-lg-4 px-lg-5">
+        <h2 class="text-black2 fs18 mb-3 mt-2 font-weight-bold desktop-view">{{langData.subscriptionPage.paymentInformation}}</h2>
+        <ul class="list-unstyled pl-0 taginput-list mb-0 d-flex flex-row" *ngIf="hideRadio">
+            <li class="ml-lg-0 mr-2" (click)="PlanSelected('monthly')" *ngIf = "monthlyHide == false">
+               <div class="custom-checkbox">
+                  <input id="check1" name="acctype" type="radio" [checked]="checkedMonthly">
+                  <svg class="position-absolute" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                     width="21px" xmlns="http://www.w3.org/2000/svg">
+                     <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                        stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                  </svg>
+                  <label for="check1">{{langData.billingPage.monthly}}</label>
+               </div>
+            </li>
+            <li class="mr-lg-0 ml-2" (click)="PlanSelected('yearly')">
+               <div class="custom-checkbox">
+                  <input id="check2" name="acctype" type="radio" [checked]="checkedYearly">
+                  <svg class="position-absolute" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                     width="21px" xmlns="http://www.w3.org/2000/svg">
+                     <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                        stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                  </svg>
+                  <label for="check2">{{langData.billingPage.yearly}}</label>
+               </div>
+            </li>
+         </ul>
+        <!-- For Monthly  -->
+        <p class="text-grey13 fs14" *ngIf="checkedMonthly && planObject?.planname!='Limited Platinum'">{{langData.subscriptionPage.YouHaveChosenMonthlySubscription}}
+          <strong class="text-black2" >${{planObject?.price}}</strong>
+        </p>
+        <!-- For Yearly  -->
+        <p class="text-grey13 fs14" *ngIf="checkedYearly && planObject?.planname!='Limited Platinum'">{{langData.subscriptionPage.YouHaveChosenYearlySubscription}}
+          <strong class="text-black2" *ngIf="planObject?.planname=='Gold'">${{goldYearly}}</strong>
+          <strong class="text-black2" *ngIf="planObject?.planname=='Platinum'">${{platinumYearly}}</strong>
+         
+        </p> 
+        <p class="text-grey13 fs14" *ngIf="planObject?.planname=='Limited Platinum'">You have chosen Platinum Plan 
+        <strong class="text-black2" >${{planObject?.price}}</strong>
+        </p>
+  
+        <form [formGroup]="cardForm">
+          <div class="form-group">
+            <label class="text-grey13">{{langData.subscriptionPage.nameOnCard}}</label>
+            <input #name class="form-control" placeholder="" type="text" formControlName="name" [ngClass]="{ 'is-invalid': submitted && cardForm.get('name').invalid}"
+              pattern="^[a-zA-Z\b ]+$" placeholder="" type="text" required> </div>
+          <span class="text-danger fs16" *ngIf="submitted &&  cardForm.get('name').errors">
+            <small *ngIf="cardForm.get('name').errors">{{langData.billingPage.cardHolderNameRequired}}</small>
+          </span>
+          <div class="form-group">
+            <label class="text-grey13 fs14">{{langData.billingPage.cardNumber}}</label>
+            <div class="input-group payment-input-group mb-3">
+              <ng-container *ngIf="editValue == false">
+                <input class="form-control border-right-1" placeholder="" type="text" formControlName="cardnumber" (keypress)="numberOnly($event)"
+                  (change)="checkCardType($event.target.value); cvvClear()" maxlength="19" (input)="cardFormat()" [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }"
+                  required>
+              </ng-container>
+              <ng-container *ngIf="editValue">
+                <input class="form-control border-right-1" placeholder="" type="text" formControlName="cardnumber" (keypress)="numberOnly($event)"
+                  [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }" required [readOnly]="cardNumberShow">
+              </ng-container>
+            </div>
+            <span class="text-danger fs16" *ngIf="submitted &&  cardForm.get('cardnumber').errors">
+              <small *ngIf="cardForm.get('cardnumber').errors">{{langData.billingPage.cardNumberrequired}}</small>
+            </span>
+            <span class="text-danger fs16" *ngIf="invalidcard">
+              <small *ngIf="cardForm.get('cardnumber').errors">{{langData.billingPage.invalidCardNumber}}</small>
+            </span>
+          </div>
+          <div class="row">
+            <div class="col-6 col-md-6">
+              <label class="text-grey13 fs14">{{langData.billingPage.expiryDate}}</label>
+              <div class="form-group row">
+                <div class="col-5 pr-1 mr-20">
+                  <select class="custom-select month pr-0" formControlName="expmonth" [ngClass]="{ 'is-invalid': submitted && cardForm.get('expmonth').invalid}"
+                    required>
+                    <option selected hidden value="">MM</option>
+                    <ng-container *ngFor="let m of months">
+                      <option value="{{m}}">{{m}}</option>
+                    </ng-container>
+                  </select>
+                </div>
+                <div class="col-5 pl-1">
+                  <select class="custom-select year pr-0" formControlName="expyear" [ngClass]="{ 'is-invalid': submitted && cardForm.get('expyear').invalid}"
+                    required>
+                    <option selected hidden value="">YYYY</option>
+                    <ng-container *ngFor="let y of years">
+                      <option value="{{y}}">{{y}}</option>
+                    </ng-container>
+                  </select>
+  
+                </div>
+              </div>
+              <span *ngIf="submitted && cardForm.get('expmonth').invalid && cardForm.get('expmonth').errors.required && cardForm.get('expyear').invalid && cardForm.get('expyear').errors.required"
+                class="text-danger fs14 pl-3">
+                <small>{{langData.billingPage.expiryDateRequired}}</small>
+              </span>
+            </div>
+            <div class="col-4 offset-2 col-md-3 offset-md-3" *ngIf="cvvDisabled">
+              <label class="text-grey13 fs14">{{langData.billingPage.CVV}}</label>
+              <div class="form-group">
+                <input #cvvInput class="form-control text-center" (keypress)="numberOnly($event)" type="password" value="cvv"
+                  class="form-control text-center" formControlName="cvv" maxlength="{{cvvLength}}" [ngClass]="{ 'is-invalid': submitted && cardForm.get('cvv').invalid}"
+                  required>
+              </div>
+              <span *ngIf="submitted && cardForm.get('cvv').invalid && cardForm.get('cvv').errors.required" class="text-danger fs14">
+                <small>{{langData.billingPage.cvvRequired}}</small>
+              </span>
+            </div>
+          </div>
+          <div class="text-lg-left text-center" *ngIf="cvvDisabled == true">
+            <button class="btn btn-blue btn-rounded px-30 py-2 mt-3  mr-2 mb-2" type="button" (click)="createToken(); subscriptionPage = true">
+              <span class="fs14">{{langData.common.save}}</span>
+            </button>
+            <ng-container *ngIf="deletingCard">
+              <button class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button" (click)="closeShowpaymentcontent()">
+                <span class="fs14">{{langData.common.cancel}}</span>
+              </button>
+            </ng-container>
+          </div>
+          <div class="text-lg-left text-center" *ngIf="cvvDisabled == false">
+            <button class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button" (click)="editCard();  subscriptionPage = true">
+              <span class="fs14">{{langData.billingPage.update}}</span>
+            </button>
+            <button class="btn btn-blue btn-rounded px-30 py-2 mt-3 mb-2" type="button" (click)="closeShowpaymentcontent()">
+              <span class="fs14">{{langData.common.cancel}}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+  
+  
+  <div [ngClass]="{'bg-grey5' : desktopView, 'pt-5': page == 1}">
+    <!-- Mobile Header -->
+    <div class="mobile-view">
+      <header class="mobile-header">
+        <div class="position-relative">
+          <em class="fas fa-chevron-left" (click)="page = 1" *ngIf="page == 2"></em>
+          <h1>
+            <span *ngIf='page == 1' class="fs16">Subscription</span>
+            <span *ngIf='page == 2' class="fs16">Payment Information</span>
+          </h1>
+        </div>
+      </header>
+      <div class="sub-mobile-header" *ngIf="page == 1 && mobileView" (click)="openModal(freesubscriptiondetails)">
+        <span class="text-blue font-weight-bold fs14">3 Months Free Trial</span>
+        <div class="text-black2 fs12">Friendly Reminder
+          <em class="fas fa-chevron-right float-right text-grey17 fs16"></em>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Header -->
+    <!-- Body Content -->
+    <section class="container  my-5 mt-xl-0 min-h-60vh">
+      <!-- Personal Information -->
+      <form class="personal-info-form pt-xl-4" [ngClass]="{'pt-lg-5': page == 1}">
+        <div *ngIf="desktopView">
+          <h1 class="fs26 font-weight-bold text-center my-4 text-black2">Subscription Plans</h1>
+          <!-- Plan Cards -->
+          <ng-container [ngTemplateOutlet]="plancards"></ng-container>
+          <!-- Plan Cards -->
+          <!-- Paid Plans -->
+          <div class="row">
+            <div class="col-md desktop-view" *ngIf="showcontent==true">
+              <div class="card position-relative mb-4 h-lg-100">
+                <div class="card-body px-4 py-5">
+                  <ng-container [ngTemplateOutlet]="freesubscriptiondesc"></ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="col-md" *ngIf="showcontent == true">
+              <!-- payment Card -->
+              <ng-container [ngTemplateOutlet]="payments"></ng-container>
+              <!-- payment Card -->
+            </div>
+            
+          </div>
+          <!-- Paid Plans -->
+        </div>
+        <!-- Mobile View  -->
+        <div *ngIf="mobileView">
+          <div *ngIf="page == 1">
+            <!-- Plan Cards -->
+            <ng-container [ngTemplateOutlet]="plancards"></ng-container>
+            <!-- Plan Cards -->
+            <!-- Pay btn -->
+            <div class="text-center pt-1 pb-4">
+              <button type="button" *ngIf="plantype == 2 || plantype == 3 || plantype == 4" (click)="page = 2" class="btn btn-blue btn-rounded px-5 py-2">
+                <span class="fs14">Pay</span>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="page == 2">
+            <!-- payment Card -->
+            <ng-container [ngTemplateOutlet]="payments"></ng-container>
+            <!-- payment Card -->
+          </div>
+        </div>
+        <!-- Mobile View  -->
+      </form>
+    </section>
+    <!-- Body Content -->
+    <!-- footer Section -->
+    <!-- <app-auth-footer class="desktop-view"></app-auth-footer> -->
+    <!-- footer Section -->
+  </div>
+  <!-- Mobile Preferred Industries Modal -->
+  <ng-template #freesubscriptiondetails>
+    <div class="modal-header bg-grey12 border-0 px-3">
+      <h1 class="fs18 text-center text-blue py-2 mb-0">Friendly Reminder</h1>
+      <button type="button" class="close position-absolute rt-29px op-1 mt-0 py-1" aria-label="Close" (click)="modalRef.hide()">
+        <span class="lnr lnr-cross font-weight-bold text-grey11 fs20"></span>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <!-- Subscription Desc -->
+      <ng-container [ngTemplateOutlet]="freesubscriptiondesc"></ng-container>
+      <!-- Subscription Desc -->
+      <div class="mobile-checkbox-list" *ngIf="mobileView">
+        <ng-container [ngTemplateOutlet]="preferedindustryCheckboxlist"></ng-container>
+      </div>
+    </div>
+  </ng-template>
+  <!-- Mobile prefered location Modal -->

@@ -1,0 +1,121 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }" ></ngx-loading>
+<div class="container mt-5 pt-2">
+  
+          <div class="row my-3">
+            <div class="col-md-6">
+               <div class="company-tab post-list-tabs">
+                  <ul class="nav nav-pills  nav-justified">
+                     <li class="nav-item">
+                     <a class="nav-link" [class.active]="tabActive === 1" (click)="tabChange(1)" href="javascript:void(0)"><span class="fas fa-circle text-green float-left pt-2 fs12"></span> {{langData.postListPage.active}} ({{activeCount}})</a>
+                     </li>
+                     <li class="nav-item">
+                    
+                     <a class="nav-link"  [class.active]="tabActive === 2" (click)="tabChange(2)" href="javascript:void(0)"> <span class="fas fa-circle text-yellow float-left pt-2 fs12"></span> {{langData.postListPage.paused}} ({{pausedCount}})</a>
+                     </li>
+                     <li class="nav-item">
+                     
+                     <a class="nav-link fs16"  [class.active]="tabActive === 3" (click)="tabChange(3)" href="javascript:void(0)"><span class="fas fa-circle text-red2 float-left pt-2 fs12"></span> {{langData.postListPage.deleted}} ({{deletedCount}})</a>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+
+            <div class="col-md-3 offset-md-3 my-auto">
+               <div class="input-group search-input">
+                  <div class="input-group-prepend float-right">
+                     <span class="input-group-text py-1 px-2 bg-white border-0"><span
+                        class="lnr lnr-magnifier fs20"></span></span>
+                  </div>
+                  <input type="text" [ngModel]="search" (input)="onSearchChange($event.target.value)"class="form-control border-0 togglesearch pl-0" [placeholder]="langData.postListPage.searchPost" aria-label="Search">
+               </div>
+            </div>
+          </div>
+          
+
+          <div class="summary-box br5 pt-2 mb30 bg-white overflow-hidden">
+               <div class="table-businessin">
+           
+           
+                <table class="table table-striped mb0">
+                   <thead>
+                     <tr>
+                       <th class="border-0 fs18 w-24px"></th> 
+                       <th class="border-0 fs18 pl-2">{{langData.postListPage.name}} <em (click)="orderBy('postname')" class="fa fa-fw fa-sort sort-color"></em></th>
+                       <th class="border-0 fs18 pl-2">{{langData.common.view}} <em (click)="orderBy('postcount')" class="fa fa-fw fa-sort sort-color"></em></th>
+                       <th class="border-0 fs18">{{langData.postListPage.type}} <em (click)="orderBy('accname')" class="fa fa-fw fa-sort sort-color"></em></th>
+                       <th class="border-0 fs18" *ngIf="tabActive === 3">{{langData.postListPage.createdOn}} <em (click)="orderBy('createdon')" class="fa fa-fw fa-sort sort-color"></em></th>
+                       <th class="border-0 fs18" *ngIf="tabActive === 2 || tabActive === 1">{{langData.postListPage.create}} <em (click)="orderBy('createdon')" class="fa fa-fw fa-sort sort-color"></em></th>
+                       <th class="border-0 fs18">
+                           <ng-container *ngIf="tabActive !== 3">
+                          {{langData.postListPage.updatedOn}} <em (click)="orderBy('updatedon')" class="fa fa-fw fa-sort sort-color"></em>
+                        </ng-container>
+                        <ng-container *ngIf="tabActive === 3">
+                              {{langData.common.deletedOn}} <em (click)="orderBy('updatedon')" class="fa fa-fw fa-sort sort-color"></em>
+                            </ng-container>
+                        </th>
+                       <ng-container *ngIf="tabActive !== 3">
+                       <th class="border-0 fs18">{{langData.postListPage.status}}</th>
+                     </ng-container>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     <tr *ngFor="let viewPostList of postName | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index">
+                       <td class="fs14 w-24px px-0 text-right" (click)="viewPost(viewPostList)">
+                           <div *ngIf="viewPostList">
+                              <img alt="default-businessin-images" *ngIf="!viewPostList.postlogo || viewPostList.postlogo == null" class="post-list-img" src="./assets/images/mobile-logo.png">
+                              <img alt="top-pics-images" *ngIf="viewPostList.postlogo && viewPostList.postlogo !== null" class="post-list-img" src="{{cloudeURL}}{{viewPostList.postlogo}}">
+                           </div>
+                      </td> 
+                      
+                      <td class="fs14 pl-2" (click)="viewPost(viewPostList)"><a  href="javascript:void(0)" style="color: black">{{viewPostList.postname | truncate : 20 : "..."}}</a></td>
+                       <td class="fs14" (click)="viewPost(viewPostList)"><a  href="javascript:void(0)" style="color: black">{{viewPostList.postcount}}</a></td>
+                       <td class="fs14" (click)="viewPost(viewPostList)"><a  href="javascript:void(0)" style="color: black">{{viewPostList.accname}}</a></td>
+                       <td class="fs14" (click)="viewPost(viewPostList)"> <span *ngIf="viewPostList.createdon !== null || viewPostList.createdon !== ''"><a  href="javascript:void(0)" style="color: black">{{ convertutctolocal(viewPostList.createdon) | amLocale:'en' | amDateFormat:'MMM D, YYYY  h:mm A' }}</a></span></td>
+                       <td class="fs14" (click)="viewPost(viewPostList)"><span *ngIf="viewPostList.updatedon !== null || viewPostList.updatedon !== null"><a  href="javascript:void(0)" style="color: black">{{ convertutctolocal(viewPostList.updatedon)  | amLocale:'en' | amDateFormat:'MMM D, YYYY  h:mm A' }}</a></span></td>
+                       <ng-container *ngIf="tabActive !==3">
+                       <td >
+ 
+                        <ul class="list-inline mb-0 custom-tooltip-alignment">
+                           <li class="list-inline-item  play-tooltip" *ngIf="tabActive === 2" (click)="changeStatus(viewPostList.postid, 1)"><a href ="javascript:void(0)"><img tooltip="click on active to add the post from other's law"  src="./assets/images/play-green.svg" alt="play"></a>
+                           <ng-template #tolTemplate class="font-weight-bold">{{langData.postListPage.clickActiveToAddPostForOthersView}}</ng-template></li>
+                           <!-- (click)="changeStatus(viewPostList.postid, 2)" -->
+                           <li class="list-inline-item pause-tooltip" *ngIf="tabActive === 1" (click)="changeStatus(viewPostList.postid, 2)"><a href ="javascript:void(0)"><img tooltip="Click here to hide the post from others." placement="top" src="./assets/images/pause-orange.svg" alt="pause"></a>
+                              <ng-template #toTemplate class="font-weight-bold">{{langData.postListPage.clickPauseToRemovePostFromOtherView}}</ng-template></li>
+                           <li class="list-inline-item" (click)="editPost(viewPostList.postid)"><a href ="javascript:void(0)"><img alt="play" src="./assets/images/edit-grey.svg"></a></li>
+                           <li class="list-inline-item"><a href ="javascript:void(0)"><img alt="play" src="./assets/images/delete-red.svg" (click)="openModal(delete, viewPostList.postid)"></a></li>
+                        </ul>
+
+                       </td>
+                     </ng-container>
+                     </tr>
+                     <tr *ngIf="postName.length === 0 && loading == false" class="text-center">
+                        <td colspan="7" class="text-light-grey">{{langData.common.noDataFound}}</td>
+                     </tr>
+                   </tbody>
+                 </table> 
+               </div>
+             </div>
+            <div>
+               <pagination-controls (pageChange)="postChange($event)" directionLinks="true" autoHide="true"
+                  responsive="true"  previousLabel="" nextLabel="">
+               </pagination-controls>
+            </div>
+</div>
+
+<ng-template #delete>
+   <div class="modal-header bg-grey12 border-0 text-center">
+      <h1 class="modal-title fs20 font-weight-bold mx-auto">{{langData.postListPage.deletePost}}</h1>
+      <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+      <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+      </button>
+   </div>
+  <div class="modal-body text-center">
+      <img alt="play" src="./assets/images/delete-red.svg" style="width:30px;margin-top: -30px;padding: -9px;height:30px;">
+    <p class="fs15">{{langData.postListPage.areYouSureWantToDeleteThisPost}}</p>
+    <div class="">
+      <button type="button" class="btn btn-outline-secondary fs14 px-4 mr-3" style="border-radius: 5px; font-weight: 700;" (click)="modalRef.hide()">{{langData.common.cancel}}</button>
+      <button type="button" class="btn fs14 px-4" style="border-radius: 5px; font-weight: 700; background-color: #F03813; color: white" (click)="deletePost()">{{langData.common.delete}}</button>
+    </div>
+  </div>
+</ng-template>
+

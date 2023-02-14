@@ -1,0 +1,51 @@
+
+  <section class="container my-5 max-w-lg-1070px" >
+    <div class="mt-4 d-flex align-items-center">
+    <h1 class="fs16 text-black2 d-inline-block font-weight-bold mb-0" *ngIf="profileOrPostListHeader">{{profileOrPostListHeader}}</h1>
+
+    <div class="btn-group ml-auto" placement="bottom right" dropdown>
+      <button id="button-basic" dropdownToggle type="button" class="btn btn-blue  px-3 d-flex align-items-center font-weight-bold"
+              aria-controls="dropdown-basic">
+        {{ viewdBy }} 
+        <span class="badge badge-pill badge-light text-blue custom-badge rounded-circle p-0 mx-2 fs12 d-flex align-items-center justify-content-center">{{viewedCount}}</span> 
+        <span class="lnr lnr-chevron-down ml-3 font-weight-bold"></span>
+      </button>
+      <ul *dropdownMenu class="dropdown-menu">
+        <li role="menuitem"><a class="dropdown-item" (click)="changeViewedBy('Today')" href="javascript:void(0)">Today</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="changeViewedBy('Week')" href="javascript:void(0)">Week</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="changeViewedBy('Month')" href="javascript:void(0)">Month</a></li>
+      </ul>
+    </div>
+  </div>
+   <div class="clearfix"></div>
+
+    <div class="card page-card mt-4">
+      <div class="card-body pt-4 pb-0">
+        <div class="row">
+          <div class="col-md-4" *ngFor="let view of viewList | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: viewedCount }; let i = index">
+            <div class="viewed-user-card c-pointer" (click)="viewProfile(view)">
+              <img src="./assets/images/default-user.jpg" *ngIf="view.profileimage === null" class="user-img rounded-circle position-absolute" alt="user-img">
+              <img src="{{cloudeURL}}{{view.profileimage}}" *ngIf="view.profileimage !== null" class="user-img rounded-circle position-absolute" alt="user-img">
+              <div class="user-desc">
+                <h2 class="user-desc-title mb-1 font-weight-bold" style="text-transform: capitalize">{{view.name}}</h2>
+                <span class="user-desc-designation font-weight-bold d-block" *ngIf="view.acctypeshortname !== null">{{view.acctypeshortname}}</span>
+                <span class="user-desc-designation1 d-block" *ngIf="view.companyname !== null" onmouseover=""
+                style="cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{view.companyname}}>{{view.companyname | truncate : 22 : "..."}}</span>
+                <span class="user-desc-location" *ngIf="view.location !== null" onmouseover=""
+                style="cursor: pointer;" placement = 'top' tooltip={{view.location}}>{{view.location | truncate : 22 : "..."}}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="viewList.length === 0 && loading == false" class="text-center">
+            <span class="text-light-grey">
+              {{langData.common.norecords}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="viewList.length > 0" class="text-center w-100 d-flex justify-content-center" >
+      <pagination-controls (pageChange)="viewListChange($event)"  previousLabel="" nextLabel="" autoHide="true" responsive="true">
+      </pagination-controls>
+    </div>
+  </section>

@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+
+// @import "~bootstrap-sass/assets/stylesheets/bootstrap";
+// @import "~ngx-toastr/ng2-select.css";
+@import "~ngx-toastr/toastr.css";
+@import './scss-styles/helpers/variables';
+@import './scss-styles/components/_buttons';
+@import './scss-styles/components/_navigation';
+@import './scss-styles/helpers/helpers';
+@import './scss-styles/helpers/_pages';
+@import './scss-styles/reset/style';
+@import './scss-styles/reset/_fonts';
+@import './scss-styles/reset/_color';
+@import './scss-styles/layout/_forms';
+@import './scss-styles/layout/_sidebar';
+@import './scss-styles/layout/header';
+@import './scss-styles/layout/footer';
+@import './scss-styles/responsive'; 
+
+
+.c-pointer{
+    cursor: pointer
+}

@@ -1,0 +1,57 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }" ></ngx-loading>
+<div class="bg-grey5 pt-5">
+  <section class="container mb-5 max-w-lg-1070px">
+    <div class="row">
+      <div class="col-md-3 mx-2rem ml-auto">
+        <div class="input-group search-input">
+          <div class="input-group-prepend">
+            <span class="input-group-text py-1 px-2 bg-white border-0"><span
+                class="lnr lnr-magnifier fs20"></span></span>
+          </div>
+          <input type="text" [ngModel]="search" (input)="onSearchChange($event.target.value)" class="form-control border-0 togglesearch pl-0" [placeholder]="langData.bookmarkPage.searchBookmark"
+            aria-label="Search" aria-describedby="basic-addon1">
+
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="bookmarkList.length>0" class="card custom-user-card overflow-hidden">
+          <div class="card-body pt-0 pb-0">
+            <ul class="list-group toppics-list">
+
+              <li *ngFor="let bookmark of bookmarkList | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index" class="list-group-item position-relative">
+                <img src="{{cloudeURL}}{{bookmark.postlogo}}" onError="this.src='assets/images/mobile-logo.png';" alt="top-pics-images" class="position-absolute" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">
+                <div *ngIf = "bookmark.poststatus !== 1" class="position-absolute py-2 text-center content-align">
+                <img alt="No post" src="./assets/images/bookmarkNolonger.png">
+                <p class="fs15">{{langData.bookmarkPage.noLongerAvailable}}</p>
+              </div>
+                <div class="top-pic-desc">
+                  <h4 class="fs14 mt-1 mb-1 font-weight-bold text-black2" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">{{bookmark.postname}}</h4>
+                  <span class="brand-name" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">{{bookmark.companyname}}</span>
+                  <button type="button" (click)="removeBookmark(bookmark)" class="btn btn-blue btn-rounded float-right">{{langData.common.remove}}</button>
+                </div>
+                <div class="desc-section">
+                  <span class="time-text" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">{{bookmark.createdon | date:'MMM d, y, h:mm a' }}</span>
+                  <p class="mb-0 fs14 text-black2" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">{{bookmark.summary}}</p>
+                  <a href="javascript:void(0)" *ngIf="bookmark.poststatus === 1" class="text-blue float-right font-weight-bold" (click)="viewPost(bookmark)" [ngClass]="bookmark.poststatus === 1 ? ' ' : 'blur-bg'">View More</a>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+        <div *ngIf="bookmarkList?.length === 0 && loading == false" class="text-center">
+          <span class="text-light-grey">
+              {{langData.common.norecords}}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="bookmarkList.length > 0" class="text-center w-100 d-flex justify-content-center" >
+      <pagination-controls (pageChange)="postChange($event)"  previousLabel="" nextLabel="" autoHide="true" responsive="true">
+     </pagination-controls>
+    </div>
+  </section>
+
+</div>

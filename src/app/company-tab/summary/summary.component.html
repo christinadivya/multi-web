@@ -1,0 +1,31 @@
+<section class="mt30">
+  <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.summary}}</h1>
+  <div class="card br5 summary-box mb30">
+    <div class="card-body fs14 word-break-all">
+      {{postdata.postsummary}}
+    </div>
+  </div>
+
+  <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.targetedLocation_s}}</h1>
+  <div class="card br5 summary-box mb30">
+    <div class="card-body fs14">
+      <ul class="list-group list-group-horizontal d-block">
+        <li *ngFor="let location of locationFinal" class="list-group-item mr-3 rounded bg-grey9 brdr-grey d-inline-block my-2">
+          {{location.final}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.targetedIndustry_s}}</h1>
+  <div class="card br5 summary-box mb30">
+    <div class="card-body fs14">
+      <ul class="list-group list-group-horizontal d-block">
+        <li *ngFor="let industry of postdata.postindustry" class="list-group-item mr-3 rounded bg-grey9 brdr-grey d-inline-block my-2">
+            {{industry.industryname}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</section>

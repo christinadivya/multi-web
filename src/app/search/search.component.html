@@ -1,0 +1,265 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }" ></ngx-loading>
+<app-header (messageEvent)="receiveMessage($event)"></app-header>
+<div class="search-card mt53 px-5">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="sel1" class="fs13">{{langData.header.type}}<sup class="text-red">*</sup></label>
+        <select class="form-control custom-arrow" (change)="onTypeChange($event.target.value)" [ngModel]="typeId" id="sel1">
+          <option value="100">{{langData.header.type}}</option>
+          <ng-container *ngFor="let type of typeList">
+            <option [value]=type.accounttypeid>{{type.accounttypeshortname}}</option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group location-box">
+        <label for="sel2" class="fs13">{{langData.header.location_s}}<sup class="text-red">*</sup></label>
+        <ngx-select [allowClear]="true" [items]="items" optionTextField="final" [(ngModel)]="selectedcityid"
+          (typed)="mylocationSearch($event)" (selectionChanges)="locationChanges($event)" [placeholder]="langData.searchPage.chooseLocation"
+          class="location-hidden" [disabled]="planBased" [tooltip]="tooltipStatus">
+          <ng-template ngx-select-option ngx-select-option-selected let-option let-text="text">
+            {{option.data.final}}
+          </ng-template>
+          <ng-template ngx-select-option-not-found let-input>
+            "{{input}}" not found
+          </ng-template>
+        </ngx-select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="sel3" class="fs13">{{langData.header.industry_s}}<sup class="text-red">*</sup></label>
+        <select class="form-control  custom-arrow" (change)="onIndChange($event.target.value, 2)" [ngModel]="indusId" id="sel3">
+          <option value="500">{{langData.header.industry_s}}</option>
+          <ng-container *ngFor="let industry of industryList">
+            <option [value]=industry.industryid>{{industry.industryname}}</option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3 my-auto">
+      <div class="mt12">
+        <button type="button" (click)="clearFilter()" class="btn btn-blue-outline btn-rounded mr-3">{{langData.searchPage.clear}}</button>
+        <button type="button" *ngIf="!moreFilter" (click)="showMoreFilter()" class="btn btn-primary btn-rounded"><span
+            class="mr-2"><img src="./assets/images/filter.svg" alt="businessin-message"></span>{{langData.searchPage.moreFilter}}</button>
+        <button type="button" *ngIf="moreFilter" (click)="showMoreFilter()" class="btn btn-primary btn-rounded"><span
+            class="mr-2"></span>{{langData.searchPage.done}}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- search box -->
+
+  <div class="row">
+    <div *ngIf="seletedLocation.length>0" class="col-md-6 border-right">
+      <h2 class="fs14 font-weight-bold">{{langData.searchPage.selectedLocation}}</h2>
+      <ul class="chips-list list-unstyled mb-0 pt-3">
+        <li *ngFor="let location of seletedLocation; let i = index" class="">
+          {{location.displayName}}
+          <span (click)="removeLocation(i)" class="remove-btn rounded-circle"><span class="fas fa-minus">
+            <!-- <img tooltip="hai"> -->
+          </span></span>
+        </li>
+
+      </ul>
+    </div>
+
+    <div *ngIf="seletedIndustry.length > 0" class="col-md-6">
+      <h2 class="fs14 font-weight-bold">{{langData.searchPage.selectedIndustry}}</h2>
+      <ul class="chips-list list-unstyled mb-0 pt-3">
+        <li *ngFor="let industry of seletedIndustry; let i = index" class=""> {{industry.industryname}}<span
+            (click)="removeIndustry(i)" class="remove-btn rounded-circle"><span class="fas fa-minus"></span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <!-- search box -->
+
+  <div *ngIf="moreFilter" class="row">
+    <div *ngIf="showInvertorType" class="col-md-3">
+      <h1 class="fs18 font-weight-bold">{{langData.header.investorType}}<sup class="text-red">*</sup></h1>
+      <ul class="list-unstyled mb-0 search-check-list mt-4">
+        <li>
+          <div class="custom-checkbox">
+            <input type="radio" name="userInvestor" id="preferredInd" (change)="subInvestor(0)" checked>
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkCurrentCheckbox('preferredInd', 0)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredInd" class="custom-radio-changes">All</label>
+          </div>
+        </li>
+        <li *ngFor="let investorValue of inves; let i = index">
+          <div class="custom-checkbox">
+            <input type="radio" name="userInvestor" id="preferredInd{{i}}" (change)="subInvestor(investorValue)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkCurrentCheckbox('preferredInd' + i, investorValue)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredInd{{i}}" class="custom-radio-changes">{{investorValue.subaccname}}</label>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3">
+      <h1 class="fs18 font-weight-bold">{{langData.header.companySize}}<sup class="text-red"></sup></h1>
+      <ul class="list-unstyled mb-0 search-check-list mt-4">
+        <li>
+          <div class="custom-checkbox">
+            <input type="radio" name="userCompany" id="preferredComp" (change)="getCompanySize(0)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkCompanyCheckbox('preferredComp', 0)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredComp" class="custom-radio-changes">All</label>
+          </div>
+        </li>
+        <li *ngFor="let companies of companysize; let i = index">
+          <div class="custom-checkbox">
+            <input type="radio" name="userCompany" id="preferredComp{{i}}" (change)="getCompanySize(companies)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkCompanyCheckbox('preferredComp' +i, companies)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredComp{{i}}" class="custom-radio-changes">{{companies.compsize}}Employees</label>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3">
+      <h1 class="fs18 font-weight-bold">{{langData.header.yearInBusiness}}<sup class="text-red"></sup></h1>
+      <ul class="list-unstyled mb-0 search-check-list mt-4">
+        <li>
+          <div class="custom-checkbox">
+            <input type="radio" name="userBusiness" id="preferredBusiness1" (change)="getBussinessYear(1)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkYearCheckbox('preferredBusiness1', 1)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredBusiness1" class="custom-radio-changes">&lt;1 &nbsp; Year</label>
+          </div>
+        </li>
+        <li>
+          <div class="custom-checkbox">
+            <input type="radio" name="userBusiness" id="preferredBusiness2" (change)="getBussinessYear(2)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkYearCheckbox('preferredBusiness2', 2)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredBusiness2" class="custom-radio-changes">1-5 &nbsp;Year</label>
+          </div>
+        </li>
+        <li>
+          <div class="custom-checkbox">
+            <input type="radio" name="userBusiness" id="preferredBusiness3" (change)="getBussinessYear(3)">
+            <svg class="position-absolute c-pointer" height="21px" version="1.1" (click)="checkYearCheckbox('preferredBusiness3', 3)" viewBox="0 0 130.2 130.2" width="21px"
+              xmlns="http://www.w3.org/2000/svg">
+              <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 " stroke="#fff"
+                stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+            </svg>
+            <label for="preferredBusiness3" class="custom-radio-changes">&gt;5 &nbsp; Year</label>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+
+</div>
+<div class="bg-grey5">
+  <section class="container mb-5 max-w-lg-1070px">
+    <div class="row margin-content">
+      <div class="col-md-3 mx-auto ml-auto">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <div class="card custom-user-card overflow-hidden">
+          <div class="card-body pt-0 pb-0">
+            <ul class="list-group toppics-list">
+              <li class="list-group-item position-relative pb-4"
+                *ngFor="let contentValue of overalResult | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index">
+                <div *ngIf="applyBlur" class="py-2 position-absolute d-flex h-100 w-100 align-items-center justify-content-center">
+                  <p class="fs15 text-red font-weight-bold text-center">{{langData.searchPage.pleaseUpgradeYourPlanForFurtherResults}}
+                  </p>
+                </div>
+                <div [ngClass]="applyBlur == false? ' ' : 'blur-bg'">
+
+                  <img src="{{cloudeURL}}{{contentValue.postlogo}}" *ngIf="contentValue.postlogo" alt="top-pics-images"
+                    class="position-absolute">
+                  <img src="./assets/images/mobile-logo.png" *ngIf="!contentValue.postlogo" class="position-absolute"
+                    alt="Company logo">
+                  <div class="top-pic-desc">
+
+                    <h4 class="fs14 mt-1 mb-1 font-weight-bold text-black2">{{contentValue.postname}}</h4>
+                    <span class="brand-name">{{contentValue.companyname}}</span>
+                  </div>
+                  <div class="desc-section">
+                    <span class="time-text">{{ contentValue.createdon| date: 'MMM d, y, h:mm:ss a'}}</span>
+                    <p class="mb-0 fs14 text-black2">{{contentValue.postsummary}}</p>
+                    <a href="javascript:void(0)" class="text-blue float-right font-weight-bold"
+                      (click)="viewPost(contentValue)">{{langData.userHomePage.viewMore}}</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+        <div *ngIf="overalResult?.length === 0" class="text-center mt-3">
+          <span class="text-red">
+            {{langData.common.norecords}}
+          </span>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card custom-user-card overflow-hidden">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Top Picks For You</h3>
+          </div>
+
+          <div class="card-body pt-0 pb-0">
+            <ul class="list-group toppics-list">
+              <li class="list-group-item position-relative pb-4" *ngFor="let top of toppicksforyou">
+                <img src="{{cloudeURL}}{{top.postlogo}}" alt="top-pics-images" class="position-absolute"
+                  *ngIf="top.postlogo">
+                <img src="./assets/images/mobile-logo.png" *ngIf="!top.postlogo" alt="Company logo"
+                  class="position-absolute">
+                <div class="top-pic-desc">
+
+                  <h4 class="fs14 mt-1 mb-1 font-weight-bold text-black2">{{top.postname}}</h4>
+                  <span class="brand-name">{{top.companyname}}</span>
+                </div>
+
+                <div class="desc-section">
+                  <span class="time-text">{{ top.createdon| date: 'MMM d, y, h:mm:ss a'}}</span>
+                  <a href="Javascript:void(0)" class="text-blue float-right font-weight-bold"
+                    (click)="viewPost(top)">{{langData.userHomePage.viewMore}}</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center w-100 d-flex justify-content-left">
+      <pagination-controls (pageChange)="postChange($event)" directionLinks="true" autoHide="true" responsive="true"
+        previousLabel="" nextLabel="">
+      </pagination-controls>
+    </div>
+  </section>
+</div>

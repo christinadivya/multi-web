@@ -1,0 +1,263 @@
+<ng-template #register let-Evaluates='Evaluates'>
+    <form name="form" #registerForm="ngForm"  (ngSubmit)="registerForm.form.valid && registerUser()"  novalidate>
+        <div class="form-group mt20">
+          <label>{{langData.common.firstName}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': registerForm.submitted && password.errors}">
+            <input type="text" class="form-control border-right-0" name="firstname" #firstname="ngModel" maxlength="25" pattern="[A-Za-z]{0,25}" [(ngModel)]="registerData.firstname" [placeholder]="langData.common.firstName" [ngClass]="{'is-invalid': registerForm.submitted && firstname.errors}" required>
+            <div class="input-group-append">
+              <span class="input-group-text border-0 bg-white" [ngClass]="{'is-invalid': registerForm.submitted && firstname.errors}">
+                <img src="./assets/images/businessin-icons/user-icon.svg" alt="User Name">
+              </span>
+             </div>
+          </div>  
+            <div class="text-danger" *ngIf="registerForm.submitted && firstname.errors">
+              <small *ngIf="firstname.errors.required">{{langData.common.pleaseEnterFirstName}}</small>
+              <small *ngIf="firstname.errors.pattern">{{langData.common.firstNameOnlyAlphbets}}</small>
+            </div>
+         </div>
+        <div class="form-group">
+          <label>{{langData.common.lastName}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': registerForm.submitted && password.errors}">
+            <input type="text" class="form-control border-right-0"  name="lastname" #lastname="ngModel" maxlength="25" pattern="[A-Za-z]{0,25}" [(ngModel)]="registerData.lastname" [ngClass]="{'is-invalid': registerForm.submitted && lastname.errors}"  [placeholder]="langData.common.lastName" required>
+            <div class="input-group-append">
+                <span class="input-group-text border-0 bg-white" [ngClass]="{'is-invalid': registerForm.submitted && lastname.errors}" >
+                  <img src="./assets/images/businessin-icons/user-icon.svg" alt="User Name">
+                </span>
+            </div>
+          </div>            
+          <div class="text-danger" *ngIf="registerForm.submitted && lastname.errors">
+            <small *ngIf="lastname.errors.required">{{langData.common.pleaseEnterLastName}}</small>
+            <small *ngIf="lastname.errors.pattern">{{langData.common.lastNameOnlyAlphbets}}</small>
+          </div>
+         </div>
+        <div class="form-group">
+          <label>{{langData.common.emailAddress}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': registerForm.submitted && password.errors}">
+            <input type="email" class="form-control border-right-0" name="email" #email="ngModel" [(ngModel)]="registerData.email" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" [ngClass]="{'is-invalid': registerForm.submitted && email.errors}" [placeholder]="langData.common.emailAddress" required>
+            <div class="input-group-append">
+                <span class="input-group-text border-0 bg-white" [ngClass]="{'is-invalid': registerForm.submitted && email.errors}"><em class="far fa-envelope text-black2 op-35 fs15"></em></span>
+            </div>
+          </div>          
+          <div class="text-danger" *ngIf="registerForm.submitted && email.errors">
+            <small *ngIf="email.errors?.pattern">{{langData.common.pleaseEnterValidEmailAddress}}</small>
+            <small *ngIf="email.errors?.required">{{langData.common.pleaseEnterEmailAddress}}</small>
+          </div>
+        </div>
+        <div class="form-group mb-1">
+          <label>{{langData.common.password}}</label>
+          <div class="input-group" [ngClass]="{'is-invalid': registerForm.submitted && password.errors}">
+              <input [type]="input_type" class="form-control border-right-0" name="password" #password="ngModel" [(ngModel)]="registerData.password"  [ngClass]="{'is-invalid': registerForm.submitted && password.errors}" pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"    [placeholder]="langData.common.password" required>
+            <div class="input-group-append">
+                <span class="input-group-text border-0 bg-white c-pointer" (click)="passwordToggle()" [ngClass]="{'is-invalid': registerForm.submitted && password.errors}"><img [src]="passEye" alt="eye"></span>
+            </div>
+          </div>
+          
+          <div class="text-danger" *ngIf="registerForm.submitted && password.errors">
+            <small *ngIf="password.errors?.required">{{langData.common.pleaseEnterPassword}}</small>
+            <small *ngIf="password.errors?.pattern">{{langData.loginhome.passwordCriteria}}</small>
+          </div>
+      </div>
+        <p class="text-center desc-color fs11 mb-0 mt-4 mb-lg-1 ff-muli-Regular">{{langData.loginhome.byCliciingJoinNow}}</p>
+        <p class="text-center desc-color fs11 mb-4  ff-muli-Regular"><a href="#">{{langData.loginhome.userAgreement}} </a> {{langData.loginhome.and}} <a href="#">{{langData.loginhome.joinNow}}</a></p>
+         
+        <button type="submit" [disabled]="registerflag" class="btn btn-blue btn-block mt-3  fs14 ff-muli-bold">{{langData.loginhome.joinNow}}</button>
+    </form>
+</ng-template>
+
+
+<!-- Social Login -->
+<ng-template #sociallogin>
+    <ul class="floating-list list-unstyled mb-0 pl-0">
+        <li><a class="fb" href="javascript:void(0)" (click)="tryFacebookLogin()"><span class="login-txt">Login with Facebook</span><span class="fab fa-facebook-f login-icon"></span></a></li>
+        <li><a class="twitter" href="javascript:void(0)" (click)="tryTwitterLogin()"><span class="login-txt">Login with Twitter</span><span class="fab fa-twitter login-icon"></span></a></li>
+        <li><a class="linkedin" href="javascript:void(0)" (click)="tryLinkedinLogin()"><span class="login-txt">Login with LinkedIn</span><span class="fab fa-linkedin-in login-icon"></span></a></li>
+        <li><a class="g-plus" href="javascript:void(0)" (click)="tryGoogleLogin()"><span class="login-txt">Login with Google</span><span class="login-icon"><img src="./assets/images/google_circle.svg" alt="google-icon"></span></a></li>
+      </ul>
+</ng-template>
+<!-- Social Login -->
+
+
+
+<section class="desktop-view">
+<!-- Header -->
+<div>
+  <app-auth-header></app-auth-header>
+</div>
+<!-- Header -->
+
+<!-- Body Content -->
+<section class="banner-section">
+ <div class="banner-overlay">
+  <div class="container-fluid align-form-middle p0">
+  <div class="row w-100">
+        <div class="col-lg-6 mx-auto text-white">
+          <div class="pt-5 ml-5">
+          <h1 class="fs30 lh-md-40 pt-5 mt100 mb-5 ff-muli-ExtraBold">{{langData.loginhome.takeYourBusiness}} <br class="d-none d-lg-block"> 
+          <span class="ff-muli-Regular mt-3 d-block">{{langData.loginhome.toTheNextLevel}}</span></h1>
+          <p class="fs18 lh-md-40 ff-muli-semibold mt-md-4">{{langData.loginhome.buildYourFutureFor}} <br> {{langData.loginhome.connectWithOtherBusiness}} <br> {{langData.loginhome.growYourBusiness}}</p>
+        </div>
+        </div>
+        <div class="col-lg-5 mx-auto">
+            <div class="card register-card h-100 mt30 ml160">
+              <div class="card-header border-0 py-3">
+                <h2 class="fs15 text-black2 text-center ff-muli-ExtraBold mb-0">{{langData.loginhome.connectYourBusiness}} {{langData.loginhome.withTheWorld}}</h2>
+              </div>
+              <div class="card-body px-4 pt-3 pb-3 border-0">
+                <ng-container [ngTemplateOutlet]="register"></ng-container>
+              </div>
+            </div>
+          </div>
+            <div class="col-lg-1 social-share-col">
+           <ng-container [ngTemplateOutlet]="sociallogin"></ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white p-5"> 
+  <div class="container text-center">
+    <h3 class="color-darkblack color-darkblack mt-3 mb-5">Our <span class="font-weight-bold">Aim</span></h3>
+    <div class="card-content pt-4 pb-5">
+      <div class="row">
+          <div class="col-md-4">
+            <div class="card c-pointer" routerLink="/companies">
+              <img src="./assets/images/businessin-icons/companies.svg" alt="Companies" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Companies</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 card-up">
+            <div class="card c-pointer" routerLink="/distributor">
+              <img src="./assets/images/businessin-icons/distributors.svg" alt="Distributors" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Distributors</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card c-pointer" routerLink="/enterpreneurs">
+              <img src="./assets/images/businessin-icons/enterpreneurs.svg" alt="Enterpreneurs" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Entrepreneurs</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card c-pointer" routerLink="/investors">
+              <img src="./assets/images/businessin-icons/investers.svg" alt="Investers" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Investors</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 card-up">
+            <div class="card c-pointer" routerLink="/franchasis">
+              <img src="./assets/images/businessin-icons/franchises.svg" alt="Franchises" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Franchises</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card c-pointer" routerLink="/referal">
+              <img src="./assets/images/businessin-icons/getreferrals.svg" alt="Get Referrals" class="card-img-top mx-auto">
+              <div class="card-body">
+                <h5 class="card-title fs16 ff-muli-bold color-lightblack text-center">Get Referrals</h5>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div> 
+  </div>
+</section>
+<!-- Body Content -->
+
+
+<!-- footer Section -->
+<app-auth-footer></app-auth-footer>
+<!-- footer Section -->
+
+
+<!-- Floating Login social login -->
+<!-- <ng-container [ngTemplateOutlet]="sociallogin"></ng-container> -->
+<!-- Floating Login social login -->
+
+</section>
+
+
+<!-- Mobile View -->
+
+<section class="mobile-view bg-auth">
+
+  <div class="overlay p-4">
+      <div class="row">
+          <div class="col-md-7 mx-auto">
+
+    <!-- Login -->
+    <div class="login-view" *ngIf="mobileview == 1">
+      <img src="./assets/images/mobile-logo.png" alt="Business-In-Logo" class="business-in-logo d-block mx-auto my-4">
+
+        <!-- Login Component -->
+        <app-auth-login (forgotpassword)="openModal(forgotpassword)"></app-auth-login>
+        <!-- Login Component -->
+
+      <div class="text-center">
+        
+        <span class="text-white d-block my-3">Or</span>
+
+     
+        <!-- Mobile social login -->
+        <ng-container [ngTemplateOutlet]="sociallogin"></ng-container>
+        <!-- Mobile social login -->
+
+        <span class="text-white">
+            Don't have an account?  <a href="javascript:void(0)" (click)="mobileview = 2" class="text-white border-bottom-2px my-3 d-inline-block">Sign Up</a>
+        </span>
+        
+      
+      </div>
+    </div>
+ 
+    <!-- Login -->
+
+    <!-- Register -->
+
+    <div class="register-view" *ngIf="mobileview == 2">
+
+            <img src="./assets/images/mobile-logo.png" alt="Business-In-Logo" class="business-in-logo d-block mx-auto mb-2">
+
+            <h1 class="fs18 text-blue7 text-center font-weight-bold">Connect Your Business With The World</h1>
+    
+            <ng-container [ngTemplateOutlet]="register" [ngTemplateOutletContext]=""></ng-container>
+    
+             <div class="text-center">
+            
+            <span class="text-white d-block my-3">Or</span>
+    
+            <!-- Mobile social login -->
+            <ng-container [ngTemplateOutlet]="sociallogin"></ng-container>
+            <!-- Mobile social login -->
+    
+            <span class="text-white">
+                Already have an account <a href="javascript:void(0)" class="text-white border-bottom-2px my-3 d-inline-block" (click)="mobileview = 1">Sign In</a>
+            </span>
+
+        </div>
+      </div>
+      
+      </div>
+    </div>
+
+
+    <!-- Register -->
+
+  </div>
+
+   
+
+</section>
+
+
+<!-- Mobile View -->

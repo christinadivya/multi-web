@@ -1,0 +1,72 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<section class="container mt93">
+  <div class="d-flex" *ngIf = "hideLayer == false ">
+
+    <!-- Start Company Basic Info -->
+    <div class="pr-3">
+      <div class="card br5 mb-4 w-280px">
+        <div class="c-pointer" [ngClass]="bookmarkStatus === true ? 'company-card': 'company-card_1'" (click)="addBookmark()" [tooltip]="tooltipStatus" style="
+        position: absolute;
+        right: 7px;
+    "></div>
+        <div class="card-header bg-transparent text-center border-0">
+          <div *ngIf="responseData">
+          <img src="{{cloudeURL}}{{responseData.postlogo}}" *ngIf="responseData && responseData.postlogo && responseData.postlogo != null" class="card-img-top rounded-circle company-logo object-fit-cover" alt="Company logo">
+          <img src="./assets/images/mobile-logo.png" *ngIf="responseData && !responseData.postlogo || responseData.postlogo == null" class="card-img-top rounded-circle company-logo object-fit-contain" alt="Company logo">
+          </div>    
+
+          <div class="post-title my-2">
+            <h1 class="fs14 text-black2 font-weight-bold"  *ngIf="responseData && responseData.postname">{{responseData.postname}}</h1>
+            <h2 class="fs14 text-blue font-weight-bold mt5 mb-0" *ngIf="responseData && responseData.companyname">{{responseData.companyname}}</h2>
+          </div>
+        </div>
+        <hr class="mt0 mb0 ml-3 mr-3">
+        <div class="card-body pt-2  pl10 pr10 pb3">
+          <ul class="list-group list-group-flush" *ngIf="responseData && responseData.postlocation.length > 0">
+              <li class="list-group-item fs14 text-black2 border-0 px-0 py-2">Type :
+                  <span class="font-weight-bold">{{responseData.accounttype.accounttypeshortname}} <span *ngIf="responseData.accounttype.accounttypeid === 3"> &#62; {{responseData.subaccounttype.subaccname}}</span></span></li>
+            <li class="list-group-item fs14 text-black2 border-0 px-0 py-2" *ngIf="responseData.companyfounded !== ''">{{langData.viewPostPage.founded}} :
+              <span class="font-weight-bold">{{responseData.companyfounded}}</span></li>
+            <li class="list-group-item fs14 text-black2 border-0 px-0 py-2" *ngIf="responseData.companysize !== null">{{langData.viewPostPage.companySize}} :
+              <span class="font-weight-bold" *ngIf="responseData.companysize" > {{responseData.companysize.compsize }} {{langData.viewPostPage.employees}}</span></li>
+
+            <li class="list-group-item fs14 text-black2 border-0 px-0 py-2">
+              {{langData.viewPostPage.location}}:
+              <address class="font-weight-bold d-inline-block mb-0" *ngIf="responseData && responseData.city">{{responseData.city.cityname}}, {{responseData.city.countryname}}</address></li>
+          </ul>
+        
+        </div>
+        <div class="card-footer bg-transparent text-center border-0" *ngIf="responseData && responseData.companywebsite">
+          <a href="http://{{responseData.companywebsite}}" target="_blank" class="text-blue text-center d-block text-underline fs13">{{langData.viewPostPage.viewWebsite}}</a>
+        </div>
+      </div>
+    </div>
+    <!-- End Company Basic Info -->
+    <!-- Start Company Details -->
+    <div class="pl-3 flex-fill">
+      <tabset  #tabset [justified]="true" type="pills" class="company-tab">
+        <tab heading="{{langData.viewPostPage.summary}}">
+          <app-summary></app-summary>
+        </tab>
+        <tab heading="{{langData.viewPostPage.businessPitch}}" *ngIf="accountTypeName === 'Entrepreneurs'" (selectTab)="pitchFunction()">
+          <app-business-pitch  ></app-business-pitch>
+        </tab>
+        <tab heading="{{langData.viewPostPage.communication}}" *ngIf="communicationTab" (selectTab)="isCommunication()">
+          <app-communications [chatroomid]="communicationCheck"></app-communications>
+        </tab>
+        <tab heading="{{langData.viewPostPage.notes}}" *ngIf="noteCon">
+          <app-notes></app-notes>
+        </tab>
+        <tab heading="{{langData.viewPostPage.contactInfo}}" *ngIf="contactInfoTab">
+          <app-contact-info></app-contact-info>
+        </tab>
+      </tabset>
+    </div>
+    <!-- End Company Details -->
+
+  </div>
+  <div *ngIf ="hideLayer" class ="position-absolute py-2 text-center content-alignment">
+    <img alt="No post" src="./assets/images/bookmarkNolonger.png">
+    <p class="fs15">{{hideMessage}}</p>
+  </div>
+</section>

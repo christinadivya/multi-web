@@ -1,0 +1,41 @@
+<section class="bg-white mt28">
+  <div class="jumbotron jumbotron-fluid subscription-bg py-5">
+    <div class="container text-center text-white mt-2">
+      <h1 class="fs30 font-weight-bold">{{langData.pricingPage.pricingHeader}}</h1>
+      <p class="fs18 op-9 lh-35 w-60 mx-auto">{{langData.pricingPage.choosePlan}}</p>
+      <div class="custom-control custom-switch plan-switch pl-0"><span class="font-weight-bold fs20 mx-5">{{langData.pricingPage.monthly}}</span>
+        <input type="checkbox" class="custom-control-input" id="customSwitch1" [checked]="showMonth" (change)="changeStatus($event.target.checked)">
+        <label class="custom-control-label font-weight-bold fs20 mx-3" for="customSwitch1">
+          <span class="ml25">{{langData.pricingPage.yearly}}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="px-5 my-2">
+    <div class="row">
+      <div class="col-md-4 col-xl-3 col-lg-4 mb30" *ngFor="let plan of subscriptionList">
+        <div class="card h-100 mb-4">
+          <div class="card-body pb-0">
+            <h5 class="card-title text-blue text-center ff-muli-bold fs22 my-3">{{plan.planname}}</h5>
+            <ul class="ff-muli-Regular pricing-plan-list">
+              <div *ngFor="let feature of plan.managefeature">
+                <li class="fs12 ff-muli-Regular text-black2" *ngIf="feature.active == true">{{feature.feature.description}}</li>
+                <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="feature.active == false">{{feature.feature.description}}</li>
+                <!-- <li class="fs12 ff-muli-Regular text-black2"></li> -->
+                <!-- <li class="fs12 ff-muli-Regular  color-shadegray deactive">Accessing posts worldwide</li>
+                <li class="fs12 ff-muli-Regular color-shadegray deactive">Contacting Targets worldwide</li>
+                <li class="fs12 ff-muli-Regular color-shadegray deactive">Posting</li> -->
+              </div>
+            </ul>
+          </div>
+          <div class="card-footer bg-white border-0 text-center pt-0">
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price === '0.00'">Free</strong>
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price !== '0.00' && plan.planname !== 'Limited Platinum'">${{plan.price}} / {{plan.intervaltype}}</strong>
+            <strong class="d-block mb-4 fs26" *ngIf="plan.price !== '0.00' && plan.planname === 'Limited Platinum'">${{plan.price}} one time</strong>
+            <button class="btn btn-blue mt-2 mb-3 fs13 btn-rounded px-4 py-2 ff-muli-Regular" (click)="signUp(plan.planname,plan.intervaltype)">{{langData.pricingPage.signUpNow}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,570 @@
+<ngx-loading [show]="ngxLoader" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<section class="biiling_main_tab" *ngIf="showContent">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="upgrade_col">
+            <!--Memeber Start-->
+            <div class="row" *ngIf="upgradeShow">
+               <div class="col-md-12">
+                  <div class="card member_col" (click)="Showplan()">
+                     <div class="card-body">
+                        <div class="row">
+                           <div class="col-md-4">
+                              <img src="./assets/images/member_cup.svg" alt="Member" class="img-fluid">
+                           </div>
+                           <div class="col-md-7 text-center">
+                              <div class="card_content">
+                                 <h5 class="card-title">{{langData.billingPage.upgrademembership}}</h5>
+                                 <p class="card-text">{{langData.billingPage.toplans}}</p>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!--Memeber End-->
+            <!--Payment Start-->
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="card payment_col">
+                     <div class="card-body">
+                        <h4 class="card-title tiltle">{{langData.billingPage.paymentMethod}}</h4>
+                        <!--Paymethod List-->
+                        <div class="row" *ngIf="mycard">
+                           <div class="col-md-2">
+                              <div class="payment_icon">
+                                 <img src="{{brandImage}}" alt="Member" class="img-fluid">
+                              </div>
+                           </div>
+                           <div class="col-md-7" *ngIf = cardDetails>
+                              <div class="card_content">
+                                 <h5 class="card-title">{{cardDetails.cardholdername}}</h5>
+                                 <p class="card-text">XXXX-XXXX-XXXX-{{cardDetails.last4}}</p>
+                              </div>
+                           </div>
+                           <div class="col-md-3">
+                              <ul class="payment_action list-inline">
+                                 <li class="list-inline-item edit_list"  style="cursor: pointer;" (click)="editOpen(); showMainContent = true;
+                                 ">
+                                    <p title="Edit"><em class="fas fa-pencil-alt"  style="cursor: pointer;"></em></p>
+                                 </li>
+                                 <li class="list-inline-item delete_list"  style="cursor: pointer;" (click)="openDeleteModal(deletepopup)">
+                                    <p title="Delete"> <em class="fas fa-trash-alt"  style="cursor: pointer;"></em></p>
+                                 </li>
+                              </ul>
+                           </div>
+                        </div>
+                        <!--Paymethod List-->
+                        <!--Add New Payment-->
+                        <div class="row" *ngIf="mycard == false">
+                           <div class="col-md-12">
+                              <div class="addpay_btn text-center">
+                                 <button class="btn btn-primary theme_btn"
+                                    (click)="showMainContent = true; editValue = false; createCardToken(); focusingName()">Add New
+                                    Card</button>
+                              </div>
+                           </div>
+                        </div>
+                        <!--Add New Payment-->
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!--Payment End-->
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="card cancelsubscribe_box">
+            <div class="card-body">
+               <img src="./assets/images/gift.svg" class="img-fluid gift_img" alt="Cancel">
+               <div class="cancelsubscribe_content text-center">
+                  <h4 class="card-title tiltle">{{type}} {{planDuration}}</h4>
+                  <p class="title_sub">{{planType}}</p>
+                  <p class="exp_date" *ngIf="mySubscription && planType !== 'Silver'">Expires on
+                     {{convertutctolocal(subscriptionDate) | amLocale:'en' | amDateFormat:'D-MMMM-YYYY'}}</p>
+                  <p class="exp_sub" *ngIf = "hideAutoRenewal">Auto Renewal on
+                     {{convertutctolocal(autoRenewal) | amLocale:'en' | amDateFormat:'D-MMMM-YYYY'}}
+                  </p>
+                  <div class="row">
+                     <div class="col-md-8 offset-md-3" *ngIf="index!=-1">
+                        <ul class="ff-muli-Regular pricing-plan-list text-left" >
+                           <div *ngFor="let allfeature of plans[index].managefeature">
+                              <li class="fs12 ff-muli-Regular text-black2" *ngIf="allfeature.active == true">{{allfeature.feature.description}}</li>
+                              <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="allfeature.active == false">{{allfeature.feature.description}}</li>
+                           </div>
+                        </ul>
+                     </div>
+                  </div>
+                  <div *ngIf="showButton">
+                     <div class="cancelsubscribe_btn" *ngIf="planType !== 'Silver'">
+                        <button type="button"  style="cursor: pointer;" (click) = "cancelOpen()"  class="btn  btn-rounded py-2 pr-2 mr-4 text-grey26 font-weight-bold hovermsgbtn " [ngClass]="(CancelShow == false) ? 'btn-grey-border' : 'btn-blue'"  [disabled] = "CancelShow == false">
+                           <span class="fs14"  style="cursor: pointer;" [ngClass]="(CancelShow == false) ? '' : 'text-white'" *ngIf="planType !== 'Silver'" >Cancel Subscription</span>
+                        </button>
+                     </div>
+                     <div class="cancelsubscribe_btn" *ngIf="planType === 'Silver'">
+                        <button type="button"  style="cursor: pointer;" class="btn  btn-rounded py-2 pr-2 mr-4 text-grey26 font-weight-bold hovermsgbtn " [ngClass]="(CancelShow == false) ? 'btn-grey-border' : 'btn-blue'">
+                           <span class="fs14"  style="cursor: pointer;" [ngClass]="(CancelShow == false) ? '' : 'text-white'" (click)="Showplan()">Upgrade Subscription</span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<!--Section 1 End-->
+<!--Section 2 Start-->
+<section class="billing_plans_col" *ngIf="showPlanContent">
+   <div class="row mb-4">
+      <div class="col-lg-4 col-md-6 plan-choose" (click)="ShowPlatinum(); planChoosen('Gold')" *ngIf="showGold">
+         <input class="d-none" name="plans" type="radio" id="Gold">
+         <label class="card position-relative subscription-card h-lg-100" for="Gold">
+            <span class="radiobtn">{{langData.billingPage.gold}}</span>
+            <div class="text-center  my-2">
+               <h1 class="mx-auto font-weight-bold mb-1"><sup class="fs19">$</sup><span
+                  class="fs41" *ngIf = "goldMonthly">{{goldMonthly}}</span><small class="fs12">/mo</small></h1>
+               <p class="mb-1 fs14"><span class="font-weight-bold" *ngIf = "goldYearly">(or ${{goldYearly}}/year)</span></p>
+            </div>
+            <ul class="ff-muli-Regular pricing-plan-list text-left" >
+               <div *ngFor="let allfeature of GoldPlanMonthly.managefeature">
+                  <li class="fs12 ff-muli-Regular text-black2" *ngIf="allfeature.active == true">{{allfeature.feature.description}}</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="allfeature.active == false">{{allfeature.feature.description}}</li>
+               </div>
+            </ul>
+         </label>
+      </div>
+      <div class="col-lg-4 col-md-6 plan-choose" (click)="ShowPlatinum() ;planChoosen('Limited')" *ngIf="showLimit">
+         <input class="d-none" name="plans" type="radio" id="Limited Platinum">
+         <label class="card position-relative subscription-card h-lg-100" for="Limited Platinum">
+            <span class="radiobtn">{{langData.billingPage.limitedPlatinum}}</span>
+            <div class="text-center  my-2">
+               <h1 class="mx-auto font-weight-bold mb-1"><sup class="fs19">$</sup><span
+                  class="fs41" *ngIf = "LimitedPlan">{{LimitedPlan.price}}</span><small class="fs12">/use</small></h1>
+               <p class="mb-1 fs14"><span class="font-weight-bold">One time only</span></p>
+            </div>
+            <ul class="ff-muli-Regular pricing-plan-list text-left" >
+               <div *ngFor="let allfeature of LimitedPlan.managefeature">
+                  <li class="fs12 ff-muli-Regular text-black2" *ngIf="allfeature.active == true">{{allfeature.feature.description}}</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="allfeature.active == false">{{allfeature.feature.description}}</li>
+               </div>
+            </ul>
+         </label>
+      </div>
+      <div class="col-lg-4 col-md-6 plan-choose" (click)="ShowPlatinum(); planChoosen('Platinum')" *ngIf="showPlat">
+         <input class="d-none" name="plans" type="radio" id="Platinum">
+         <label class="card position-relative subscription-card h-lg-100" for="Platinum">
+            <span class="radiobtn">{{langData.billingPage.platinum}}</span>
+            <div class="text-center  my-2">
+               <h1 class="mx-auto font-weight-bold mb-1"><sup class="fs19">$</sup><span
+                  class="fs41" *ngIf = "platinumMonthly">{{platinumMonthly}}</span><small class="fs12">/mo</small></h1>
+               <p class="mb-1 fs14"><span class="font-weight-bold" *ngIf = "platinumYearly">(or ${{platinumYearly}}/year)</span></p>
+            </div>
+            <ul class="ff-muli-Regular pricing-plan-list text-left" >
+               <div *ngFor="let allfeature of PlatinumPlanMonthly.managefeature">
+                  <li class="fs12 ff-muli-Regular text-black2" *ngIf="allfeature.active == true">{{allfeature.feature.description}}</li>
+                  <li class="fs12 ff-muli-Regular color-shadegray deactive" *ngIf="allfeature.active == false">{{allfeature.feature.description}}</li>
+               </div>
+            </ul>
+         </label>
+      </div>
+   </div>
+   <div *ngIf = "showLimit == false && showPlat == false && showGold == false"> 
+      <p> {{langData.billingPage.noPlansToUpgrade}}</p>
+   </div>
+</section>
+<!--Section 2 End -->
+
+<!--Section 3 Start-->
+<section class="">
+   <div class="row">
+      <div class="col-md desktop-view" *ngIf="showPlatinumContent">
+         <div class="card position-relative billingpayment_card mb-2 radius-30">
+            <div class="card-body px-4 py-3">
+               <div class="text-center">
+                  <h2 class="text-blue fs18 font-weight-bold">3 Months Free Trial</h2>
+                  <p class="fs16 text-black"><strong>Limited Time Offer:</strong> We are offering free full access to
+                     posts all over the world and unlimited ad posting for three month.</p>
+                  <p class="fs16">After trial ends, you will be downgraded to a free account with limited access and no
+                     ad posting.</p>
+               </div>
+               <hr class="border-grey14 my-4">
+               <h3 class="text-black2 fs16 font-weight-bold">Friendly Reminder</h3>
+               <ul class="checked-list fs14 pl-4">
+                  <li class="mb-3">Your Payment method will be automatically charged the subscription amount monthly /
+                     yearly</li>
+                  <li class="mb-3">A 3 months minimum commitment is required for monthly subscriptions </li>
+                  <li class="mb-3">Your subscription will be active until you can cancel anytime after 3
+                     months for monthly subscription or 1 year if you have chosen yearly subscription).</li>
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="col-md" *ngIf="showPaymentContent">
+         <div class="card position-relative billingpayment_card mb-2 radius-30">
+         <div class="card-body py-lg-2 px-lg-3">
+            <h2 class="text-black2 fs18 mb-3 mt-2 font-weight-bold desktop-view">{{langData.billingPage.paymentInformation}}</h2>
+               <ul class="list-unstyled pl-0 taginput-list mb-0 d-flex flex-row" *ngIf="hideRadio">
+                  <li class="ml-lg-0 mr-2" (click)="PlanSelected('monthly')" *ngIf = "monthlyHide == false">
+                     <div class="custom-checkbox">
+                        <input id="check1" name="acctype" type="radio" [checked]="checkedMonthly">
+                        <svg class="position-absolute" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                           width="21px" xmlns="http://www.w3.org/2000/svg">
+                           <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                              stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                        </svg>
+                        <label for="check1">{{langData.billingPage.monthly}}</label>
+                     </div>
+                  </li>
+                  <li class="mr-lg-0 ml-2" (click)="PlanSelected('yearly')">
+                     <div class="custom-checkbox">
+                        <input id="check2" name="acctype" type="radio" [checked]="checkedYearly">
+                        <svg class="position-absolute" height="21px" version="1.1" viewBox="0 0 130.2 130.2"
+                           width="21px" xmlns="http://www.w3.org/2000/svg">
+                           <polyline class="path check" fill="none" points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                              stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="12"></polyline>
+                        </svg>
+                        <label for="check2">{{langData.billingPage.yearly}}</label>
+                     </div>
+                  </li>
+               </ul>
+               <ng-container *ngIf="amount != '' && choosed != ''">
+                  <p class="text-grey13 fs14">You have chosen {{choosed}} subscription. <strong
+                     class="text-black2 fs18"> Total
+                     ${{amount}}</strong></p>
+               </ng-container>
+               <div class="new-card" *ngIf="mycard == false || editMode == true">
+                  <form [formGroup]="cardForm">
+                     <div class="form-group">
+                        <label class="text-grey13 fs14">{{langData.billingPage.nameOnCard}}</label>
+                        <input #name class="form-control" placeholder="" type="text" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && cardForm.get('name').invalid}"
+                           pattern="^[a-zA-Z\b ]+$" placeholder="" type="text" required>
+                     </div>
+                     <span class="text-danger fs16" *ngIf="submitted &&  cardForm.get('name').errors">
+                        <small *ngIf="cardForm.get('name').errors">{{langData.billingPage.cardHolderNameRequired}}</small>
+                     </span>
+                     <div class="form-group">
+                        <label class="text-grey13 fs14">{{langData.billingPage.cardNumber}}</label>
+                        <div class="input-group payment-input-group mb-3">
+                           <ng-container *ngIf="editValue == false">
+                              <input class="form-control border-right-1" placeholder="" type="text"
+                              formControlName="cardnumber" (keypress)="numberOnly($event)" (change)="checkCardType($event.target.value); cvvClear()"  maxlength="19" (input) = "cardFormat()"
+                              [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }" required>
+                           </ng-container>
+                           <ng-container *ngIf="editValue">
+                              <input class="form-control border-right-1" placeholder="" type="text"
+                                 formControlName="cardnumber" (keypress)="numberOnly($event)" 
+                                 [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }" required
+                                 [readOnly]="cardNumberShow">
+                           </ng-container>
+                        </div>
+                        <span class="text-danger fs16" *ngIf="submitted &&  cardForm.get('cardnumber').errors">
+                           <small *ngIf="cardForm.get('cardnumber').errors">{{langData.billingPage.cardNumberrequired}}</small>
+                        </span>
+                        <span class="text-danger fs16" *ngIf="invalidcard">
+                           <small *ngIf="cardForm.get('cardnumber').errors">{{langData.billingPage.invalidCardNumber}}</small>
+                        </span>
+                     </div>
+                     <div class="row">
+                        <div class="col-6 col-md-6">
+                           <label class="text-grey13 fs14">{{langData.billingPage.expiryDate}}</label>
+                           <div class="form-group row">
+                              <div class="col-5 pr-1 mr-20">
+                                 <select class="custom-select month pr-0" formControlName="expmonth"
+                                    [ngClass]="{ 'is-invalid': submitted && cardForm.get('expmonth').invalid}" required>
+                                    <option selected hidden value="">MM</option>
+                                    <ng-container *ngFor="let m of months">
+                                       <option value="{{m}}">{{m}}</option>
+                                    </ng-container>
+                                 </select>
+                              </div>
+                              <div class="col-5 pl-1">
+                                 <select class="custom-select year pr-0" formControlName="expyear"
+                                    [ngClass]="{ 'is-invalid': submitted && cardForm.get('expyear').invalid}" required>
+                                    <option selected hidden value="">YYYY</option>
+                                    <ng-container *ngFor="let y of years">
+                                       <option value="{{y}}">{{y}}</option>
+                                    </ng-container>
+                                 </select>
+                              </div>
+                           </div>
+                           <span
+                           *ngIf="submitted && cardForm.get('expmonth').invalid && cardForm.get('expmonth').errors.required && cardForm.get('expyear').invalid && cardForm.get('expyear').errors.required"
+                           class="text-danger fs14 pl-3"><small>{{langData.billingPage.expiryDateRequired}}</small></span>
+                        </div>
+                        <div class="col-4 offset-2 col-md-3 offset-md-3" *ngIf="cvvDisabled">
+                           <label class="text-grey13 fs14">{{langData.billingPage.CVV}}</label>
+                           <div class="form-group"><input #cvvInput class="form-control text-center"
+                              (keypress)="numberOnly($event)" type="password" value = "cvv" class="form-control text-center"
+                              formControlName="cvv" maxlength="{{cvvLength}}"
+                              [ngClass]="{ 'is-invalid': submitted && cardForm.get('cvv').invalid}" required>
+                           </div>
+                           <span *ngIf="submitted && cardForm.get('cvv').invalid && cardForm.get('cvv').errors.required"
+                              class="text-danger fs14"><small>{{langData.billingPage.cvvRequired}}</small></span>
+                        </div>
+                     </div>
+                     <div class="text-lg-left text-center" *ngIf="cvvDisabled == true"><button
+                        class="btn btn-blue btn-rounded px-30 py-2 mt-3  mr-2 mb-2" type="button"
+                        (click)="createToken(); subscriptionPage = true"><span class="fs14">{{langData.common.save}}</span></button>
+                        <ng-container *ngIf = "deletingCard">
+                           <button 
+                           class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button"
+                           (click)="closeShowpaymentcontent()"><span class="fs14">{{langData.common.cancel}}</span></button>
+                        </ng-container>
+                     </div>
+                     <div class="text-lg-left text-center" *ngIf="cvvDisabled == false"><button
+                        class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button"
+                        (click)="editCard();  subscriptionPage = true"><span class="fs14">{{langData.billingPage.update}}</span></button>
+                        <button
+                        class="btn btn-blue btn-rounded px-30 py-2 mt-3 mb-2" type="button"
+                        (click)="closeShowpaymentcontent()"><span class="fs14">{{langData.common.cancel}}</span></button>
+                     </div>
+                  </form>
+               </div>
+               <div class="billingpayment platinum_tab billingpayment_card" *ngIf="mycard && editModePage === false">
+                  <div class="payment_col">
+                     <div class="row">
+                        <div class="col-md-2">
+                           <div class="payment_icon">
+                              <img src="{{brandImage}}" alt="Member" class="img-fluid">
+                           </div>
+                        </div>
+                        <div class="col-md-7">
+                           <div class="card_content">
+                              <h5 class="card-title">{{cardDetails.cardholdername}}</h5>
+                              <p class="card-text">XXXX-XXXX-XXXX-{{cardDetails.last4}}</p>
+                           </div>
+                        </div>
+                        <div class="col-md-3">
+                           <ul class="payment_action list-inline">
+                              <li class="list-inline-item edit_list"  style="cursor: pointer;" (click)="editMode = true; editOpen()">
+                                 <a href="javascript:void(0)" titlte="Edit"><em class="fas fa-pencil-alt"  style="cursor: pointer;"></em></a>
+                              </li>
+                              <li class="list-inline-item delete_list"  style="cursor: pointer;" (click)= "openDeleteModal(deletepopup)">
+                                 <a href="javascript:void(0)" titlte="Delete"> <em class="fas fa-trash-alt"  style="cursor: pointer;"></em></a>
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="text-lg-center text-center"><button class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2"
+                     type="button" (click)="onSubmitSubscription()"><span class="fs14">{{langData.common.submit}}</span></button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<!--Section 3 End-->
+
+<!--Section 4 Start-->
+
+<!--Section 4 End-->
+<!--Section 5 Start-->
+<ngx-loading [show]="ngxLoader" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<section class="editpayment" *ngIf="showMainContent">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="card position-relative billingpayment_card mb-4 h-lg-100">
+            <form [formGroup]="cardForm">
+               <div class="card-body py-lg-4 px-lg-5">
+                  <h2 class="text-black2 fs18 mb-3 mt-2 font-weight-bold desktop-view">{{langData.billingPage.paymentInformation}}</h2>
+                  <div class="form-group">
+                     <label class="text-grey13 fs14">{{langData.billingPage.nameOnCard}}</label>
+                     <input #myname class="form-control border-right-1" formControlName="name"
+                        [ngClass]="{ 'is-invalid': submitted && cardForm.get('name').invalid}" pattern="^[a-zA-Z\b ]+$"
+                        placeholder="" type="text" required>
+                     <span class="text-danger fs14" *ngIf="submitted &&  cardForm.get('name').errors">
+                        <small *ngIf="cardForm.get('name').errors">{{langData.billingPage.cardHolderNameRequired}}</small>
+                     </span>
+                  </div>
+                  <div class="form-group">
+                     <label class="text-grey13 fs14">{{langData.billingPage.cardNumber}}</label>
+                     <div class="input-group payment-input-group mb-3">
+                        <ng-container *ngIf="editValue == false">
+                           <input class="form-control border-right-1" placeholder="" type="text"
+                              formControlName="cardnumber" (keypress)="numberOnly($event)" (change)="checkCardType($event.target.value); cvvClear()"  maxlength="19" (input) = "cardFormat()"
+                              [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }" required>
+                        </ng-container>
+                        <ng-container *ngIf="editValue">
+                           <input class="form-control border-right-1" placeholder="" type="text"
+                              formControlName="cardnumber" maxlength="19"
+                              [ngClass]="{ 'is-invalid': submitted && cardForm.get('cardnumber').invalid }" required
+                              [readOnly]="cardNumberShow">
+                        </ng-container>
+                     </div>
+                     <span class="text-danger fs14" *ngIf="submitted &&  cardForm.get('cardnumber').errors">
+                        <small *ngIf="cardForm.get('cardnumber').errors">{{langData.billingPage.cardNumberrequired}}</small>
+                     </span>
+                  </div>
+                  <div class="row">
+                     <div class="col-6 col-md-5">
+                        <label class="text-grey13 fs14">{{langData.billingPage.expiryDate}}</label>
+                        <div class="form-group row">
+                           <div class="col-6 pr-1">
+                              <select class="custom-select pr-0 month" formControlName="expmonth"
+                                 [ngClass]="{ 'is-invalid': submitted && cardForm.get('expmonth').invalid}" required>
+                                 <option selected hidden value="">MM</option>
+                                 <ng-container *ngFor="let m of months">
+                                    <option value="{{m}}">{{m}}</option>
+                                 </ng-container>
+                              </select>
+                           </div>
+                           <div class="col-6 pl-4">
+                              <select class="custom-select year pr-0" formControlName="expyear"
+                                 [ngClass]="{ 'is-invalid': submitted && cardForm.get('expyear').invalid}" required>
+                                 <option selected hidden value="">YYYY</option>
+                                 <ng-container *ngFor="let y of years">
+                                    <option value="{{y}}">{{y}}</option>
+                                 </ng-container>
+                              </select>
+                           </div>
+                        </div>
+                        <span
+                           *ngIf="submitted && cardForm.get('expmonth').invalid && cardForm.get('expmonth').errors.required && cardForm.get('expyear').invalid && cardForm.get('expyear').errors.required"
+                           class="text-danger fs14 pl-3"><small>{{langData.billingPage.expiryDateRequired}}</small></span>
+                     </div>
+                     <div class="col-4 offset-2 col-md-3 offset-md-3" *ngIf="cvvDisabled">
+                        <label class="text-grey13 fs14">{{langData.billingPage.CVV}}</label>
+                        <div class="form-group"><input #mycvv class="form-control text-center"
+                           (keypress)="numberOnly($event)" type="password" class="form-control text-center"
+                           formControlName="cvv"  maxlength="{{cvvLength}}"
+                           [ngClass]="{ 'is-invalid': submitted && cardForm.get('cvv').invalid}" required>
+                        </div>
+                        <span *ngIf="submitted && cardForm.get('cvv').invalid && cardForm.get('cvv').errors.required"
+                           class="text-danger fs14"><small>{{langData.billingPage.cvvRequired}}</small></span>
+                     </div>
+                  </div>
+                  <div class="text-lg-left text-center" *ngIf="cvvDisabled == true"><button
+                     class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button"
+                     (click)="createToken()"><span class="fs14">{{langData.common.save}}</span></button>
+                     <button
+                     class="btn btn-blue btn-rounded px-30 py-2 mt-3  mb-2" type="button"
+                     (click)="closeMainContent()"><span class="fs14">{{langData.common.cancel}}</span></button>
+                  </div>
+                  <div class="text-lg-left text-center" *ngIf="cvvDisabled == false">
+                     <button
+                        class="btn btn-blue btn-rounded px-30 py-2 mt-3 mr-2 mb-2" type="button" (click)="editCard()"><span
+                        class="fs14">{{langData.billingPage.update}}</span>
+                     </button>
+                     <button
+                        class="btn btn-blue btn-rounded px-30 py-2 mt-3  mb-2" type="button"
+                        (click)="closeMainContent()"><span class="fs14">{{langData.common.cancel}}</span>
+                     </button>
+                  </div>                  
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</section>
+<!--Section 5 End-->
+
+<!--Cancel Popup Start-->
+<ng-template #CancelSubscribe>
+   <div class="modal-header bg-grey12">
+      <h4 class="modal-title text-blue fs20 font-weight-bold text-center w-100">Cancel Subscription</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
+         <span aria-hidden="true"><img src="../assets/images/popup-close.svg" alt="close" width="14"></span>
+      </button>
+   </div>
+   
+   <div class="modal-body mt-3 pl30 pr30">
+      <p class="fs18 mb-4">{{langData.billingPage.areYouWantToCancelYourSubscription}}</p>
+      <form [formGroup]="reasonForm">
+         <div class="row">
+            <div class="col-md-12">
+               <div class="billing-radio-btn">
+                  <label class="w-100">
+                     <input type="radio" name="optionsRadios" id="optionsRadios1" value="I couldn't find what I was looking for" (input)="input($event.target.value)">
+                     <span class="position-absolute fs14 ml-2 mt1">I couldn't find what I was looking for</span>
+                  </label>
+                  <label class="w-100">
+                     <input type="radio" name="optionsRadios" id="optionsRadios2" value="I found it difficult to navigate through the Website and/or Mobile App." (input)="input($event.target.value)">
+                     <span class="position-absolute fs14 ml-2 mt1">I found it difficult to navigate through the Website and/or Mobile App.</span>
+                  </label>
+                  <label class="w-100">
+                     <input type="radio" name="optionsRadios" id="optionsRadios3" value="The price is too high." (input)="input($event.target.value)">
+                     <span class="position-absolute fs14 ml-2 mt1">The price is too high.</span>
+                  </label>
+                  <label class="w-100">
+                     <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" (input)="input(4)">
+                     <span class="position-absolute fs14 ml-2 mt1">Other [please specify]</span>
+                  </label>
+               </div>
+            </div>
+         </div>
+         <div class="row" *ngIf="showTextArea">
+            <div class="col-12">
+               <label class="fs14 fred" *ngIf="reasonsubmitted && reasonForm.get('reason').invalid && reasonForm.get('reason').errors.required">Reason *</label>
+               <textarea class="form-control border-right-1 " formControlName="reason"
+                  [ngClass]="{ 'is-invalid': submitted && reasonForm.get('reason').invalid }"
+                  placeholder="Type here.." rows="6" required></textarea>
+            </div>
+         </div>
+      </form>
+   </div>
+   <div class="modal-footer justify-content-center border-top-0  mt-1 mb-3">
+      <button type="button" class="btn btn-outline-secondary btn-grey-border cancel font-weight-bold px-4" data-dismiss="modal"
+         (click)="modalRef.hide()">{{langData.common.cancel}}</button>
+      <button type="button" class="btn btn-primary yes font-weight-bold px-4" (click)="CancelStripeSubscription()">{{langData.common.continue}}</button>
+   </div>
+</ng-template>
+<!--Cancel Popup End-->
+
+<!--Congratulations  Popup Start-->
+<ng-template #congratulations>
+   <div class="modal-header">
+      <button type="button" class="close" aria-label="Close" (click)="congratzmodalRef.hide()">
+         <span aria-hidden="true"><img src="../assets/images/popup-close.svg" alt="close"></span>
+      </button>
+   </div>
+   <div class="modal-body mt-0">
+      <!-- <img src="./assets/images/congrats.svg" alt="Subscribe" class="img-fluid con-img"> -->
+      <h2 class="modal-title">{{langData.billingPage.congratulations}}</h2>
+      <p class="content">{{message}} </p>
+   </div>
+</ng-template>
+<!--Congratulations  Popup End-->
+
+<!-- Failure Popup -->
+<ng-template #failure>
+   <div class="modal-header">
+      <button type="button" class="close" aria-label="Close" (click)="failuremodalRef.hide()">
+         <span aria-hidden="true"><img src="../assets/images/popup-close.svg" alt="close"></span>
+      </button>
+   </div>
+   <div class="modal-body mt-0">
+      <div class="popup_content">
+      <img src="./assets/images/failed-img.svg" alt="Subscribe" class="img-fluid con-img">
+      <h2 class="modal-title">{{langData.billingPage.failed}}</h2>
+      <p class="content">{{message}} </p>
+   </div>
+   </div>
+</ng-template>
+<!-- Failure Popup End -->
+
+<!-- Delete Popup -->
+<ng-template #deletepopup>
+   <div class="modal-header"  >
+      <button type="button" class="close" aria-label="Close" >
+         <span aria-hidden="true" (click)="deletemodalRef.hide()"><img src="../assets/images/popup-close.svg" alt="close"></span>
+      </button>
+   </div>
+   <div class="modal-body mt-0">
+      <h4 class="modal-title">{{langData.billingPage.deleteCard}}</h4>
+      <div class="popup_content">
+         <img src="./assets/images/delete-card.svg" alt="Subscribe" class="img-fluid height-100">
+         <p>{{langData.billingPage.areYouWantToDeleteCard}}</p>
+      </div>
+   </div>
+   <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary cancel" data-dismiss="modal"
+         (click)=" closeDelete();">{{langData.common.cancel}}</button>
+      <button type="button" class="btn btn-primary yes" (click)="showPayment(); focusingName()">{{langData.common.yes}}</button>
+   </div>
+</ng-template>
+<!-- Delete Popup End -->

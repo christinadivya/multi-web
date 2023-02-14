@@ -1,0 +1,49 @@
+<section class="bg-white mt28">
+  <div class="jumbotron jumbotron-fluid subscription-bg py-5">
+    <div class="container text-center text-white mt-2">
+      <h1 class="fs30 font-weight-bold">{{langData.loginFooterPage.contactUs}}</h1>
+      <p class="fs18 op-9 lh-35 w-75 mx-auto">{{langData.contactUsPage.contactUsReason}}</p>
+    </div>
+  </div>
+  <div class="container pt-2">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form class="contactus-form pt-2 pb-4" focusInvalidInput [formGroup]="contactUsForm" (ngSubmit)="onSubmit()"   novalidate="">
+          <fieldset>
+            <div class="form-group">
+              <label>{{langData.contactUsPage.fullName}}</label>
+              <input class="form-control"  formControlName="fullname" [placeholder]="langData.contactUsPage.namehere" type="text" maxlength="25" pattern="[A-Za-z ]{0,25}" [ngClass]="{ 'is-invalid': submitted && contactUsForm.get('fullname').invalid}"> 
+              <div class="text-danger" *ngIf="submitted  &&  contactUsForm.get('fullname').errors">
+                <small *ngIf="contactUsForm.get('fullname').errors.required">{{langData.contactUsPage.enterYourName}}</small>
+                <small *ngIf="contactUsForm.get('fullname').errors.pattern">{{langData.contactUsPage.onlyAlphabetsAllowed}}</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>{{langData.contactUsPage.yourEmailAddress}}</label>
+              <input class="form-control"  formControlName="email"  [placeholder]="langData.contactUsPage.emailhere"
+                required="" type="email" [ngClass]="{'is-invalid': submitted && contactUsForm.get('email').errors}">
+              <div class="text-danger" *ngIf="submitted  && contactUsForm.get('email').errors">
+                <small *ngIf="contactUsForm.get('email').errors.required">{{langData.contactUsPage.emailRequired}}</small>
+                <small *ngIf="contactUsForm.get('email').errors.pattern">{{langData.contactUsPage.pleaseEnterValidEmail}}</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>{{langData.contactUsPage.subject}}</label>
+              <input class="form-control" formControlName="subject" [placeholder]="langData.contactUsPage.selecthere" type="text" maxlength="50"> 
+            </div>
+            <div class="form-group">
+              <label>{{langData.contactUsPage.comments}}</label>
+              <textarea class="form-control" formControlName="comments" [placeholder]="langData.contactUsPage.typehere" type="text" maxlength="50" [ngClass]="{ 'is-invalid': submitted && contactUsForm.get('comments').invalid}"> 
+                </textarea>
+              <div class="text-danger" *ngIf="submitted  &&  (contactUsForm.get('comments').errors || invalidcomment)">
+                <small *ngIf="contactUsForm.get('comments').errors">{{langData.contactUsPage.commentsRequired}}</small>
+                <small *ngIf="invalidcomment">{{langData.contactUsPage.plsEnterValidComments}}</small>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-blue fs15 ff-muli-semibold px-5 pt10 pb10 mt-1">{{langData.common.submit}}</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

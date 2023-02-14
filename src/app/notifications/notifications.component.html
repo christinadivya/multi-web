@@ -1,0 +1,66 @@
+<section class="container my-5 max-w-lg-1070px">
+  <div class="notify-col">
+  <div class="row">
+     <div class="col-md-3 custom-col"></div>
+      <div class="col-md-6">
+        <div class="card custom-user-card overflow-hidden">
+           <div class="card-header">
+              <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.notificationPage.recentNotification}}</h3>
+           </div>
+           <div class="card-body p-0" *ngFor="let notification of notificationList  | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalCount }; let i = index">
+              <ul class="list-group toppics-list notifications-list">
+                <!-- post view -->
+                 <li class="list-group-item position-relative c-pointer" [ngStyle]="{'background-color': notification.notificationReadStatus === false ? 'lightblue' : '' }" >
+                    <img alt="notification-images" *ngIf="notification.notificationType === 12" class="position-absolute notification-icons py-2" src="./assets/images/notification-icons/uer-search.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 13" class="position-absolute notification-icons py-2" src="./assets/images/notification-icons/uer-search.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 9 || notification.notificationType === 10 || notification.notificationType === 11" class="position-absolute notification-icons py-2" src="./assets/images/notification-icons/message.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 3" class="position-absolute notification-icons py-2" src="./assets/images/notification-icons/file.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 1" class="position-absolute notification-icons py-2 h-35px" src="./assets/images/notification-icons/metro-dollar.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 5" class="position-absolute notification-icons py-2" src="./assets/images/notification-icons/file.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 6" class="position-absolute notification-icons py-2 h-55px" src="./assets/images/notification-icons/team.svg">
+                    <img alt="notification-images" *ngIf="notification.notificationType === 2" class="position-absolute notification-icons py-2 h-35px" src="./assets/images/notification-icons/metro-dollar.svg">
+
+                    <div class="top-pic-desc pic-desc mb-1" (click)="changeToReadStatus(notification.id)">
+                      <div class="row mr-0">
+                        <div class="col-md-8 pr-0">
+                          <p class="fs14 mt-1 mb-3 fw-600 text-black2">{{notification.description}}</p>
+                          <a class="btn btn-blue-outline btn-sm px-3 py-1" href="javascript:void(0)" *ngIf="notification.notificationType === 12"><span class="fs13" (click)="viewProfilePostList('post', notification)">{{langData.notificationPage.viewList}}</span></a>
+                          <a class="btn btn-blue-outline btn-sm px-3 py-1" href="javascript:void(0)" *ngIf="notification.notificationType === 13"><span class="fs13" (click)="viewProfilePostList('profile', notification)">{{langData.notificationPage.viewList}}</span></a>
+                          <a class="btn btn-blue-outline btn-sm px-3 py-1" href="javascript:void(0)" *ngIf="notification.notificationType === 9 || notification.notificationType === 10 || notification.notificationType === 11"><span class="fs13" (click)="viewmessage(notification)">{{langData.notificationPage.viewMessage}}</span></a>
+                          <a class="btn btn-blue-outline btn-sm px-3 py-1" href="javascript:void(0)" *ngIf="notification.notificationType === 6"><span class="fs13" (click)="viewReferral(notification)">{{langData.notificationPage.viewReferral}}</span></a>
+                        </div>
+                        <div class="col-md-4 text-right">
+                           <span class="notification-timer"><img src="./assets/images/notification-icons/clock.svg" alt="clock" class="mr10">{{convertutctolocal(notification.createdOn) | amTimeAgo:true}} ago</span>
+                        </div>
+                      </div>
+                    </div>
+                 </li>
+              </ul>
+           </div>
+           <div *ngIf="notificationList?.length === 0" class="text-center">
+            <span class="text-light-grey">
+                {{langData.common.norecords}}
+            </span>
+          </div>
+        </div>
+        
+        <div *ngIf="notificationList.length > 0" class="text-center w-100 d-flex justify-content-center" >
+          <pagination-controls (pageChange)="notificationChange($event)" directionLinks="true" autoHide="true"
+          responsive="true"  previousLabel="" nextLabel="">
+         </pagination-controls>
+        </div>
+     </div>
+     <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+           <div class="card-header">
+              <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+           </div>
+           <div class="card-body p-1">
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+
+           </div>
+        </div>
+     </div>
+  </div>
+</div> 
+</section>

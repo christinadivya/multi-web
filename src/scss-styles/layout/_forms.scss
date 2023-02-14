@@ -1,0 +1,357 @@
+
+.form-control{
+    border-radius: 3px;
+    border-color: $grey3;
+    color: $black2;
+    height: 38px;
+    @extend .fs14;
+    &::placeholder{
+     color: $grey3;
+    }
+
+    &.dark-placehold{
+        &::placeholder{
+            color: $black2;
+        }
+    }
+}
+
+.form-inputgroup{
+
+  .input-group-text{
+    border-radius: 3px;
+    border-color: $grey3;
+  }
+
+  &.is-invalid{
+    .input-group-text{
+    border-color: #dc3545;
+    }
+  }
+
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+
+
+
+.table-striped tbody tr:nth-of-type(odd){
+  background-color: #FAF9FF;
+}
+
+// select:invalid {
+//   color: green !important;
+// }
+.custom-select{
+  height: 38px;
+  border-radius: 3px;
+  border-color: $grey3;
+
+  &.bg-grey24{
+    @extend .bg-grey24;
+  }
+  color: $black2;
+
+  &.text-grey23{
+    @extend .text-grey23;
+
+    &.text-black2{
+      @extend .text-black2;
+    }
+  }
+  @extend .fs14;
+    background: url('./assets/images/down-arrow-grey.png') no-repeat right 0.75rem center/10px 9px;
+    
+  &.no-arrow{
+    background: none !important;
+  }
+}
+
+.was-validated .custom-select:invalid, .custom-select.is-invalid{
+  background: url('./assets/images/down-arrow-grey.png') no-repeat right 0.75rem center/10px 9px, 
+              url('./assets/images/down-arrow-white.png') #fff no-repeat center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+
+.locationsearch-field{
+  .dropdown-toggle::after{
+    border: none;
+  }
+
+  .ngx-select__toggle{
+    border-color: $grey3 !important;
+  }
+
+  .is-invalid{
+    .ngx-select__toggle{
+      border-color: #dc3545 !important;
+    } 
+  }
+  
+  .ngx-select__placeholder{
+    &.text-muted{
+      span{
+      color: $grey3 !important;
+      display: inline-block;
+      line-height: 23px;
+      }
+
+    }
+  }
+  .ngx-select__clear {
+    margin-right: 0px !important;
+  .ngx-select__clear-icon{
+    &:after, &:before{
+      border-top: 1px solid !important; 
+    }
+  }
+}
+    
+    .dropdown-menu{
+
+      box-shadow: 0px 0px 4px #ddd;
+      border: none;
+      border-radius: 0px 0px 5px 5px;
+
+        li.ngx-select__item-group{
+            @extend .c-pointer;
+            &:hover{
+              a{
+                background: $blue;
+                color: $white;
+              }
+            }
+
+            a.active{
+              background: $blue !important;
+              color: $white !important;
+            }
+        }
+    
+    
+    &.show{
+        transition: .5s;
+    }
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        transition: 1s;
+        background: #f8f8f8;
+        @extend .c-pointer;
+    }
+    &::-webkit-scrollbar-track {
+        // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $blue ;
+      border-radius: 20px;
+      outline: 2px solid #ddd;
+    
+    }
+
+    &:hover{
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+    }
+  }
+
+}
+
+
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  background-image: none;
+}
+
+.custom-checkbox,
+.custom-radio{
+    
+    position: relative;
+
+    input{
+          display: none; 
+    }
+
+    svg{
+      left: 17px;
+      top: 16px;
+    }
+
+    .path {
+       opacity: 0;
+    }
+  
+
+    label{
+
+        border:1px solid $grey8;
+        border-radius: 9px;
+        background: $grey9;
+        margin-bottom: 15px;
+        height: 55px;
+        line-height: 30px;
+        display: flex;
+        align-items: center;
+
+        @extend .c-pointer;
+        padding-left: 50px;
+        @extend .fs14;
+      &:before{
+        content:'';
+        position: absolute;
+        left: 17px;
+        top: 17px;
+        height: 22px;
+        width: 22px;
+        border-radius: 50%;
+        border: 1px solid $blue6;
+      }
+
+      &.nobefore{
+        &:before{
+          content: none;
+        }
+      }
+    }
+
+    input:checked ~ label{
+        &:before{
+            content:'';
+            // background: url('./assets/images/tick.svg') no-repeat  center/18px 18px;
+            border:transparent;
+        }
+    }
+
+    input:checked ~ svg{
+        .path {
+       opacity: 1;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 0;
+        &.check {
+          stroke-dashoffset: -100;
+          -webkit-animation: dash-check .9s .35s ease-in-out forwards;
+          animation: dash-check .9s .35s ease-in-out forwards;
+        }
+      }
+    }
+    
+
+}
+
+
+  @keyframes dash-check {
+    0% {
+      stroke-dashoffset: -100;
+    }
+    100% {
+      stroke-dashoffset: 900;
+    }
+  }
+
+
+  .custom-radio{
+    &.check-shadow {
+      input:checked ~ label{
+          background: $blue;
+          color: $white;
+          box-shadow: 0px 1px 5px rgba(31, 116, 203,.31);
+      }
+    }
+  }
+form{
+  .text-danger{
+    line-height: 18px;
+  }
+}
+.placeholderclr{
+  color:#AAB6C1;
+}
+.customclr{
+  color:black;
+}
+
+input[readonly],
+input[disabled="true"]{
+  &.form-control {
+    & ~ .input-group-append {
+      .input-group-text {
+        background-color: #e9ecef !important;
+      }
+    } 
+  }
+}
+
+.contactus-form{
+  fieldset{
+    border: 1px solid #D0D2D3;
+    border-radius: 5px;
+    padding: 43px;
+    .form-group {
+      margin-bottom: 30px;
+      label{
+        @extend .color-darkblack, .fs14, .ff-muli-semibold;
+      }
+      .form-control{
+        @extend .fs13, .pl0;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0em;
+        border-color: #e6e6e6;
+      }
+      textarea{resize: none;}
+     }
+  } 
+}
+
+.custom-form-dropdown{
+  .form-control{
+    height: 43px;
+    border: 0;
+    border-radius:5px;
+    margin:0 auto;
+  }
+}
+
+.custom-input-group {
+  
+  .form-control{
+    border-radius: 5px 0px 0px 5px !important;
+    border: none;
+    height: 45px;
+
+  }
+  
+  .input-group-text{
+    background-color: #E1F0FF;
+    color: #4291E2;
+    border: none;
+    border-radius: 0px 5px 5px 0px !important;
+    em{
+      @extend .fs20;
+    }
+   
+  }
+}
+.custom-arrow{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  background-image: url(./assets/images/downarrow.svg);
+  background-repeat: no-repeat;
+  background-size : 20px;
+  background-position-x: 98%;
+  background-position-y: 7px;
+  border: 1px solid #dfdfdf;
+  padding : 0 10px;
+}

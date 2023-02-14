@@ -1,0 +1,65 @@
+<section class="mt30">
+  <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.notes}}</h1>
+  <p>{{langData.viewPostPage.noteDescription}}</p>
+  <form class="my-3" [formGroup]="mynote" (ngSubmit)="noteSubmit()">
+    <div class="card br-19">
+        <div class="card-body  p-0 px-lg-3 py-lg-4">
+         <textarea autosize  class="form-control border-0" formControlName="note" [(ngModel)]="notes" rows="1" [placeholder]="langData.viewPostPage.addYourNotesHere"></textarea>
+        </div>
+    </div> 
+    <div *ngIf="submitted && mynote.get('note').errors" class="text-danger mb-1 pl-2">
+      <small *ngIf="mynote.get('note').errors.required">{{langData.viewPostPage.pleaseEnterNote}}</small>
+    </div>
+   
+    
+    <div class="mb-4 mt-3" style="
+    justify-content: center;
+    display: flex;
+">
+        <button type="button" class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold" (click)="notes = ''" >
+          <span class="fs14">{{langData.common.clear}}</span>
+        </button>
+        <button type="submit" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold" >
+          <span class="fs14">{{langData.common.save}}</span>
+        </button>
+      </div>
+  </form>
+  <div class="card br5 summary-box mb30" *ngFor="let mynotelist of notesList">
+    <div class="card-body fs14">
+      <!-- 03-19-19 10:59AM  -->
+      <div class="text-blue mb10">{{langData.viewPostPage.addedOn}}: {{  mynotelist.createdon | amLocale:'en' | amDateFormat:'MMM D, YYYY h:mm A'}} <span class="float-right c-pointer" (click)="deleteNote(deletemodal, mynotelist.notesid)"><img src="./assets/images/delete.svg" width="15" alt="Delete-icon"></span></div>
+      {{mynotelist.notesdescription}}
+    </div>
+  </div>
+</section>
+
+
+<!-- cancel Modal -->
+<ng-template #deletemodal>
+    <div class="modal-header bg-grey12 border-0 text-center">
+      <h1 class="modal-title fs20 font-weight-bold mx-auto">{{langData.viewPostPage.deleteNote}}</h1>
+      <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+          <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+      </button>
+    </div>
+    <div class="modal-body text-center modal-pad">
+      <span aria-hidden="true"><img src="./assets/images/delete-red.svg" alt="delete" style="    width: 75px;
+        height: 43px;
+    "></span>
+  
+      <h1 class="fs16 my-2">{{langData.viewPostPage.areYouSureYouWantDelete}}</h1>
+      
+  
+      <div class="my-2">
+          <button type="button"  class="btn btn-grey-border btn-rounded px-33 py-2 mr-4 font-weight-bold" (click)="modalRef.hide()">
+            <span class="fs14">{{langData.common.no}}</span>
+          </button>
+          <button type="button" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold" (click)="deleteCurrentNote()">
+            <span class="fs14" >{{langData.common.yes}}</span>
+          </button>
+        </div>
+      
+  
+    </div>
+  </ng-template>
+  <!-- cancel Modal -->

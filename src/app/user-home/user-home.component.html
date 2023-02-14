@@ -1,0 +1,278 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<div class="bg-grey5 pt-5 general_tab">
+
+  <!-- Top Picks For you  -->
+  <ng-template #toppicks>
+    <ul class="list-group toppics-list">
+
+
+      <li class="list-group-item position-relative" *ngFor="let toppick of toppicksforyou">
+
+        <img src="./assets/images/mobile-logo.png" *ngIf="!toppick.postlogo || toppick.postlogo == null" alt="top-pics-images" class="position-absolute">
+        <img src="{{cloudeURL}}{{toppick.postlogo}}" *ngIf="toppick.postlogo && toppick.postlogo != null" alt="top-pics-images" class="position-absolute">
+
+        <div class="top-pic-desc">
+          <h4 class="fs14 mt-1 mb-1 font-weight-bold text-black2">{{toppick.postname}}</h4>
+          <span class="brand-name">{{toppick.companyname}}</span>
+        </div>
+
+        <div class="desc-section">
+          <span class="time-text">{{convertutctolocal(toppick.createdon) | amLocale:'en' | amDateFormat:'MMM D, YYYY h:mm A' }}</span>
+          <p class="mb-0 fs14 text-black2 setheight">{{toppick.postsummary}}</p>
+          <a href="javascript:void(0)" (click)="viewPost(toppick)" class="text-blue float-right font-weight-bold">{{langData.userHomePage.viewMore}}</a>
+        </div>
+      </li>
+
+    </ul>
+  </ng-template>
+  <!-- Top Picks For you  -->
+
+  <!-- Body Content -->
+
+  <section class="container-fluid pl100 pr100 my-5 max-w-lg-1070px p0" *ngIf="desktopView">
+    <div class="row">
+
+      <div class="col-md-3">
+        <div class="card profile-card text-center mb-3  border-0">
+          <div class="card-header">
+
+            <!-- Default Image -->
+
+            <!-- User Image -->
+            <img src="{{profileImage}}" class="rounded-circle profile-img" alt="businessin-profile-image">
+
+          </div>
+          <div class="card-body pt-5 pb-4">
+            <h1 class="fs18 font-weight-bold mt-3 mb-0">{{userDatafirstname}} {{userDatalastname}}</h1>
+            <em class="fs14 fw500">{{businame}}</em>
+          </div>
+          <div class="card-footer bg-white mb5">
+            <h3 class="fs14 my-4">Access Level: {{userPlanTypeName}}</h3>
+            <!-- <a href="javascript:void(0)" class="text-blue fs14 font-weight-bold">{{langData.userHomePage.viewMore}}</a> -->
+          </div>
+        </div>
+
+
+        <div class="card custom-user-card mb-3 mt-3 overflow-hidden border-0">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.userHomePage.myPosts}}</h3>
+          </div>
+
+          <div class="card-body p-2">
+
+            <ul class="list-group user-list">
+              <li class="list-group-item position-relative" *ngFor="let viewPostList of postName">
+                <span class="c-pointer text-truncate d-block w-80" (click)="viewPost(viewPostList)">{{viewPostList.postname}}</span>
+                <span class="fw500 position-absolute rt-0px tp-10px d-block font-weight-bold">
+                  {{viewPostList.postcount}} Views
+                </span>
+              </li>
+            </ul>
+            <div *ngIf="postCon === null" class="text-center">
+              <span class="text-light-grey">
+                {{langData.common.norecords}}
+              </span>
+            </div>
+          </div>
+          <div class="card-footer text-center bg-white border-0">
+            <a routerLink="/post-list" class="text-blue fs14 font-weight-bold" (click)=" getAllPost(1)">{{langData.userHomePage.manageMyPosts}}</a>
+          </div>
+        </div>
+
+        <div class="card custom-user-card mb-3  overflow-hidden border-0">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.userHomePage.bookmarks}}</h3>
+          </div>
+
+          <div class="card-body p-2">
+
+            <ul class="list-group user-list">
+              <li *ngFor="let bookmark of bookmarkList" class="list-group-item position-relative">
+                <span class="c-pointer text-truncate d-block w-80" (click)="viewPost(bookmark)">{{bookmark.postname}}</span>
+                <span class="fw500 position-absolute rt-6px tp-10px d-block">
+                  <em (click)="removeBookmark(bookmark)" class="far fa-trash-alt text-red c-pointer"></em>
+                </span>
+              </li>
+            </ul>
+            <div *ngIf="bookmarkList.length === 0" class="text-center">
+              <span class="text-light-grey">
+                {{langData.common.norecords}}
+              </span>
+            </div>
+
+          </div>
+          <div *ngIf="bookmarkList.length > 0" class="card-footer text-center bg-white border-0">
+            <a href="javascript:void(0)" routerLink="/bookmarks" class="text-blue fs14 font-weight-bold">{{langData.userHomePage.manageBookmarks}}</a>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="col-md-6">
+
+        <div class="card creat-post-card mb-3">
+          <div class="card-header bg-white pb-0 border-0">
+            <div class="rotate-plus d-inline-block">
+              <span class="lnr lnr-cross font-weight-bold"></span>
+            </div>
+            <h3 class="fs16 d-inline-block text-black2 ml-2 font-weight-bold">{{langData.userHomePage.createPost}}</h3>
+          </div>
+          <div class="card-body pt-1">
+            <form (ngSubmit)="navigatePost()">
+              <div class="row">
+                <div class="col-md-9">
+                  <input type="text" [(ngModel)]="name" class="form-control" [placeholder]="langData.userHomePage.title?langData.userHomePage.title:''"
+                    [ngModelOptions]="{standalone: true}">
+                </div>
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-blue btn-block py-2 btn-sm">
+                    <span class="fs14">{{langData.userHomePage.create}}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="card creat-post-card mb-3">
+          <div class="card-header bg-white pb-0 border-0 text-center">
+            <h3 class="fs16 d-inline-block text-black2 ml-2 font-weight-bold">{{langData.userHomePage.whatAreYouLookingFor}}</h3>
+          </div>
+          <div class="card-body pt-1 pb-0">
+            <ul class="row list-unstyled category-card-list">
+              <li *ngFor="let type of typeList" class="col-md-4">
+                <div class="card category-card">
+                  <div class="card-body">
+                    <a href="javascript:void(0)">
+                      <span class="fs16" (click)="getTypeAcc(type)">{{type.accounttypeshortname}}</span>
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="row">
+              <div class="col-md-4">
+                <hr class="m-0" />
+              </div>
+              <div class="col-md-4">
+                <hr class="m-0" />
+              </div>
+              <div class="col-md-4">
+                <hr class="m-0" />
+              </div>
+            </div>
+            <div class="text-center">
+              <a href="javascript:void(0)" (click)="getReferrals()" class="text-blue fs14 font-weight-bold py-2 d-inline-block">
+                {{langData.userHomePage.getReferralsForYorBusiness}}
+              </a>
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+        <div class="card custom-user-card overflow-hidden">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.userHomePage.topPicksForYou}}</h3>
+          </div>
+
+          <div class="card-body pt-0 pb-0">
+
+
+            <!-- Top picks for you desktop -->
+            <ng-container [ngTemplateOutlet]="toppicks"></ng-container>
+            <!-- Top picks for you desktop -->
+
+
+
+
+
+          </div>
+
+          <div class="card-footer text-center bg-white border-0 py-3">
+            <a href="javascript:void(0)" class="btn btn-blue px-4 py-1 btn-sm fs14 font-weight-bold" routerLink="/view-all-post">{{langData.userHomePage.more}}</a>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+          <div class="card-body p-1">
+              <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+            <!-- <app-news></app-news> -->
+            <!-- <div class="news-card">
+              <img src="./assets/images/stock-news.png" alt="businessin-News">
+              <div class="description w-100 position-absolute">
+                <h4 class="fs14 mb-0">Investors lost 90% of wealth in the past year in these stocks...</h4>
+              </div>
+            </div>
+            <div class="news-card">
+              <img src="./assets/images/kotak-bankimg.png" alt="businessin-News">
+              <div class="description w-100 position-absolute">
+                <h4 class="fs14 mb-0">Kotak Mahindra Bank Q1 results:The bank's net interest income</h4>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Body Content -->
+
+
+  <!-- footer Section -->
+  <!-- <app-auth-footer></app-auth-footer> -->
+  <!-- footer Section -->
+
+</div>
+
+
+<section class="mobile-view bg-grey22" *ngIf="mobileView">
+
+
+
+  <!-- Top picks for you Mobile-->
+  <div class="top-picks-mobile-cards">
+    <ng-container [ngTemplateOutlet]="toppicks"></ng-container>
+  </div>
+
+  <!-- Top picks for you Mobile -->
+
+
+  <!-- Create post Floating Button -->
+  <button class="btn btn-blue create-post-floating position-fixed rounded-circle" routerLink="/create-a-post">
+    <span class="plus"></span>
+  </button>
+  <!-- Create post Floating Button -->
+
+</section>
+<!--Congratulations  Popup Start-->
+<ng-template #congratulations>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true">
+        <img src="../assets/images/popup-close.svg" alt="close">
+      </span>
+    </button>
+  </div>
+  <div class="modal-body mt-0">
+    <h2 class="modal-title">Congratulations !</h2>
+    <!-- <p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p> -->
+    <p class="content" *ngIf="userPlanType === 'Trail Platinum'">{{welcomeMessage}}{{popupMessage}}</p>
+  </div>
+</ng-template>
+<!--Congratulations  Popup End-->

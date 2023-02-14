@@ -1,0 +1,231 @@
+
+<div class="card page-card mt-4">
+    <div class="card-body pt-4 pb-0">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex align-items-center">
+            <span>Receive Message Notifications</span>
+            <div class="custom-control custom-switch ml-auto toggle-big mr-4">
+                <input type="checkbox" class="custom-control-input" [checked]="clicked">
+                <label class="custom-control-label"></label>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">Receive Billing Updates</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="billingemail" id="emailBilling"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailBilling">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="billingnotification" id="notificationBilling"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationBilling">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">Receive Subscription Updates</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="subscriptionemail" id="emailSubscription"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailSubscription">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="subscriptionnotification" id="notificationSubscription"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationSubscription">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">Receive Referral Notification</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="referemail" id="emailRefer"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailRefer">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="referNotification" id="notificationRefer"
+                                [checked]="referralNotification == true? true:false"
+                                (change)="changeNotification($event.target.checked, 'referNotify')">
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                                (click)="changeNotification(!referralNotification, 'referNotify')">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationRefer">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </li>
+        <li class="list-group-item d-flex align-items-center">
+            <span>Show Email Address and Phone Number </span>
+            <div class="custom-control custom-switch ml-auto toggle-big mr-4">
+                <input type="checkbox" class="custom-control-input" id="switch2" [checked]="showPhoneOrEmail">
+                <label class="custom-control-label" for="switch2" (click)="changeStatus()"></label>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">No Activity Reminder</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="activityemail" id="emailActivity"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailActivity">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="activitynotification" id="notificationActivity"
+                                [checked]="true" disabled>
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationActivity">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">Profile View Notification</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="profileemail" id="emailProfile"
+                                [checked]="profileEmail == true? true:false"
+                                (change)="changeNotification($event.target.checked, 'profileMail')">
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                                (click)="changeNotification(!profileEmail, 'profileMail')">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailProfile">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="profileNotification" id="notificationProfile"
+                                [checked]="profileNotification == true? true:false"
+                                (change)="changeNotification($event.target.checked, 'profileNotify')">
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                                (click)="changeNotification(!profileNotification, 'profileNotify')">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationProfile">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex align-items-center">
+                <div class="w-100">Post View Notification</div>
+                <div class="w-40">
+                    <ul class="list-unstyled taginput-list mb-0 privacytab-checkbox">
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="postemail" id="emailPost"
+                                [checked]="postEmail === true? true:false"
+                                (change)="changeNotification($event.target.checked, 'postMail')">
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                                (click)="changeNotification(!postEmail, 'postMail')">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="emailPost">Email</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="postnotification" id="notificationPost"
+                                [checked]="postNotification == true? true:false"
+                                (change)="changeNotification($event.target.checked, 'postNotify')">
+                                <svg version="1.1" height="21px" width="21px" class="position-absolute c-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2"
+                                (click)="changeNotification(!postNotification, 'postNotify')">
+                                <polyline class="path check" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                </svg>
+                                <label for="notificationPost">Notifications</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>            
+        </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+<ngx-loading [show]="loader" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<section class="mt30 w-100" *ngIf="showContent">
+  <h1 class="fs18 font-weight-bold mb20">{{langData.viewPostPage.documents}}</h1>
+  <div class="summary-box br5 pt-2 mb30 bg-white overflow-hidden">
+    <div class="table-responsive table-businessin">
+      <table class="table table-striped mb0">
+        <thead>
+          <tr>
+            <th class="border-0 fs18">{{langData.viewPostPage.name}}</th>
+            <th class="border-0 fs18">{{langData.viewPostPage.fileType}}</th>
+            <th class="border-0 fs18">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="docarray && docarray.length > 0 ">
+          <ng-container *ngFor="let files  of docarray">
+          <tr *ngIf="files.url != null">
+            <td class="fs14">{{langData.viewPostPage.businessPitch}}</td>
+            <td class="fs14"><div class="file-badge mr-2" 
+              [ngClass]="{'bg-red2': files.fileext == 'pdf', 
+                          'bg-yellow': (files.fileext == 'xl' || files.fileext == 'xls' || files.fileext == 'xlsx'),
+                          'bg-blue8': (files.fileext == 'rtf' || files.fileext == 'docx')
+                         }">{{files.fileext}}</div>{{files.fileext}}</td>
+            <td class="text-blue fs14"><a href="javascript:void(0)" (click)="viewDocumentModal(documentviewer, files.url)"><em class="fas fa-eye"></em> View</a></td>
+          </tr>
+        </ng-container>
+        </tbody>
+        <tbody *ngIf="docarray && !(docarray.length > 0)" class="text-center">
+          <tr>
+            <td colspan="3" class="text-red">{{langData.common.noDataFound}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h1 class="fs18 font-weight-bold mb20"  *ngIf="videoArray && videoArray.length > 0" >{{langData.viewPostPage.video}}</h1>
+  <div class="row" *ngIf="videoArray && videoArray.length > 0" >
+    <ng-container *ngFor="let video  of videoArray">
+    <div class="col-md-6" *ngIf="video.urltype == 'embed'">
+
+      <!-- youtube tag -->
+      <div class="embed-responsive embed-responsive-16by9 br5 mb20">
+        <iframe class="embed-responsive-item" height="265" [src]="sanitizer.bypassSecurityTrustResourceUrl(video.url)" title="BusinessIn video" allowfullscreen></iframe>
+      </div>
+      <!-- youtube tag -->
+
+      
+    </div>
+    <div class="col-md-6" *ngIf="video.urltype == 'local'">
+      <!-- Video Tag -->
+      <div class="embed-responsive embed-responsive-16by9 br5 mb20">
+      <video  height="265" controls>
+          <source src="{{cloudeURL}}{{video.url}}" type="video/mp4">
+          {{langData.viewPostPage.browserNotSupport}}
+        </video>
+      </div>
+      <!-- Video Tag -->
+    </div>
+  </ng-container>
+  </div>
+</section>
+<section class="mt30 w-100" *ngIf="!showContent">
+  <div class="container">
+  Currently You Don't Have Access to view this Business Pitch.
+  <br><br>
+  <button *ngIf="pitchdata.length>0 && showButton==true" class="btn btn-primary" (click)="requireaccess(pitchDet)">Request Access</button>
+  <p *ngIf="showContent==false && showButton==false">{{message}}</p>
+  </div>
+  </section>
+
+
+
+ 
+<ng-template #documentviewer>
+  <div class="modal-header bg-grey12 border-0 text-center">
+    <h1 class="fs18  text-black2 font-weight-bold mx-auto">{{langData.viewPostPage.documentViewer}}</h1>
+    <button type="button" class="close position-absolute rt-21px op-1" aria-label="Close" (click)="modalRef.hide()">
+      <span class="lnr lnr-cross font-weight-bold text-grey11"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+      <ngx-doc-viewer [url]="doc" style="width:100%;height:80vh;"></ngx-doc-viewer>
+  </div>
+</ng-template>
+

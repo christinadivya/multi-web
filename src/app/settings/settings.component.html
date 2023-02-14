@@ -1,0 +1,22 @@
+<section class="container mt93 mb40">
+  <div class="d-flex">
+    <!-- Start Settings Tab -->
+    <div class="pl-3 flex-fill">
+      <tabset  #tabset [justified]="true" type="pills" class="company-tab setting-tab">
+        <tab heading="Profile" (selectTab) = "generalTabClicked();" [active]="generalTab">
+          <app-personal-information></app-personal-information>
+        </tab>        
+        <tab heading="Privacy" (selectTab) = "privacyTabClicked()" [active] = "privacyTab">
+          <app-privacy-tab></app-privacy-tab>
+        </tab>
+        <tab heading="Billing" (selectTab) = "billTabClicked()" [active]="activeTab">
+          <app-billing-tab [showContent] = "content" [showPlanContent] = "planContent"></app-billing-tab>
+        </tab>
+      </tabset>
+    </div>
+    <!-- End Settings Tab -->
+  </div>  
+</section>
+<!-- footer Section -->
+<!-- <app-auth-footer></app-auth-footer> -->
+<!-- footer Section -->

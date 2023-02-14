@@ -1,0 +1,32 @@
+<div class="container mt-5 pt-2"> 
+  <div class="row">
+    <div class="col-md-9">
+      <div class="card custom-user-card overflow-hidden my-3">
+        <div class="card-header">
+          <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">{{langData.common.viewAllPost}}</h3>
+        </div>
+        <div class="card-body pt-0 pb-0">
+          <ul class="list-group toppics-list">
+            <li class="list-group-item position-relative" *ngFor="let toppick of viewallpost | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index">
+              <img src="./assets/images/mobile-logo.png" *ngIf="!toppick.postlogo || toppick.postlogo == null" alt="top-pics-images" class="position-absolute">
+              <img src="{{cloudeURL}}{{toppick.postlogo}}" *ngIf="toppick.postlogo && toppick.postlogo != null" alt="top-pics-images" class="position-absolute">
+              <div class="top-pic-desc">
+                <h4 class="fs14 mt-1 mb-1 font-weight-bold text-black2">{{toppick.postname}}</h4>
+                <span class="brand-name">{{toppick.companyname}}</span>
+              </div>
+              <div class="desc-section">
+                <span class="time-text">{{toppick.createdon   | amLocale:'en' | amDateFormat:'MMM D, YYYY h:mm A' }}</span>
+                <p class="mb-0 fs14 text-black2 setheight">{{toppick.postsummary}}</p>
+                <a href="javascript:void(0)" (click)="viewPost(toppick.postid)" class="text-blue float-right font-weight-bold">View More</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>      
+      <div class="w-100 d-flex justify-content-center ml-3" >
+        <pagination-controls (pageChange)="postChange($event)"  previousLabel="" nextLabel="" autoHide="true" responsive="true">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>

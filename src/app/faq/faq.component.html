@@ -1,0 +1,40 @@
+<section class="bg-white mt28">
+  <div class="jumbotron jumbotron-fluid subscription-bg py-5">
+    <div class="container text-center text-white">
+      <h1 class="fs30 font-weight-bold mb-3 mt-4">{{langData.faqPage.faqHeader}}</h1>
+      <!-- <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="input-group mb-3 custom-input-group">
+            <input type="text" class="form-control px-md-4" placeholder="Search Help here">
+            <div class="input-group-append">
+              <span class="input-group-text px-3" ><em class="fas fa-search"></em></span>
+            </div>
+          </div> 
+        </div>
+      </div> -->
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="faq-tabset">
+          <tabset [vertical]="true" type="pills">
+            <tab *ngFor="let faq of faqList">
+              <ng-template tabHeading>
+                <div (click)="changeHeader(faq.id)">
+                  {{faq.heading}}
+                </div>
+              </ng-template>
+              <h1 class="ff-muli-ExtraBold fs25 my-4">{{header}}</h1>
+              <div class="pt-2" *ngFor = "let faqItem of faqQAList">
+                <h2 class="fs18 text-blue ff-muli-semibold">{{faqItem.question}}</h2>
+                <p class="ff-muli-Regular fs14 color-blacklight mt-4 mb30">{{faqItem.answer}}</p>
+                <hr>
+              </div>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

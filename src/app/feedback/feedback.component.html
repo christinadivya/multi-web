@@ -1,0 +1,76 @@
+<section class="bg-white mt28">
+  <div class="jumbotron jumbotron-fluid subscription-bg py-5">
+    <div class="container text-center text-white mt-2">
+      <h1 class="fs30 font-weight-bold">{{langData.feedbackPage.feedback}}</h1>
+      <p class="fs18 op-9 lh-35 w-75 mx-auto">{{langData.feedbackPage.feedbackReason}}</p>
+    </div>
+  </div>
+  <div class="container pt-2">
+    <div class="row">
+      <div class="col-md-10 mx-auto">
+        <form class="contactus-form pt-2 pb-4" focusInvalidInput [formGroup]="feedbackForm" (ngSubmit)="onSubmit()"   novalidate="">
+          <fieldset>
+            <div class="form-group">
+              <label>{{langData.feedbackPage.emailAddress}}</label>
+              <input class="form-control"  formControlName="email"  [placeholder]="langData.feedbackPage.emailAddress"
+                required="" type="email" [ngClass]="{'is-invalid': submitted && feedbackForm.get('email').errors}">
+              <div class="text-danger" *ngIf="submitted  && feedbackForm.get('email').errors">
+                <small *ngIf="feedbackForm.get('email').errors.required">{{langData.contactUsPage.emailRequired}}</small>
+                <small *ngIf="feedbackForm.get('email').errors.pattern">{{langData.contactUsPage.pleaseEnterValidEmail}}</small>
+              </div>
+            </div>
+            <div class="feedback-option">
+              <label>{{langData.feedbackPage.question1}}</label>
+              <div class="form-group">
+                <div class="custom-control custom-radio custom-control-inline pl0" *ngFor="let ans1 of answer1List; let i = index">
+                  <input type="radio" id="opt1{{i}}" value="answer1List{{i}}" formControlName="answerOne" class="custom-control-input"
+                  (change)="changeanswer1(ans1)" [checked]="feedbackForm.get('answerOne').value == ans1.id">
+                  <label class="custom-control-label bg-transparent border-0" for="opt1{{i}}">{{ans1.heading}}</label>
+                </div>
+                <div class="text-danger" *ngIf="submitted  &&  !answer1Value">
+                  <small>{{langData.feedbackPage.answer1Required}}</small>
+                </div>
+              </div>
+            </div>
+            <div class="feedback-option">        
+              <label>{{langData.feedbackPage.question2}}</label>   
+              <div class="form-group">              
+                <div class="custom-control custom-radio custom-control-inline pl0" *ngFor="let ans2 of answer2List; let i = index">
+                  <input type="radio" id="opt6{{i}}" value="answer2List{{i}}" formControlName="answerTwo" class="custom-control-input"
+                  (change)="changeanswer2(ans2)" [checked]="feedbackForm.get('answerTwo').value == ans2.id">
+                  <label class="custom-control-label bg-transparent border-0" for="opt6{{i}}">{{ans2.heading}}</label>
+                </div>
+                <div class="text-danger" *ngIf="submitted  &&  !answer2Value">
+                  <small>{{langData.feedbackPage.answer2Required}}</small>
+                </div>
+              </div>
+            </div>
+            <div class="feedback-option">
+              <label>{{langData.feedbackPage.question3}}</label>
+              <div class="form-group">
+                <div class="custom-control custom-radio custom-control-inline pl0" *ngFor="let ans3 of answer3List; let i = index">
+                  <input type="radio" id="opt9{{i}}" value="answer3List{{i}}" formControlName="answerThree" class="custom-control-input"
+                  (change)="changeanswer3(ans3)" [checked]="feedbackForm.get('answerThree').value == ans3.id">
+                  <label class="custom-control-label bg-transparent border-0" for="opt9{{i}}">{{ans3.heading}}</label>
+                </div>
+                <div class="text-danger" *ngIf="submitted  &&  !answer3Value">
+                  <small>{{langData.feedbackPage.answer3Required}}</small>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>{{langData.feedbackPage.commentSuggestion}}</label>
+              <textarea class="form-control" formControlName="comments" placeholder="Type here"  maxlength="50" > 
+              </textarea>
+              <div class="text-danger" *ngIf="submitted  &&  (feedbackForm.get('comments').errors || invalidcomment)">
+                <small *ngIf="feedbackForm.get('comments').errors">{{langData.contactUsPage.commentsRequired}}</small>
+                <small *ngIf="invalidcomment">{{langData.contactUsPage.plsEnterValidComments}}</small>
+              </div>              
+            </div>
+            <button type="submit" class="btn btn-blue fs15 ff-muli-semibold px-5 pt10 pb10 mt-1">{{langData.common.submit}}</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

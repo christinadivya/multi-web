@@ -1,0 +1,37 @@
+<!-- footer Section -->
+<section class="footer-section bg-lightgrey">
+  <div class="container">
+    <div class="p-2 d-flex">
+      <div class="text-blue font-weight-bold fs14 c-pointer">
+        <img src="./assets/images/logo.png" alt="Business-In-Logo" routerLink="/home" width="78" class="mt-6" (click)="clickLogo()">
+        <span class="ml-2">© {{year}}</span>
+      </div>
+      <div class="social-icons ml-auto">
+        <ul class="list-inline mb-0 pl-0">
+          <li class="list-inline-item mr-md-3"><a class="fb" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" title="Facebook"><em class="fab fa-facebook-f"></em></a></li>
+          <li class="list-inline-item mr-md-3"><a class="twitter" href="https://twitter.com/bebusinessin" target="_blank" rel="noopener noreferrer" title="Twitter"><em class="fab fa-twitter"></em></a></li>
+          <li class="list-inline-item mr-md-3"><a class="linkedin" href="https://in.linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><em class="fab fa-linkedin-in"></em></a></li>
+          <li class="list-inline-item"><a class="instagram" href="https://www.instagram.com/bebusinessin/" target="_blank" rel="noopener noreferrer" title="Instagram"><em class="fab fa-instagram"></em></a></li>
+        </ul>
+      </div>
+      <div class="ml-auto">
+        <ul class="paging-list list-inline mb-0 pl-0 font-weight-bold fs14">
+          <li class="list-inline-item color-darkgrey fw400"><a routerLink="/aboutus">{{langData.loginFooterPage.aboutUS}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a routerLink="/pricing-plan">{{langData.loginFooterPage.pricing}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a routerLink="/faq">{{langData.loginFooterPage.faq}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a href="javascript:void(0)">{{langData.loginFooterPage.userAgreement}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a href="javascript:void(0)">{{langData.loginFooterPage.privacyPolicy}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a routerLink="/feedback">Feedback</a></li>
+          <li class="list-inline-item color-darkgrey fw400"><a routerLink="/contactus">{{langData.loginFooterPage.contactUs}}</a></li>
+          <li class="list-inline-item color-darkgrey fw400">
+            <select class="bg-transparent border-0 color-darkgrey pr20 select-lang"  (change)="changeLanguage($event.target.value)">
+              <option [value]='null' selected>{{langData.loginFooterPage.language}}</option>
+              <option *ngFor="let lang of languageData" [value]="lang.id">{{lang.name}}</option>
+            </select>
+          </li>
+        </ul>
+    </div>
+    </div>
+  </div>
+</section>
+<!-- footer Section -->

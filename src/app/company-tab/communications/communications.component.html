@@ -1,0 +1,43 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+
+<section class="mt30" *ngIf="chatroomid && chatroomid.chatroommesaagesarr">
+  <h1 class="fs18 font-weight-bold">Communications</h1>
+  <p *ngIf="postCompanyName !== ''">{{langData.viewPostPage.communicationTabDescription}}{{postCompanyName}}.</p>
+  <p *ngIf="postCompanyName === null || postCompanyName === ''">{{langData.viewPostPage.communicationTabDescription}}{{postusername}}.</p>
+  <div class="card br5 summary-box mt30 mb20">
+    <div class="card-body fs14 chatbox py-0" >
+      <div class="float-right py-4" *ngIf = "chatroomid.chatroommesaagesarr.TMESSAGES_UID == loginUserId">
+        <div class="right">
+          <p class="mb-0 pre" style="white-space: pre-wrap;" *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'text' && chatroomid.chatroommesaagesarr.TMESSAGES_Content !== null && !chatroomid.chatroommesaagesarr.linktype">{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}</p>
+          <p class="mb-0" *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'text' && chatroomid.chatroommesaagesarr.TMESSAGES_Content !== null && chatroomid.chatroommesaagesarr.linktype">
+            <a class="far fa-file-check" href="{{chatroomid.chatroommesaagesarr.anchorContent}}"  target="_blank">{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}
+            </a>
+          </p>
+          <img *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'image' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'jpg' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'jpeg' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'gif' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'png' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'tif'" src="{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}" alt="" class="chatupimg" height="150" width="200">
+          <p *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'pdf'" class="sendmsg p-2 mb-0">
+            <a class="far fa-file-check" href="{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}">
+              <em class="fas fa-file-pdf fa-2x"></em> &nbsp; &nbsp; {{chatroomid.chatroommesaagesarr.TMESSAGES_File_Name}}
+            </a>
+          </p>
+          <p *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'doc' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'docx' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'msword'" class="sendmsg p-2 mb-0">
+            <a class="far fa-file-check" href="{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}">
+              <em class="fas fa-file-word fa-2x"></em> &nbsp; &nbsp; {{chatroomid.chatroommesaagesarr.TMESSAGES_File_Name}}
+            </a>
+          </p>
+          <p *ngIf="chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'xlsx' || chatroomid.chatroommesaagesarr.TMESSAGES_File_Type == 'xls'" class="sendmsg p-2 mb-0">
+            <a class="far fa-file-check" href="{{chatroomid.chatroommesaagesarr.TMESSAGES_Content}}">
+              <em class="fas fa-file-excel fa-2x"></em> &nbsp; &nbsp; {{chatroomid.chatroommesaagesarr.TMESSAGES_File_Name}}
+            </a>
+          </p>
+        </div>
+        <div class="text-grey-dark float-right fs15 my-2 w-100 text-right">{{langData.viewPostPage.sentOn}} {{convertutctolocal(chatroomid.chatroommesaagesarr.TMESSAGES_Created_On) | amLocale:'en' | amDateFormat:'MM-DD-YY h:mm A'}}</div>
+        <!-- Received On: 03-19-19 10:59AM -->
+      </div>
+    </div>
+    <div *ngIf="chatroomid.showInputBox">
+      <textarea type="text" class="fs12 text-grey23 form-control border-0 bg-transparent writemsg" rows="3" [placeholder]="langData.messagePage.writeAMessage" [(ngModel)]="message" (keyup.enter)="send()"></textarea>
+      <button class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold fs14 float-right m-3" (click) = "send()">Send</button>
+    </div>
+  </div>  
+  <button *ngIf="!chatroomid.showInputBox" class="btn btn-blue btn-rounded px-33 py-2 font-weight-bold fs14 mb20 float-right" type="submit" (click)="goToMessage()">Go To Conversation</button>
+</section>

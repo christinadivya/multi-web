@@ -1,0 +1,174 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+  <section class="container minheight my-5 max-w-lg-1070px">
+    <div class="row">
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group px-lg-0">
+              <!-- <label class="text-black2 fs18 font-weight-bold w-100">{{langData.getReferralPage.targetedPost}}
+                <sup>*</sup>
+              </label> -->
+              <ng-container *ngIf="postList && postList.length > 0">
+                <div class="row">
+                  <div class="col-md-6">
+                    <select class="custom-select" (change)="getuser($event.target.value)" [(ngModel)]="postid">
+                      <!-- <option class="" value="" disabled>{{langData.getReferralPage.selectpostyouwanttorefer}}</option> -->
+                      <option class="customclr" *ngFor="let post of postList" [selected]="" [value]="post.postid">
+                        {{post.postname}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="fs17 text-black2 font-weight-bold pt-2">{{total}} Users</p>
+                  </div>
+                </div>
+              </ng-container>
+              <!-- <ng-container *ngIf="postList && postList.length === 1 && userList.length > 0">
+                <input type="text" [(ngModel)]="postid" class="form-control" readonly>
+              </ng-container> -->
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-7 text-right pr-0 mt3">
+                <button type="button" class="btn btn-blue-border btn-rounded text-blue  px-4 py-2  mr-2 font-weight-bold "
+                (click)="sendAllResponse(true)" *ngIf="!hideAcceptButton">
+                <span class="fs14">Accept</span>
+              </button>
+              <button type="button" class="btn btn-blue-border btn-rounded text-blue  px-4 py-2 font-weight-bold "
+                (click)="sendAllResponse(false)"  *ngIf="!hideRejectButton">
+                <span class="fs14">Reject</span>
+              </button>
+          
+              <!-- <button type="button" class="btn btn-blue btn-rounded px-4 py-2 font-weight-bold">
+                <span class="fs14">Select All</span>
+              </button> -->
+                <!-- <button type="button" [disabled]="hideSendReferralButton" class="btn btn-blue-border btn-rounded text-blue py-2 pr-2 mr-2 font-weight-bold "
+                  (click)="sendAllMyRefferal()">
+                  <em class="fa fa-envelope pt-1 " aria-hidden="true"></em>
+                  <span class="fs14 pl-2">{{langData.sendReferralPage.sendReferral}}</span>
+                </button>
+            
+                <button type="button" (click)="buttonClicked()"
+                  class="btn btn-blue btn-rounded px-4 py-2 font-weight-bold" [disabled]="hideSelectButton">
+                  <span class="fs14">{{buttonShow}}</span>
+                </button> -->
+              </div>
+              <div class="col-md-5 pt-1" *ngIf="postList && postList.length > 0 && userList.length > 0">
+                <button type="button" (click)="buttonClicked()" class="btn btn-blue btn-rounded px-4 py-2 font-weight-bold">
+                  <span class="fs14">{{buttonShow}}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="viewreferrals card position-relative mb-4 " *ngIf="loading == false">
+          <ul class="list-group toppics-list pl-2">
+            <ng-container
+              *ngFor="let array of userList | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index">
+              <li class="list-group-item position-relative pb-1">
+                <div >
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="d-flex align-items-center">
+                        <label class="custom-control custom-checkbox customcheck2 pr-2">
+                          <input type="checkbox" id="checkbox" class="custom-control-input" [checked]="array.ischeck"
+                            (click)="selectedProfile(array, array.ischeck, i)">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-label"></span>
+                        </label>
+                        <div class="text-black2  fs16" (click)="viewProfile(array.requesteruserid)">
+                          <img *ngIf="array.profileimage !== null" src={{cloudeURL}}{{array.profileimage}} id="sendreferral" class="rounded-circle "
+                            alt="sendreferral-profile-image">
+                          <img *ngIf="array.profileimage === null" src="./assets/images/default-user.jpg" id="sendreferral" class="rounded-circle "
+                            alt="sendreferral-profile-image">
+                          <p class="pl-2 fs16 pro-label font-weight-bold" onmouseover=""
+                            style="cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.name}}>{{array.name | truncate : 13 : "..."}}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="d-flex align-items-start justify-content-start pt10" *ngIf="array.companyname">
+                        <div>
+                          <em class="fas fa-briefcase fs20 color-light-blue mr-2"></em>
+                          {{langData.sendReferralPage.companyName}} 
+                          <span class="fs14 text-black2 font-weight-bold" onmouseover=""
+                            style="max-width: 255px;cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.companyname}}>{{array.companyname | truncate : 15 : "..." }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div  class="col-lg-3 pt5">
+                      <button type="button" class="btn btn-blue-border btn-rounded text-blue py-1 pr-3 mr-2  font-weight-bold"
+                        (click)="sendResponse(array, true)">
+                        <span class="fs14 pl-2">Accept</span>
+                      </button>
+                      <button type="button" class="btn btn-blue-border btn-rounded text-blue py-1 pr-3   font-weight-bold "
+                      (click)="sendResponse(array, false)">
+                      <span class="fs14 pl-2">Reject</span>
+                    </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="d-flex align-items-start justify-content-start ml80">
+                        <div>
+                          <img src="./assets/images/viewprofileicon.svg" class="viewpostimg pr-2"
+                            alt="view-post-images">
+                        </div>
+                        <div>
+                          <p class="fs14 text-black2" style="max-width: 145px;">
+                            <span>{{array.acctypeshortname}}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="d-flex align-items-start justify-content-start " *ngIf="array.location">
+                        <div>
+                          <img src="./assets/images/locationicon.svg" alt="location-icon" class="viewpostimg pr-2">
+                          {{langData.sendReferralPage.location}} 
+                          <span class="fs14 text-black2 font-weight-bold" onmouseover=""
+                            style="max-width: 255px;cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.location}}>{{array.location | truncate : 25 : "..." }}</span>
+                        </div>
+                      </div>
+                    </div>                    
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="userList.length === 0">
+              <li class="list-group-item position-relative pb-0">
+                <div class="">
+                  <div></div>
+                  <div class="text-center text-light-grey">{{langData.sendReferralPage.noProfilesMatched}}</div>
+                </div>
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+        <div class="row" *ngIf="loading == false">
+          <div class="col-md-12 d-flex justify-content-center mt-3" *ngIf="currentPage !== 0 && pageSize !== 0">
+            <pagination-controls (pageChange)="profileChange($event)" directionLinks="true" autoHide="true"
+              responsive="true" previousLabel="" nextLabel="">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+          <div class="card-body p-1">
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Body Content -->
+  <!-- footer Section -->
+  <!-- <app-auth-footer></app-auth-footer> -->
+  <!-- footer Section -->
+</div>

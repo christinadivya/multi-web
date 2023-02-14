@@ -1,0 +1,188 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }" ></ngx-loading>
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+
+  <section class="container my-5 max-w-lg-1070px">
+    <div class="row my-3">
+      <div class="col-md-4">
+        <div class="company-tab post-list-tabs">
+          <ul class="nav nav-pills  nav-justified">
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="tabActive === 1" (click)="tabChange(1)" href="javascript:void(0)"><span class="fas fa-circle text-green float-left pt-2 fs12" *ngIf = "sendReferralCount"></span> {{langData.viewReferralPage.sent}} ({{sendReferralCount}})</a>
+            </li>
+            <li class="nav-item">   
+              <a class="nav-link"  [class.active]="tabActive === 2" (click)="tabChange(2)" href="javascript:void(0)"> <span class="fas fa-circle text-yellow float-left pt-2 fs12" *ngIf = "receiveReferralCount"></span> {{langData.viewReferralPage.received}} ({{receiveReferralCount}})</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9" *ngIf="tabone">
+        
+          <div class="viewreferrals card position-relative mb-4"  *ngFor="let sentrefer of sendReferralEntity | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: sendReferralCount }; let i = index">
+              <div class="card-body p-0 pt-lg-2 pb-lg-5 px-lg-3">
+                <h1 class="text-left text-black2 fs18 font-weight-bold mb-0" *ngIf = "sentrefer && sentrefer.referraltype == 'post'">{{langData.viewReferralPage.postTitle}} - {{sentrefer.postname}}</h1>
+                <h1 class="text-left text-black2 fs18 font-weight-bold mb-0" *ngIf = "sentrefer && sentrefer.referraltype == 'profile'">{{langData.viewReferralPage.profileReferral}}</h1>
+                <p class="text-right fs12 text-grey23 mb-0" *ngIf="sentrefer && (sentrefer.referralsendon !== null || sentrefer.referralsendon !== '')">
+                  {{ convertutctolocal(sentrefer.referralupdatedon) | amLocale:'en' | amDateFormat:'MMM D, YYYY  h:mm A' }}
+                </p>
+                <p class="text-left fs14 text-black2 mb-1">{{langData.viewReferralPage.targetedLocation}}</p>
+                <ul class="chips-list list-unstyled mb-1">
+                  <li class="fs14 text-black font-weight-bold" *ngFor="let location of sentrefer.referrallocation">
+                    {{location.showreferralLocation}}
+                  </li>
+                </ul>
+                <p class="text-left fs14 text-black2 mb-1">{{langData.viewReferralPage.targetedIndustry}}</p>                
+                <ul class="chips-list list-unstyled mb-1 " >
+                  <li class="fs14 text-black font-weight-bold" *ngFor="let industry of sentrefer.referralindustry">
+                    {{industry.industryname}}
+                  </li>
+                </ul>
+
+                <p class="text-left fs14 text-black2 mb-0 view-moreless-div" 
+                   *ngIf = "sentrefer && sentrefer.message"  
+                   [ngClass]="{'break-view compresed-view': sentrefer.viewmore }">
+                  {{sentrefer.message}}
+                  <span class="d-inline-block moreless">
+                    <a class="fs12 font-weight-bold atagtext-blue"  href="javascript:void(0)" *ngIf="sentrefer.viewmore==true" (click)="viewmorepage(sentrefer)">...View More</a>
+                    <a class="fs12 font-weight-bold atagtext-blue ml-3"  href="javascript:void(0)" *ngIf="sentrefer.viewmore==false" (click)="viewmorepage(sentrefer)">...View Less</a>
+                  </span>
+                </p>
+                <br>
+                  <a href="http://{{sentrefer.profilecompanywebsite}}" target="_blank" *ngIf="sentrefer.viewmore==false" class="text-blue fs14 text-left font-weight-bold text-underline">{{sentrefer.profilecompanywebsite}}</a>
+                <br>
+                <ul class="chips-list  list-unstyled w-100 float-left" *ngIf="sentrefer.viewmore==false">
+                    <li *ngFor="let files of sentrefer.referralfiles " class="float-left w-25"
+                      [ngClass]="{'upload-red2': (files.fileext == 'pdf'||  files.fileext == 'jpg'||  files.fileext == 'jpeg'|| files.fileext == 'png'),  
+                      'upload-yellow': (files.fileext == 'xl' || files.fileext == 'xls' || files.fileext == 'xlsx'),
+                      'upload-blue8': (files.fileext == 'rtf' || files.fileext == 'docx' || files.fileext == 'doc')}">
+                      <a [href]="cloudeURL+files.url" download><div class="file-badge bg-badge-color">{{files.fileext}}</div>
+                        <div class="pl-4">{{files.url}}</div></a>
+                    </li>
+                  </ul>
+                  <button type="button" (click) = "resend(sentrefer)"  class="btn  btn-rounded py-2 pr-2 mr-4 text-grey26 font-weight-bold hovermsgbtn " [ngClass]="(sentrefer.sendtype == '1') ? 'btn-grey-border' : 'btn-blue-border'"  [disabled] = "sentrefer.sendtype == '1' ? true : false">
+                    <em class="fa fa-envelope msgimgbtn " aria-hidden="true"></em>
+                    <span class="fs14 pl-4" >{{langData.viewReferralPage.reSendReferrals}}</span>
+                  </button>
+            
+              </div>
+              
+              
+            </div>
+              <div class="col-md-12 d-flex justify-content-center mt-3" *ngIf="sendReferralEntity.length > 0">
+                <pagination-controls (pageChange)="sentReferralChange($event)" directionLinks="true" autoHide="true"
+                responsive="true"  previousLabel="" nextLabel="">
+              </pagination-controls>
+            </div>
+
+            <div class="viewreferrals card fs16 position-relative mb-4 text-center text-danger"  *ngIf = "sendReferralEntity.length == 0 && this.loading == false">No Referrals Found</div>
+      </div>
+
+      <div class="col-md-9" *ngIf="!tabone">
+          <div class="viewreferrals card position-relative mb-4 ">
+              <div class="card-body p-0 px-lg-3">
+                  <ul class="list-group toppics-list">
+                      <li class="list-group-item position-relative pb-2" *ngFor = "let recvrefer of receiveReferralEntity | paginate: { itemsPerPage: receiverPagesize, currentPage: receiverPage, totalItems: receiveReferralCount }; let i = index">
+                        <img *ngIf = "(recvrefer && recvrefer.referraltype === 'profile') && (recvrefer.profileimage !== null)" src="{{cloudeURL}}{{recvrefer.profileimage}}" alt="top-pics-images" class=" viewmainimg position-absolute">
+                        <img *ngIf = "(recvrefer && recvrefer.referraltype === 'post') && (recvrefer.postlogo !== null )" src="{{cloudeURL}}{{recvrefer.postlogo}}" alt="top-pics-images" class=" viewmainimg position-absolute">
+                        <img src="./assets/images/mobile-logo.png" *ngIf="(recvrefer.referraltype === 'profile' && recvrefer.profileimage === null) || (recvrefer.referraltype === 'post' && recvrefer.postlogo === null)"  alt="Business-In-Logo" class=" viewmainimg position-absolute">
+                        <div class="top-pic-desc mb-1">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <h1 class="fs16 mt-1 mb-0 font-weight-bold text-black2" *ngIf = "recvrefer && (recvrefer.profilefirstname !== null || recvrefer.profilefirstname !== 'null') && (recvrefer.profilelastname !== null || recvrefer.profilelastname !== 'null')">{{recvrefer.profilefirstname}} {{recvrefer.profilelastname}}</h1>
+                              <h1 class="fs16 mt-1 mb-0 font-weight-bold text-black2" *ngIf = "recvrefer && (recvrefer.profilefirstname !== null || recvrefer.profilefirstname !== 'null') && recvrefer.profilelastname === null">{{recvrefer.profilefirstname}}</h1>
+                              <h1 class="fs16 mt-1 mb-0 font-weight-bold text-black2" *ngIf = "recvrefer && recvrefer.profilefirstname === null && (recvrefer.profilelastname !== null || recvrefer.profilelastname !== 'null')">{{recvrefer.profilelastname}}</h1>
+                              
+                              <span class="fs12 text-lightpurple font-weight-bold" *ngIf = "recvrefer && recvrefer.referraltype === 'profile' && (recvrefer.profilecompanyname !== null && recvrefer.profilecompanyname !== '')">{{recvrefer.profiletype}} - {{recvrefer.profilecompanyname}}</span>
+                              <span class="fs12 text-lightpurple font-weight-bold" *ngIf = "recvrefer && recvrefer.referraltype === 'profile' && (recvrefer.profilecompanyname === null)">{{recvrefer.profiletype}}</span>
+                              <span class="fs12 text-lightpurple font-weight-bold" *ngIf = "recvrefer && recvrefer.referraltype === 'post' && (recvrefer.postcompanyname !== null || recvrefer.postcompanyname !== '')">{{recvrefer.posttype}} - {{recvrefer.postcompanyname}}</span>
+                              <span class="fs12 text-lightpurple font-weight-bold" *ngIf = "recvrefer && recvrefer.referraltype === 'post' && (recvrefer.postcompanyname === null)">{{recvrefer.posttype}}</span>
+                            </div>
+                            <div>
+                              <div class="d-flex align-items-center">
+                                <p class="text-right fs12 text-grey23 mb-0 mr-3">{{convertutctolocal(recvrefer.referralupdatedon) | amLocale:'en' | amDateFormat:'MMM D, YYYY  h:mm A' }}</p>
+                                <button type="button" class="btn btn-blue-borderbtn btn-rounded text-blue posthover py-2" *ngIf = "recvrefer && recvrefer.referraltype == 'post'">
+                                  <img src="./assets/images/viewposticon.svg" class="viewpostimg pr-2" alt="view-post-images">
+                                  <span class="fs12 posthover" (click)="viewpost(recvrefer.postid, recvrefer.referralid)">{{langData.viewReferralPage.viewPost}}</span>
+                                </button>
+                                <button type="button" class="btn btn-blue-borderbtn btn-rounded text-blue posthover py-2" *ngIf = "recvrefer && recvrefer.referraltype == 'profile'">
+                                  <img src="./assets/images/viewprofileicon.svg" class="viewpostimg pr-2" alt="view-post-images">
+                                  <span class="fs12 posthover" (click)="viewprofile(recvrefer.profileid)">{{langData.viewReferralPage.viewProfile}}</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>  
+                        </div>
+                        <div class="desc-section">
+                          <p class="fs14 text-left font-weight-bold atagtext-blue mb-0" *ngIf = "recvrefer && recvrefer.referraltype == 'post'">{{langData.viewReferralPage.postTitle}} - {{recvrefer.postname}}</p>
+                          <p class="text-left fs14 ext-black2 mb-1 view-moreless-div" *ngIf = "recvrefer && recvrefer.message; " [ngClass]="{'break-view compresed-view': recvrefer.viewmore }">{{recvrefer.message}}
+                          <span class="d-inline-block moreless">
+                            <a class="fs12 font-weight-bold atagtext-blue"  href="javascript:void(0)" *ngIf="recvrefer.viewmore==true" (click)="viewmorepage2(recvrefer)">... {{langData.viewReferralPage.viewMore}}</a>
+                            <a class="fs12 font-weight-bold atagtext-blue"  href="javascript:void(0)" *ngIf="recvrefer.viewmore==false" (click)="viewmorepage2(recvrefer)">... {{langData.viewReferralPage.viewLess}}</a>
+                           
+                          </span>
+                        </p>
+                        <div>
+                          <a href="http://{{recvrefer.profilecompanywebsite}}" target="_blank" *ngIf="recvrefer.viewmore==false" class="text-blue fs14 text-left font-weight-bold text-underline">{{recvrefer.profilecompanywebsite}}</a>
+                        </div>
+                          <ul class="chips-list  list-unstyled w-100 float-left" *ngIf="recvrefer.viewmore==false">
+                            <li *ngFor="let files of recvrefer.referralfiles" class="float-left w-25"
+                              [ngClass]="{'upload-red2': (files.fileext == 'pdf'||  files.fileext == 'jpg'||  files.fileext == 'jpeg'|| files.fileext == 'png'),  
+                              'upload-yellow': (files.fileext == 'xl' || files.fileext == 'xls' || files.fileext == 'xlsx'),
+                              'upload-blue8': (files.fileext == 'rtf' || files.fileext == 'docx' || files.fileext == 'doc')}">
+                              <a [href]="cloudeURL+files.url" download><div class="file-badge bg-badge-color">{{files.fileext}}</div>
+                                <div class="pl-4">{{files.url}}</div>
+                               </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </li>
+                      <li class="list-group-item position-relative p-0"><div class="text-center fs16 text-danger" *ngIf = "receiveReferralEntity.length == 0 && loading == false">{{langData.viewReferralPage.noReferralsFound}}</div></li>
+                   
+                    </ul>
+                    
+                   
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 d-flex justify-content-center mt-3">
+                <pagination-controls (pageChange)="recvreferralchange($event)" directionLinks="true" autoHide="true"
+                responsive="true"  previousLabel="" nextLabel="">
+              </pagination-controls>
+            </div>
+            </div>
+           
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+          <div class="card-body p-1">
+
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+  </section>
+
+  
+  <!-- Body Content -->
+
+
+  <!-- footer Section -->
+  <!-- <app-auth-footer></app-auth-footer> -->
+  <!-- footer Section -->
+
+</div>
+

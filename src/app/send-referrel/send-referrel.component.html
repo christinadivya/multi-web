@@ -1,0 +1,200 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+<div class="bg-grey5 pt-5">
+  <!-- Body Content -->
+
+  <section class="container minheight my-5 max-w-lg-1070px">
+
+    <div class="row">
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-4">
+            <p class="fs17 text-black2 font-weight-bold pt-2">{{total}} {{langData.sendReferralPage.resultsFound}}</p>
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-7 text-right pr-0">
+                <button type="button" [disabled]="hideSendReferralButton
+                " class="btn btn-blue-border btn-rounded text-blue py-2 pr-2 mr-2  font-weight-bold "
+                  (click)="sendAllMyRefferal()">
+                  <em class="fa fa-envelope pt-1 " aria-hidden="true"></em>
+                  <span class="fs14 pl-2">{{langData.sendReferralPage.sendReferral}}</span>
+                </button>
+            
+                <button type="button" (click)="buttonClicked()"
+                  class="btn btn-blue btn-rounded px-4 py-2 font-weight-bold" [disabled]="hideSelectButton">
+                  <span class="fs14">{{buttonShow}}</span>
+                </button>
+              </div>
+              <div class="col-md-5 pt-1">
+                <div class="input-group search-input" [tooltip]="tooltipStatus">
+                  <div class="input-group-prepend float-right">
+                    <span class="input-group-text py-1 px-2 bg-white border-0"><span
+                        class="lnr lnr-magnifier fs20"></span></span>
+                  </div>
+                  <input type="text" [ngModel]="search" (input)="onSearchChange($event.target.value)"
+                    class="form-control border-0 togglesearch pl-0" [placeholder]="langData.sendReferralPage.searchPost" aria-label="Search"
+                    [disabled]="PlanBased">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="viewreferrals card position-relative mb-4 " *ngIf="loading == false">
+         
+            <div *ngIf="applyBlur" [ngClass]="applyBlur? 'blur-background-bg' : '' "
+              class="py-2 position-absolute d-flex h-100 w-100 align-items-center justify-content-center flex-column">
+              <p class="fs15 text-red font-weight-bold text-center">{{langData.searchPage.pleaseUpgradeYourPlanForFurtherResults}}
+              </p>
+              <button class="btn btn-blue btn-rounded px-4 py-2 font-weight-bold" type="button" (click)="upgradePlan()"><span class="fs14">Upgrade</span></button>
+            </div>
+          <ul class="list-group toppics-list pl-2">
+            <ng-container
+              *ngFor="let array of sendreferralarray | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: total }; let i = index">
+              <li class="list-group-item position-relative pb-0">
+                <!-- <div *ngIf="applyBlur"
+                  class="py-2 position-absolute d-flex h-100 w-100 align-items-center justify-content-center">
+                  <p class="fs15 text-red font-weight-bold text-center">{{langData.searchPage.pleaseUpgradeYourPlanForFurtherResults}}
+                  </p>
+                </div> -->
+                <div >
+                  <!-- [ngClass]="applyBlur? 'blur-bg' : '' " -->
+
+                  <div class="row mb-2">
+                    <div class="col-lg-4">
+                      <div class="d-flex align-items-center">
+                        <label class="custom-control custom-checkbox customcheck2 pr-2">
+                          <input type="checkbox" id="checkbox" class="custom-control-input" [checked]="array.ischeck"
+                            (click)="selectedRefferals(array, array.ischeck, i)"
+                            [disabled]="array.senttype == '1' || applyBlur">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-label"></span>
+                        </label>
+                        <div class="text-black2  fs16" (click)="viewProfile(array.userid)">
+                          <img src={{array.img}} id="sendreferral" class="rounded-circle "
+                            alt="sendreferral-profile-image">
+                          <p class="pl-2 fs16 pro-label font-weight-bold" onmouseover=""
+                            style="cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.name}}>{{array.name | truncate : 13 : "..."}}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="d-flex align-items-start justify-content-start pt10" *ngIf="array.companyname">
+                        <div>
+                          <!-- <img src="./assets/images/locationicon.svg" alt="location-icon" class="viewpostimg pr-2"> -->
+                          <em class="fas fa-briefcase fs20 color-light-blue mr-2"></em>
+                          {{langData.sendReferralPage.companyName}} 
+                          <span class="fs14 text-black2 font-weight-bold" onmouseover=""
+                            style="max-width: 255px;cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.companyname}}>{{array.companyname | truncate : 15 : "..." }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div  class="col-lg-3 text-right pt5">
+                      <button type="button" *ngIf="array.senttype=='0' || array.senttype=='2'"
+                        class="btn btn-blue-border btn-rounded text-blue py-1 pr-3 mr-2  font-weight-bold "
+                        (click)="sendMyRefferal(array)">
+                        <em class="fa fa-envelope pt-1 " aria-hidden="true"></em>
+                        <span class="fs14 pl-2">{{langData.sendReferralPage.sendReferral}}</span>
+                      </button>
+                      <p class="fs15 text-green2 pr-3" *ngIf="array.senttype=='1'"><img src="./assets/images/tick2.svg"
+                          class="viewpostimg" alt="tick-images">
+                        {{langData.sendReferralPage.sent}}</p>
+                    </div>
+                  </div>
+                  <div class="row" (click)="viewProfile(array.userid)">
+                    <div class="col-lg-4">
+                      <div class="d-flex align-items-start justify-content-start pl-5">
+                        <div>
+                          <img src="./assets/images/viewprofileicon.svg" class="viewpostimg pr-2"
+                            alt="view-post-images">
+                        </div>
+                        <div>
+                          <p class="fs14 text-black2" style="max-width: 145px;">
+                            <span>{{array.acctypeshortname}}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="d-flex align-items-start justify-content-start pt10" *ngIf="array.companyname">
+                        <div>
+                          <img src="./assets/images/locationicon.svg" alt="location-icon" class="viewpostimg pr-2">
+                          <!-- <em class="fas fa-briefcase fs20 color-light-blue mr-2"></em> -->
+                          {{langData.sendReferralPage.location}} 
+                          <span class="fs14 text-black2 font-weight-bold" onmouseover=""
+                            style="max-width: 255px;cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.location}}>{{array.location | truncate : 25 : "..." }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-lg-5">
+                      <div class="d-flex align-items-start justify-content-start">
+                        <div>
+                          <img src="./assets/images/locationicon.svg" alt="location-icon" class="viewpostimg pr-2">
+                          {{langData.sendReferralPage.location}}
+                        </div>
+                        <div>
+                          <p class="fs14 text-black2 font-weight-bold" onmouseover=""
+                            style="max-width: 255px;cursor: pointer;" placement = "i = 0 ? 'bottom' : 'top'" tooltip={{array.location}}>{{array.location | truncate : 25 : "..." }}</p>
+                        </div>
+                      </div>
+                    </div> -->
+                    <div class="col-lg-3 text-lg-right">
+                      <p *ngIf="array.companywebsite" class="fs14  text-blue pr-3"> <img
+                          src="./assets/images/viewwebsiteicon.svg" class="viewpostimg pr-2 fs14"
+                          alt="view-post-images"><a target="_blank" rel="noopener noreferrer"
+                          [attr.href]="'//' + array.companywebsite">{{langData.viewPostPage.viewWebsite}}</a></p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="sendreferralarray.length == 0">
+              <li class="list-group-item position-relative pb-0">
+                <div class="">
+                  <div></div>
+                  <div class="text-center text-light-grey">{{langData.sendReferralPage.noProfilesMatched}}</div>
+                </div>
+              </li>
+            </ng-container>
+
+          </ul>
+        </div>
+        <div class="row" *ngIf="loading == false">
+          <div class="col-md-12 d-flex justify-content-center mt-3" *ngIf="currentPage !== 0 && pageSize !== 0">
+            <pagination-controls (pageChange)="postChange($event)" directionLinks="true" autoHide="true"
+              responsive="true" previousLabel="" nextLabel="">
+            </pagination-controls>
+          </div>
+        </div>
+       
+
+      </div>
+      <div class="col-md-3">
+        <div class="card custom-user-card curved-last-cards border-0">
+
+          <div class="card-header">
+            <h3 class="fs14 mb-0 text-center text-black2 font-weight-bold">Latest Business News</h3>
+          </div>
+
+          <div class="card-body p-1">
+            <iframe id="serviceFrameSend" src="./assets/html/newswidgets.html" frameborder="0" height="530" width="100%"></iframe>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+  </section>
+
+
+
+  <!-- Body Content -->
+
+
+  <!-- footer Section -->
+  <!-- <app-auth-footer></app-auth-footer> -->
+  <!-- footer Section -->
+
+</div>

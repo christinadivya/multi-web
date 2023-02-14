@@ -1,0 +1,24 @@
+// Internet Explorer css
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+    /* IE10+ CSS styles go here */
+    .custom-checkbox, 
+    .custom-radio {
+        input:checked ~ svg .path.check{
+        stroke-dashoffset: 0 !important;
+        }
+    }
+
+    .min-h-100vh{
+      height: 100vh;
+      min-height: auto
+    }
+    
+    input::-ms-clear,
+    input[type=password]::-ms-reveal,
+    input[type=password]::-ms-clear
+    {
+        display: none;
+    }
+}
